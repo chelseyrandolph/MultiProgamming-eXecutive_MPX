@@ -107,6 +107,19 @@ int init_polling(char *buffer, int *count){
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers
 					
+					
+					if(cursor + 1 != *count ) {
+						if(cursor == buf_len) {
+							buffer[cursor] = letter;
+							cursor++;
+							buf_len++;
+							str[0] = letter;
+							serial_print(str); //prints the letter to the terminal
+						} else {
+							
+						}
+					 
+					}
 					return 1;
 
 			}
