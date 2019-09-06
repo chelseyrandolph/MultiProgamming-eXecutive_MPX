@@ -19,6 +19,15 @@ int init_polling(char *buffer, int *count){
 	if(!buffer || !count){
 		return -1;
 	}
+	char tmp_buf[4];
+	temp_buf[4] = '\0';
+	int tmp_len = 0;
+
+	//Store the esc code in a buffer
+	while (inb(COM1+5)&1){
+		tmp_buf[tmp_len] = inb(COM1);
+		tmp_len++;
+	}
 
 //Where your cursor is at in the buffer and how long is the buffer.
 	int cursor = 0;
@@ -32,7 +41,7 @@ int init_polling(char *buffer, int *count){
 			//depends on how it's handled in this polling function.
 			switch(letter){
 				
-				// 07xF ????   ^?
+				// 07xF ????   ^?   scan code: 0x0E
 				case 12: //backspace
 					
 					//Option 1: If the cursor isn't 0 and is equal to the length 
@@ -107,7 +116,10 @@ int init_polling(char *buffer, int *count){
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers
 					
-					
+					// if cursor isn't at the end of the string ???
+					// isn't count the length of the string
+					// or is that saying if the buffer isn't full and 
+					// it's at the end of the string, to add it to the end????
 					if(cursor + 1 != *count ) {
 						if(cursor == buf_len) {
 							buffer[cursor] = letter;
@@ -116,16 +128,42 @@ int init_polling(char *buffer, int *count){
 							str[0] = letter;
 							serial_print(str); //prints the letter to the terminal
 						} else {
-							
-						}
-					 
-					}
-					return 1;
+							int temp_c = cursor;
+							int i;
+							// The position in front of the cursor, where
+							// we will type next
+							int temp_len = buf_len + 1;
+							// While the cursor is less than the length of the string
+							while(temp_c < temp_len){
+								//The characters are shifted over from where the cursor was  									//to the next space.
+								buffer[temp_len] = buffer[temp_len - 1];
+								temp_len--;
+							}
+							buffer[cursor] = letter;
+							cursor++;
+							buf_len++;
+							str[0] = letter;
+							serial_print(str);
+							temp_c = cursor;
+							temp_len = buf_len + 1;
+							for(i = 0; i < (temp_c - temp_len); temp_len++){
+								letter = buffer[temp_len];
+								str[0] = letter;
+								serial_print(str);
+							}
 
+							i = 0;
+							temp_c = cursor;
+							temp_len = buf_len + 1;
+							for(i = 0; i < (temp_c - temp_len) - 1; temp_len++){
+								serial_print("\b");
+							}				
+						}
+					}
 			}
-		}
-		
+		}	
 	}
+	return 1;
 }
 
 
