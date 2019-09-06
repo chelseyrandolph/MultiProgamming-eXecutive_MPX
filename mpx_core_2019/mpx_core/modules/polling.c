@@ -3,15 +3,19 @@
 	
 */
 
-
+#include <system.h>
+#include <core/io.h>
+#include <core/serial.h>
+#include <string.h>
+#include "mpx_supt.h"
 #include "polling.h"
 
 
 
 int init_polling(char *buffer, int *count){
-	char str[2]'
+	char str[2];
 	str[1] = '\0';
-
+	serial_print(&str[1]);
 	if(!buffer || !count){
 		return -1;
 	}
@@ -21,7 +25,7 @@ int init_polling(char *buffer, int *count){
 	int buf_len = 0;
 
 	while(1){
-		if inb(COM1 + 5) & 1{
+		if( inb(COM1 + 5) & 1){
 			char letter = inb(COM1);
 			
 			//Depending on what letter is given by the user, 
@@ -53,7 +57,8 @@ int init_polling(char *buffer, int *count){
 								//What needs to be reprinted back out after the key is backspaced.
 								int buf_2 = temp_len - temp_cursor;
 								//Fill in the rest of the line with the remaining characters
-								for(int i = 0; i < buf_2; i++){
+								int i;
+								for(i = 0; i < buf_2; i++){
 									buffer[cursor + i - 1] = buffer[cursor + i];
 									letter = buffer[cursor + i];
 									str[0] = letter;
@@ -102,6 +107,7 @@ int init_polling(char *buffer, int *count){
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers
 					
+					return 1;
 
 			}
 		}
