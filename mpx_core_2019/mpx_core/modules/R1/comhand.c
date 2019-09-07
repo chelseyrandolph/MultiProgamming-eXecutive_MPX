@@ -2,7 +2,7 @@
 #include <core/io.h>
 #include <core/serial.h>
 #include <string.h>
-#include "mpx_supt.h"
+#include "../mpx_supt.h"
 #include "comhand.h"
 #include "time.h"
 #include "date.h"
