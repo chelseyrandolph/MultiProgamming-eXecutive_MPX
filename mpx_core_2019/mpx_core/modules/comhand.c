@@ -83,10 +83,15 @@ int shutDown(){
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
 	sys_req(READ, DEFAULT_DEVICE, ans , &ansInt);
 	int i = atoi(ans);
+	
 	if(i==1){
+	
+		klogv("MPX is shuting down");
 		return 1;
 	}
 	else if(i==2){
+	
+		serial_print("shutdwon process is canceled by the user");
 		return 0;
 	}else{
 		int failedAbortSize = 50;

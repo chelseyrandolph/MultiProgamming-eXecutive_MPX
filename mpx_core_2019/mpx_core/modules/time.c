@@ -117,14 +117,17 @@ void getTime(){
 
 	char *h;
 	h = itoa(hourr);
+	//h = itoi(hourr);
 	serial_print(h);
 	serial_print(":");
 	char *m;
 	m = itoa(minutee);
+	//m = itoi(minutee);
 	serial_print(m);
 	serial_print(":");
 	char *s;
 	s = itoa(secondd);
+	//s = itoi(secondd);
 	serial_print(s);
 	serial_print("\n");
 
