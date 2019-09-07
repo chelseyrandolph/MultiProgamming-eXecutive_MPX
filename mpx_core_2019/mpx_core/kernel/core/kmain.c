@@ -18,8 +18,8 @@
 #include <mem/paging.h>
 
 #include "modules/mpx_supt.h"
-#include "modules/polling.h"
-#include "modules/comhand.h"
+#include "modules/R1/polling.h"
+#include "modules/R1/comhand.h"
 
 void kmain(void)
 {

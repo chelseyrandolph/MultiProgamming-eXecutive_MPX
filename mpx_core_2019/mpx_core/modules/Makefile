@@ -11,11 +11,11 @@ ASFLAGS = -f elf -g
 # add new files as you create them.
 # I'll start you off with just mpx_supt.o
 OBJFILES =\
-polling.o\
+R1/polling.o\
 mpx_supt.o\
-time.o\
-date.o\
-comhand.o
+R1/time.o\
+R1/date.o\
+R1/comhand.o
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<
