@@ -1,6 +1,9 @@
-#include<string.h>
-#include<comHandSupport.h>
-
+#include <system.h>
+#include <core/io.h>
+#include <core/serial.h>
+#include <string.h>
+#include "mpx_supt.h"
+#include "comhand.h"
 
 
 int comHandler(const char * buffer){
