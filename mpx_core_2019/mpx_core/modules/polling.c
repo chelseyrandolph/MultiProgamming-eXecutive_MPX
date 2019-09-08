@@ -73,40 +73,81 @@ int init_polling(char *buffer, int *count){
 					}
 					break;
 				case 13: //return
-					serial_print("correct");
 					serial_print("\r\n");			
 
 					break;
 				case 89: 
 					tmp_buf[4] = '\0';
 					int tmp_len = 0;
-					//Store the esc code in a buffer
+					//Store the code in a buffer
 					while (inb(COM1+5)&1){
 						tmp_buf[tmp_len] = inb(COM1);
 						tmp_len++;
 					}
-					break;
-				// \033[3~    ???????? maybe
-				case 23: //Delete
-					//Options are the same as the backspace key, except everything to the right 
-					//of the highlighted character gets deleted.
-					
-					break;
+					//A bracket '[' was the first character used
+					if(tmp_buf[0] == 91){
+						switch(tmp_buf[1]){
+							// \033[3~    ???????? maybe
+							// Delete
+							//Options are the same as the backspace key, except everything 
+							//to the right of the highlighted character gets deleted.
+							case 51:
+								if(cursor < buf_len){
+									str[0] = buffer[cursor];
+									serial_print(str);
+									serial_print("\b \b");
+								
+									// Creating temporary values to fix the buffer once
+									// the character has been deleted.
+									int t_len = buf_len;
+									int t_cursor = cursor;
+									int buf_3 = t_len - t_cursor;
+									int i = 0;
+									//Since we deleted the character to the right of the cursor,
+									//we will shift all the characters into the space before them 
+									//in the buffer then print out the new string.
+									for(i = 0; i < buf_3; i++){
+										buffer[cursor + i] = buffer[cursor + i + 1];
+										letter = buffer[cursor + i ];
+										serial_print(str);
+									}
+									serial_print(" ");
+									serial_print("\b \b");
+									buf_len--;
+									
+									for(i = 0; i < buf_3 - 1; i++){
+										serial_print("\b");
+									}
+								}
+							break;
+						
 
-	
+							//Keep track of each arrow key to move the cursor over so if 
+							//they decide to type characters, we can handle that as needed.
+							case 67: //right arrow
+								if(cursor < buf_len){
+									if(buffer[cursor] == 127){
+										str[0] = buffer[cursor];
+										serial_print(str);
+										cursor++;
+									}else{
+										str[0] = buffer[cursor];
+										serial_print(str);
+										cursor++;
+										
+									}
+								}
+								
+							break;
 
-
-
-				//Keep track of each arrow key to move the cursor over so if they decide to 
-				//type characters, we can handle that as needed.
-				case 45: //left arrow
-					
-					break;
-
-				case 56: //right arrow
-					
-					break;
-			
+							case 68: //left arrow
+								if(cursor > 0){
+									serial_print("\b");
+									cursor--;
+								}
+							break;
+						}
+					}
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers
 					
@@ -128,11 +169,11 @@ int init_polling(char *buffer, int *count){
 							// we will type next
 							int temp_len = buf_len + 1;
 							// While the cursor is less than the length of the string
-							while(temp_c < temp_len){
+							/*while(temp_c < temp_len){
 								//The characters are shifted over from where the cursor was  									//to the next space.
 								buffer[temp_len] = buffer[temp_len - 1];
 								temp_len--;
-							}
+							}*/
 							buffer[cursor] = letter;
 							cursor++;
 							buf_len++;
