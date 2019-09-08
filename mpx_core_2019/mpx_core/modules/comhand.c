@@ -13,8 +13,8 @@ int comhand(){
 	int quit = 0;
 
 	while(!quit){
-	char menu[1000] = "0: Quit \n 1: \n 2: \n";
-	sys_req(READ, DEFAULT_DEVICE, menu, &menuSize);
+	char menu[1000] = "0: Quit\n1:\n2:\n";
+	sys_req(WRITE, DEFAULT_DEVICE, menu, &menuSize);
 	memset(cmdBuffer, '\0', 100);
 	//reset before each all to read
 	bufferSize = 99;
@@ -23,11 +23,11 @@ int comhand(){
 	if(*cmdBuffer == '0'){
 		quit = 1;
 	}else if(*cmdBuffer == '1'){
-		serial_print("1");
+		serial_print("1\n");
 	}else if(*cmdBuffer == '2'){
-		serial_print("2");
+		serial_print("2\n");
 	}else{
-		serial_print("Please choose a command.");
+		serial_print("Please choose a command.\n");
 	}
 
 	}

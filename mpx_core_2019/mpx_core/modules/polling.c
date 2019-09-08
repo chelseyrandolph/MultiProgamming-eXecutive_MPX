@@ -17,25 +17,12 @@ int init_polling(char *buffer, int *count){
 	char str[2];
 	str[1] = '\0';
 
-
-	// ASK WHY WE GET AN ERROR STATING:
-	// error: ____ set but not used. 
-	serial_print(&str[1]);
-
 	if(!buffer || !count){
 		return -1;
 	}
 	//Where your cursor is at in the buffer and how long is the buffer.
 	int cursor = 0;
 	int buf_len = 0;
-	
-	// ASK WHY WE GET AN ERROR STATING:
-	// error: ____ set but not used. 
-	serial_print(&tmp_buf[1]);
-
-
-
-
 
 	while(1){
 		if( inb(COM1 + 5) & 1){
