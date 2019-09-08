@@ -18,7 +18,8 @@
 #include <mem/paging.h>
 
 #include "modules/mpx_supt.h"
-
+#include "modules/polling.h"
+#include "modules/comhand.h"
 
 void kmain(void)
 {
@@ -43,18 +44,33 @@ void kmain(void)
    if ( magic != 0x2BADB002 ){
      //kpanic("Boot was not error free. Halting.");
    }
+  
+   init_serial(COM1);
+   set_serial_out(COM1);
+   set_serial_in(COM1);
+   mpx_init(MODULE_R1);
    
    // 3) Descriptor Tables
    klogv("Initializing descriptor tables...");
 
+   init_idt();
+   init_gdt();
+
+   init_irq();
+   init_pic();
+   sti();
+
+   init_paging();
+
 
    // 4) Virtual Memory
    klogv("Initializing virtual memory...");
-
+   
 
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
-
+   sys_set_read(init_polling);
+   comhand();
 
    // 6) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
