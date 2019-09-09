@@ -37,17 +37,18 @@ int init_polling(char *buffer, int *count){
 					if(cursor != 0){
 							//If the cursor is at the end of the buffer
 							if(cursor == buf_len){
-								buffer[cursor - 1] = 00;
+								buffer[cursor - 1] = NULL;
 								serial_print("\b \b");
 								cursor--;
 								buf_len--;
+
 
 					//Option 2: If the cursor is in the buffer (not at the end), delete the 
 					//highlighted character, move the cursor, and loops throughout the buffer 
 					//adding the buffer of everything to the right to everything on 
 					//the left side. Subtract one from the total length of the buffer.
-							}else{
-								serial_print("\b \b");
+							}else{	
+								serial_print("\b \b");							
 								int temp_len = buf_len;
 								int temp_cursor = cursor;
 								//What needs to be reprinted back out after the key is backspaced.
@@ -62,13 +63,12 @@ int init_polling(char *buffer, int *count){
 								}
 								serial_print(" ");
 								serial_print("\b \b");
-								buffer[buf_len - 1] = 00;
+								buffer[buf_len - 1] = NULL;
 								cursor--;
 								buf_len--;
-
-								for(i = 0; i < buf_2; i++){
-									serial_print("\b");
-								}
+								for (i = 0; i < buf_2; i++){
+                            		serial_print("\b");
+                        		}  
 							}	
 					}
 					break;
@@ -77,11 +77,9 @@ int init_polling(char *buffer, int *count){
 					//serial_print("correct");
 					buffer[cursor] = '\0';
 					serial_print("\r\n");	
-					return -1;		
-
-
+					return -1;
 					break;
-				case 89: 
+				case 27: 
 					tmp_buf[4] = '\0';
 					int tmp_len = 0;
 					//Store the code in a buffer
@@ -104,29 +102,34 @@ int init_polling(char *buffer, int *count){
 								
 									// Creating temporary values to fix the buffer once
 									// the character has been deleted.
-									int t_len = buf_len;
-									int t_cursor = cursor;
-									int buf_3 = t_len - t_cursor;
+									int temp_len = buf_len;
+									int temp_cursor = cursor;
+									int buf_2 = temp_len - temp_cursor;
 									int i = 0;
 									//Since we deleted the character to the right of the cursor,
 									//we will shift all the characters into the space before them 
 									//in the buffer then print out the new string.
-									for(i = 0; i < buf_3; i++){
+									for(i = 0; i < buf_2; i++){
 										buffer[cursor + i] = buffer[cursor + i + 1];
-										letter = buffer[cursor + i ];
+										letter = buffer[cursor + i];
+										str[0] = letter;
 										serial_print(str);
 									}
 									serial_print(" ");
 									serial_print("\b \b");
 									buf_len--;
-									
-									for(i = 0; i < buf_3 - 1; i++){
+									for(i=0;i<buf_2-1;i++){
 										serial_print("\b");
 									}
 								}
 							break;
 						
-
+							case 68: //left arrow
+								if(cursor > 0){
+									serial_print("\b");
+									cursor--;
+								}
+							break;
 							//Keep track of each arrow key to move the cursor over so if 
 							//they decide to type characters, we can handle that as needed.
 							case 67: //right arrow
@@ -145,14 +148,10 @@ int init_polling(char *buffer, int *count){
 								
 							break;
 
-							case 68: //left arrow
-								if(cursor > 0){
-									serial_print("\b");
-									cursor--;
-								}
-							break;
+
 						}
 					}
+				break;
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers
 					
