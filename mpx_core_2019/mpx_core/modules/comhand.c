@@ -46,7 +46,7 @@ int comhand(){
 
 void version(){
 	int verSize = 10;
-	char version[10] = "1.0\n";
+	char version[10] = "1.1\n";
 	sys_req(WRITE,DEFAULT_DEVICE, version, &verSize);
 }
 
