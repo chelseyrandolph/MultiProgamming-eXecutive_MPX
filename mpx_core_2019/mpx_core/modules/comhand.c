@@ -33,7 +33,7 @@ int comhand(){
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
 		int failSize = 100;
 		char failure[100] = "Not a valid command, please enter a valid number\n";
-		int i = atoi(cmdBuffer);
+		int i = atoi(cmdBuffer); 
 		switch(i){
 			case 1: version(); 					break;
 			case 2: ourHelp();					break;
@@ -53,8 +53,8 @@ int comhand(){
 
 
 void version(){
-	int verSize = 10;
-	char version[10] = "1.1\n";
+	int verSize = 20;
+	char version[20] = "Version 1.1\n";
 	sys_req(WRITE,DEFAULT_DEVICE, version, &verSize);
 }
 
