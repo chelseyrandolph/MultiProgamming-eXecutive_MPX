@@ -73,8 +73,11 @@ int init_polling(char *buffer, int *count){
 					}
 					break;
 				case 13: //return
-					serial_print("correct");
-					serial_print("\r\n");			
+					//When you hit enter, it should slap a noll character at the end of the buffer and return back to comHand
+					//serial_print("correct");
+					buffer[cursor] = '\0';
+					serial_print("\r\n");	
+					return -1;		
 
 					break;
 				case 89: 
