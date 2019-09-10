@@ -21,13 +21,13 @@ void setTime() {
 int hourToint, minToint, secToint;
 int sethour=0 ,setmin =0,setsec =0;
 char hourInput[20] ,minInput[20],secInput[20];
-int entersize = 10 ,size =3;
+int size =3;
 
 //invalid interupt
 cli();
 
 serial_print("Enter the hour : ");
-sys_req(WRITE, DEFAULT_DEVICE, hourInput, &entersize);
+//sys_req(WRITE, DEFAULT_DEVICE, hourInput, &entersize);
 memset(hourInput, '\0', 3);
 sys_req(READ, DEFAULT_DEVICE, hourInput, &size);
 
@@ -48,7 +48,7 @@ outb(0x71,hourToint);}
 
 
 serial_print("Enter the minutes  : ");
-sys_req(WRITE, DEFAULT_DEVICE, minInput, &entersize);
+//sys_req(WRITE, DEFAULT_DEVICE, minInput, &entersize);
 memset(minInput, '\0', 3);
 sys_req(READ, DEFAULT_DEVICE, minInput,&size);
 
@@ -68,7 +68,7 @@ outb(0x71,minToint);}
 
 
 serial_print("Enter the second : ");
-sys_req(WRITE, DEFAULT_DEVICE, secInput, &entersize);
+//sys_req(WRITE, DEFAULT_DEVICE, secInput, &entersize);
 memset(secInput, '\0', 3);
 sys_req(READ, DEFAULT_DEVICE, secInput ,&size);
 

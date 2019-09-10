@@ -118,7 +118,7 @@ int shutDown(){
 	int promptInt = 50;
 	char prompt[50] = "Are you sure? \n 1. Yes \n 2. No\n";
 	int ansInt;
-	char ans[10];
+	char ans[1];
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
 	sys_req(READ, DEFAULT_DEVICE, ans , &ansInt);
 	int i = atoi(ans);
