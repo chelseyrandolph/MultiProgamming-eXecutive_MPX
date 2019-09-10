@@ -8,7 +8,7 @@
 void setTime();
 void getTime();
 char* itoa(int number);
-//int BCDToDEC(int num);
+int BCDToDEC(int num);
 int DECToBCD(int num); 
 
 #endif

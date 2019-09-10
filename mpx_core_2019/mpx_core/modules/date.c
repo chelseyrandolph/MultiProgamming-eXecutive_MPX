@@ -4,7 +4,7 @@
 #include <string.h>
 #include "mpx_supt.h"
 #include "date.h"
-#include "setTime.h"
+#include "time.h"
 
 
 void getDate(){

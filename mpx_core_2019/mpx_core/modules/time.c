@@ -26,7 +26,7 @@ int entersize = 10 ,size =3;
 //invalid interupt
 cli();
 
-serial_println("Enter the hour :");
+serial_print("Enter the hour : ");
 sys_req(WRITE, DEFAULT_DEVICE, hourInput, &entersize);
 memset(hourInput, '\0', 3);
 sys_req(READ, DEFAULT_DEVICE, hourInput, &size);
@@ -47,7 +47,7 @@ outb(0x70,0x04);
 outb(0x71,hourToint);}
 
 
-serial_println("Enter the minutes :");
+serial_print("Enter the minutes  : ");
 sys_req(WRITE, DEFAULT_DEVICE, minInput, &entersize);
 memset(minInput, '\0', 3);
 sys_req(READ, DEFAULT_DEVICE, minInput,&size);
@@ -67,7 +67,7 @@ outb(0x70,0x02);
 outb(0x71,minToint);}
 
 
-serial_println("Enter the second :");
+serial_print("Enter the second : ");
 sys_req(WRITE, DEFAULT_DEVICE, secInput, &entersize);
 memset(secInput, '\0', 3);
 sys_req(READ, DEFAULT_DEVICE, secInput ,&size);
@@ -111,20 +111,21 @@ secondd = secondd-((int) secondd/16)*6;
 
 
 
-serial_println("the current time is : ");
+serial_print("the current time is :  ");
 
 char *h;
 h = itoa(hourr);
-serial_println(h);
+serial_print(h);
+serial_print(":");
 
 char *m;
 m = itoa(minutee);
-serial_println(m);
-
+serial_print(m);
+serial_print(":");
 char *s;
 s = itoa(secondd);
-serial_println(s);
-
+serial_print(s);
+serial_print("\n");
 
 }
 
