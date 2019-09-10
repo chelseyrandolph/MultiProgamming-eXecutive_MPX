@@ -11,8 +11,8 @@
 #define Invalid_sec "you enter incalid type of second"
 
 #define HOUR 0x04
-#define Minute 0x02
-#define Second 0x00
+#define MINUTE 0x02
+#define SECOND 0x00
 
 
 void setTime() {
@@ -92,37 +92,37 @@ sti();
 }
 
 void getTime(){
-int hour, minute , second;
+int hourr, minutee , secondd;
 
 
-outb(0x70,hour);
-hour= inb(0x71);
-hour = hour-((int) hour/16)*6;
+outb(0x70,HOUR);
+hourr= inb(0x71);
+hourr = hourr-((int) hourr/16)*6;
 
 
-outb(0x70,minute);
-minute= inb(0x71);
-minute = minute-((int) minute/16)*6;
+outb(0x70,MINUTE);
+minutee= inb(0x71);
+minutee = minutee-((int) minutee/16)*6;
 
 
-outb(0x70,second);
-second= inb(0x71);
-second = second-((int) second/16)*6;
+outb(0x70,SECOND);
+secondd = inb(0x71);
+secondd = secondd-((int) secondd/16)*6;
 
 
 
 serial_println("the current time is : ");
 
 char *h;
-h = itoa(hour);
+h = itoa(hourr);
 serial_println(h);
 
 char *m;
-m = itoa(minute);
+m = itoa(minutee);
 serial_println(m);
 
 char *s;
-s = itoa(second);
+s = itoa(secondd);
 serial_println(s);
 
 
