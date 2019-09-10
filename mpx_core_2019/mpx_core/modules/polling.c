@@ -167,34 +167,33 @@ int init_polling(char *buffer, int *count){
 						// If we are adding more to their input within the input they
 						// already typed.
 						} else {
-							int temp_c = cursor;
-							int i;
+							int temp_cursor = cursor;
+							int i = 0;
 							// The position in front of the cursor, where
 							// we will type next
 							int temp_len = buf_len + 1;
 							// While the cursor is less than the length of the string
-							/*while(temp_c < temp_len){
+							while(temp_cursor < temp_len){
 								//The characters are shifted over from where the cursor was  									//to the next space.
 								buffer[temp_len] = buffer[temp_len - 1];
 								temp_len--;
-							}*/
+							}
 							buffer[cursor] = letter;
 							cursor++;
 							buf_len++;
 							str[0] = letter;
 							serial_print(str);
-							temp_c = cursor;
+							temp_cursor = cursor;
 							temp_len = buf_len + 1;
-							for(i = 0; i < (temp_c - temp_len); temp_len++){
-								letter = buffer[temp_len];
+							for(i = 0; i < (temp_len - temp_cursor); temp_cursor++){
+								letter = buffer[temp_cursor];
 								str[0] = letter;
 								serial_print(str);
 							}
 
-							i = 0;
-							temp_c = cursor;
+							temp_cursor = cursor;
 							temp_len = buf_len + 1;
-							for(i = 0; i < (temp_c - temp_len) - 1; temp_len++){
+							for(i = 0; i < (temp_len - temp_cursor) - 1; temp_cursor++){
 								serial_print("\b");
 							}				
 						}
