@@ -13,6 +13,8 @@ ASFLAGS = -f elf -g
 OBJFILES =\
 polling.o\
 mpx_supt.o\
+time.o\
+date.o\
 comhand.o
 
 .c.s:

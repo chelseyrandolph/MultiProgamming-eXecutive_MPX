@@ -4,17 +4,13 @@
 #include <string.h>
 #include "mpx_supt.h"
 #include "comhand.h"
-
-
+#include "time.h"
+#include "date.h"
 
 
 void version();
 int ourHelp();
 int shutDown();
-void getTime();
-void getDate();
-void setTime();
-void setDate();
 
 
 
@@ -139,10 +135,7 @@ int shutDown(){
 	}
 }
 
-void getTime(){}
-void getDate(){}
-void setTime(){}
-void setDate(){}
+
 
 
 //		" ____ ___                                                 "                    

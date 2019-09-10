@@ -1,72 +1,80 @@
 #include <string.h>
 #include <core/io.h>
-#include "mpx_supt.h"
 #include <core/serial.h>
-#include "setTime.h"
+#include <core/interrupts.h>
+
+#include "mpx_supt.h"
+#include "time.h"
+
+#define Invalid_hour "you enter invalid type of hour"
+#define Invalid_min "you enter invalid type of mintuts"
+#define Invalid_sec "you enter incalid type of second"
+
 #define HOUR 0x04
 #define Minute 0x02
 #define Second 0x00
 
 
-void SetTime() {
+void setTime() {
 
 
 int hourToint, minToint, secToint;
-int sethour=0 ,setmint =0,setsec ;
-char hourInput[20] ,hour,mintInput[20],mint,secInput[20],sec;
- int entersize = 10 ,size =3;
+int sethour=0 ,setmin =0,setsec =0;
+char hourInput[20] ,minInput[20],secInput[20];
+int entersize = 10 ,size =3;
 
 //invalid interupt
 cli();
 
-serial_println("Enter the hour :", hourInput);
+serial_println("Enter the hour :");
 sys_req(WRITE, DEFAULT_DEVICE, hourInput, &entersize);
-memset(hour,3);
-sys_req(READ, DEFAULT_DEVICE, hour,&size);
+memset(hourInput, '\0', 3);
+sys_req(READ, DEFAULT_DEVICE, hourInput, &size);
 
-hourToint= atoa(hour);
+hourToint= atoi(hourInput);
 sethour = hourToint;
-hourToint = DecToBCD(hourToint);
+hourToint = DECToBCD(hourToint);
 
 
 
 if(sethour < 0 || sethour>23){
 
 int Ihoursize = sizeof(Invalid_hour);
-sys_req(WRITE, DEFAULT_DEVICE,Invalid_hour,&Ihoursize);}
+sys_req(WRITE, DEFAULT_DEVICE,Invalid_hour,&Ihoursize);
+}
 else{
 outb(0x70,0x04);
 outb(0x71,hourToint);}
 
 
-serial_println("Enter the minutes :", mintInput);
-sys_req(WRITE, DEFAULT_DEVICE, minttInput, &entersize);
-//memset(mint,3);
-sys_req(READ, DEFAULT_DEVICE, mint,&size);
+serial_println("Enter the minutes :");
+sys_req(WRITE, DEFAULT_DEVICE, minInput, &entersize);
+memset(minInput, '\0', 3);
+sys_req(READ, DEFAULT_DEVICE, minInput,&size);
 
-minToint= atoa(mint);
-setmint = mintToint;
-mintToint = DecToBCD(mintToint);
+minToint= atoi(minInput);
+setmin = minToint;
+minToint = DECToBCD(minToint);
 
 
 
-if(setmint < 0 || setmint>59){
+if(setmin < 0 || setmin>59){
 
 int Imintsize = sizeof(Invalid_min);
-sys_req(WRITE, DEFAULT_DEVICE,Invalid_mint,&Imintsize);}
+sys_req(WRITE, DEFAULT_DEVICE,Invalid_min,&Imintsize);}
 else{
 outb(0x70,0x02);
 outb(0x71,minToint);}
 
 
-serial_println("Enter the second :", sectInput);
+serial_println("Enter the second :");
 sys_req(WRITE, DEFAULT_DEVICE, secInput, &entersize);
-memset(sec,3);
-sys_req(READ, DEFAULT_DEVICE, sec,&size);
+memset(secInput, '\0', 3);
+sys_req(READ, DEFAULT_DEVICE, secInput ,&size);
 
-secToint= atoa(sec);
+secToint= atoi(secInput);
 setsec = secToint;
-secToint = DecToBCD(secToint);
+secToint = DECToBCD(secToint);
 
 
 
@@ -87,31 +95,34 @@ void getTime(){
 int hour, minute , second;
 
 
-outb(0x70,Hour);
+outb(0x70,hour);
 hour= inb(0x71);
 hour = hour-((int) hour/16)*6;
 
 
-outb(0x70,Minute);
+outb(0x70,minute);
 minute= inb(0x71);
 minute = minute-((int) minute/16)*6;
 
 
-outb(0x70,Second);
+outb(0x70,second);
 second= inb(0x71);
 second = second-((int) second/16)*6;
 
 
 
 serial_println("the current time is : ");
-int h = itoa(hour);
+
+char *h;
+h = itoa(hour);
 serial_println(h);
 
-int m = itoa(minute);
+char *m;
+m = itoa(minute);
 serial_println(m);
 
-int s = itoa(second);
-
+char *s;
+s = itoa(second);
 serial_println(s);
 
 
