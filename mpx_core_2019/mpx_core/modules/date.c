@@ -50,7 +50,6 @@ void getDate(){
 	cyear = itoa(iyear);
 	yearSize = strlen(cyear);
 	sys_req(WRITE, DEFAULT_DEVICE, cyear, &yearSize);
-	//sys_req(WRITE, DEFAULT_DEVICE, cyear, &yearSize);
 
 
 
@@ -63,13 +62,13 @@ void setDate(){
 	//Variables
 	//int qSize = 50;
 	int size = 3;	
-	int ySize = 5;
+	int ySize = 3;
 	int tmp_month = 0;
 	int tmp_day = 0;
 	int tmp_year = 0;
 	char month[3];
 	char day[3];
-	char year[5];
+	char year[3];
 	int imonth;
 	int iday;
 	int iyear;
@@ -95,9 +94,9 @@ void setDate(){
 	iday = DECToBCD(iday);
 
 	//Year
-	char getYear[50] = "Enter a year (YYYY): ";
+	char getYear[50] = "Enter a year (YY): ";
 	sys_req(WRITE, DEFAULT_DEVICE, getYear, &ySize);
-	memset(year, '\0',5);
+	memset(year, '\0',3);
 	sys_req(READ, DEFAULT_DEVICE, year, &ySize);
 	iyear = atoi(year);
 	tmp_year = iyear;
@@ -111,6 +110,8 @@ void setDate(){
 	if(tmp_month > 0 && tmp_month < 13){
 		if(tmp_day > 0 && tmp_day <= daysAmonth[tmp_month-1]){
 			valid = 1;
+		
+		//Handling leap years with February
 		}else if(tmp_month == 2 && tmp_year % 4 == 0 && tmp_day == 29){
 			valid = 1;
 		}else{
@@ -130,7 +131,7 @@ void setDate(){
 			iday = DECToBCD(iday);
 		
 			sys_req(WRITE, DEFAULT_DEVICE, getYear, &ySize);
-			memset(year, '\0',5);
+			memset(year, '\0',3);
 			sys_req(READ, DEFAULT_DEVICE, year, &ySize);
 			iyear = atoi(year);
 			tmp_year = iyear;
@@ -138,7 +139,7 @@ void setDate(){
 
 		}
 
-		//Handling leap years with February
+		
 		
 		
 
