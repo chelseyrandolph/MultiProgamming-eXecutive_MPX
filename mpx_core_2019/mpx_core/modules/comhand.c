@@ -8,50 +8,6 @@
 #include "date.h"
 
 
-void version();
-int ourHelp();
-int shutDown();
-
-
-
-int comhand(){
-	char cmdBuffer[100];
-	int bufferSize;
-	int quit = 0;
-	int menuSize = 2500;
-	char menu[2500] = {"\nPress Corresponding number to execute command \n 1. Version \n 2. Help \n 3. Shutdown \n 4. Get time \n 5. Get Date \n 6. Set Time \n 7. Set Date\n\n"};
-
-	serial_println(" _   _  ___  ___  _____    __    _  _____  __        __  ___");   
-	serial_println("| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|");
-	serial_println("| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ ");
-	serial_println("| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|");
-	serial_println("| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ ");
-	serial_println("|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|");
-	while(!quit){
-
-		sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
-
-		//get a command
-		memset(cmdBuffer, '\0', 100);
-		bufferSize = 99;
-		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-		int failSize = 100;
-		char failure[100] = "Not a valid command, please enter a valid number.\n";
-		int i = atoi(cmdBuffer); 
-		switch(i){
-			case 1: version(); 					break;
-			case 2: ourHelp();					break;
-			case 3: quit = shutDown();			break;
-			case 4: getTime();					break;
-			case 5: getDate();					break;
-			case 6: setTime();					break;
-			case 7: setDate();					break;
-			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
-		}
-	}
-	return -1;
-
-}
 
 
 
@@ -86,22 +42,22 @@ int ourHelp(){
 		return 0;
 	}
 	else if(i==3){
-		char message[300] = "Get Time.\n";		//TODO - Mohammed finish time help messages
+		char message[300] = "Displays the current time of day.\n";		//TODO - Mohammed finish time help messages
 		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 		return 0;
 	}
 	else if(i==4){
-		char message[300] = "Get Date.\n";	
+		char message[300] = "Displays the current date.\n";	
 		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 		return 0;
 	}
 	else if(i==5){
-		char message[300] = "Set Time.\n";	
+		char message[300] = "Prompts the user for an hour, minute, and second to change the MPX clock to.\n";	
 		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 		return 0;
 	}
 	else if(i==6){
-		char message[300] = "Set Date.\n";	
+		char message[300] = "Prompts the user for a month, day, and year to change the MPX date to.\n";	
 		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 		return 0;
 	}
@@ -142,21 +98,44 @@ int shutDown(){
 
 
 
+int comhand(){
+	char cmdBuffer[100];
+	int bufferSize;
+	int quit = 0;
+	int menuSize = 2500;
+	char menu[2500] = {"\nPress Corresponding number to execute command \n 1. Version \n 2. Help \n 3. Shutdown \n 4. Get time \n 5. Get Date \n 6. Set Time \n 7. Set Date\n\n"};
 
-//		" ____ ___                                                 "                    
-//		"|    |   \______ ___________  ____ _____    _____   ____  "
-//		"|    |   /  ___// __\\_  __\\/    \\__ \\  /    \\_/ __\\ "
-//		"|    |  /\\___\\  ___/|  |\\/   | \\/ __\\|  Y Y \\  ___/ "
-//		"|______//____ \\___  __|  |___|  (____  /__|_|  /\\___ >"
-//		"            \\/    \\/          \\/    \\/     \\/    \\/ 
-//		"		  /    \\   ____   ____  __ __ 		   "
-//		"		 /  \ / \\_/ __\\ /   \\|  | \\		   "
-//		"		/    Y   \\  ___/|   | \\  |  /		   "
-//		"	       \\____|__ /\\___  >___|  /____/ 		   "
-//		"		       \\/    \\/    \\/       		   "
+	serial_println(" _   _  ___  ___  _____    __    _  _____  __        __  ___");   
+	serial_println("| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|");
+	serial_println("| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ ");
+	serial_println("| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|");
+	serial_println("| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ ");
+	serial_println("|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|");
+	while(!quit){
 
+		sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
 
+		//get a command
+		memset(cmdBuffer, '\0', 100);
+		bufferSize = 99;
+		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
+		int failSize = 100;
+		char failure[100] = "Not a valid command, please enter a valid number.\n";
+		int i = atoi(cmdBuffer);
+		switch(i){
+			case 1: version(); 					break;
+			case 2: ourHelp();					break;
+			case 3: quit = shutDown();				break;
+			case 4: getTime();					break;
+			case 5: getDate();					break;
+			case 6: setTime();					break;
+			case 7: setDate();					break;
+			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
+		}
+	}
+	return -1;
 
+}
 
 
 

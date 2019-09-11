@@ -115,7 +115,7 @@ void setDate(){
 		}else if(tmp_month == 2 && tmp_year % 4 == 0 && tmp_day == 29){
 			valid = 1;
 		}else{
-			serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format");
+			serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YY format");
 			sys_req(WRITE, DEFAULT_DEVICE, getMonth, &size);
 			memset(month, '\0',3);
 			sys_req(READ, DEFAULT_DEVICE, month, &size);
@@ -144,7 +144,7 @@ void setDate(){
 		
 
 	}else{
-		serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format");
+		serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YY format");
 		sys_req(WRITE, DEFAULT_DEVICE, getMonth, &size);
 		memset(month, '\0',3);
 		sys_req(READ, DEFAULT_DEVICE, month, &size);
