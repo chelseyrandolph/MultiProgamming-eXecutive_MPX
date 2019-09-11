@@ -91,61 +91,63 @@ outb(0x71,secToint);}
 sti();
 }
 
+
+
 void getTime(){
-int hourr, minutee , secondd;
+	int hourr, minutee , secondd;
 
 
-outb(0x70,HOUR);
-hourr= inb(0x71);
-hourr = hourr-((int) hourr/16)*6;
+	outb(0x70,HOUR);
+	hourr= inb(0x71);
+	hourr = hourr-((int) hourr/16)*6;
 
 
-outb(0x70,MINUTE);
-minutee= inb(0x71);
-minutee = minutee-((int) minutee/16)*6;
+	outb(0x70,MINUTE);
+	minutee= inb(0x71);
+	minutee = minutee-((int) minutee/16)*6;
 
 
-outb(0x70,SECOND);
-secondd = inb(0x71);
-secondd = secondd-((int) secondd/16)*6;
+	outb(0x70,SECOND);
+	secondd = inb(0x71);
+	secondd = secondd-((int) secondd/16)*6;
 
 
 
-serial_print("the current time is :  ");
+	serial_print("the current time is :  ");
 
-char *h;
-h = itoa(hourr);
-serial_print(h);
-serial_print(":");
+	char *h;
+	h = itoa(hourr);
+	serial_print(h);
+	serial_print(":");
+	char *m;
+	m = itoa(minutee);
+	serial_print(m);
+	serial_print(":");
+	char *s;
+	s = itoa(secondd);
+	serial_print(s);
+	serial_print("\n");
 
-char *m;
-m = itoa(minutee);
-serial_print(m);
-serial_print(":");
-char *s;
-s = itoa(secondd);
-serial_print(s);
-serial_print("\n");
+}
+
+
+
+	// convert binary code decimal to string 
+	char* itoa(int number){
+
+	char *string = " "; 
+	//int i;
+	//for(i=0 ;i <3; i++){
+
+	string[0]= (number/10)+48;
+	string[1]= (number%10)+48;
+	string[2] = '\0';
+
+	return string;
+
 
 }
 
-
-
-// convert binary code decimal to string 
-char* itoa(int number){
-
-char *string = " "; 
-//int i;
-//for(i=0 ;i <3; i++){
-
-string[0]= (number/10)+48;
-string[1]= (number%10)+48;
-string[2] = '\0';
-
-return string;
-//}
-
-}
 int BCDToDEC(int num){
 return ((((num)>>4)&0x0F)*10) +(num&0x0F);
 

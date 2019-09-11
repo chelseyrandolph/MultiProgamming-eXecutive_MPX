@@ -111,13 +111,35 @@ void setDate(){
 	if(tmp_month > 0 && tmp_month < 13){
 		if(tmp_day > 0 && tmp_day <= daysAmonth[tmp_month-1]){
 			valid = 1;
+		}else if(tmp_month == 2 && tmp_year % 4 == 0 && tmp_day == 29){
+			valid = 1;
+		}else{
+			serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format");
+			sys_req(WRITE, DEFAULT_DEVICE, getMonth, &size);
+			memset(month, '\0',3);
+			sys_req(READ, DEFAULT_DEVICE, month, &size);
+			imonth = atoi(month);
+			tmp_month = imonth;
+			imonth = DECToBCD(imonth);
+	
+			sys_req(WRITE, DEFAULT_DEVICE, getDay, &size);
+			memset(day, '\0',3);
+			sys_req(READ, DEFAULT_DEVICE, day, &size);
+			iday = atoi(day);
+			tmp_day = iday;
+			iday = DECToBCD(iday);
+		
+			sys_req(WRITE, DEFAULT_DEVICE, getYear, &ySize);
+			memset(year, '\0',5);
+			sys_req(READ, DEFAULT_DEVICE, year, &ySize);
+			iyear = atoi(year);
+			tmp_year = iyear;
+			iyear = DECToBCD(iyear);
+
 		}
 
 		//Handling leap years with February
-		if(tmp_month == 2 && tmp_year % 4 == 0 && tmp_day == 29){
-			valid = 1;
-		}
-
+		
 		
 
 	}else{
