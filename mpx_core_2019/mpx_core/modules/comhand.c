@@ -21,7 +21,12 @@ int comhand(){
 	int menuSize = 2500;
 	char menu[2500] = {"\nPress Corresponding number to execute command \n 1. Version \n 2. Help \n 3. Shutdown \n 4. Get time \n 5. Get Date \n 6. Set Time \n 7. Set Date\n\n"};
 
-
+	serial_println(" _   _  ___  ___  _____    __    _  _____  __        __  ___");   
+	serial_println("| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|");
+	serial_println("| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ ");
+	serial_println("| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|");
+	serial_println("| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ ");
+	serial_println("|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|");
 	while(!quit){
 
 		sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
@@ -31,12 +36,12 @@ int comhand(){
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
 		int failSize = 100;
-		char failure[100] = "Not a valid command, please enter a valid number\n";
+		char failure[100] = "Not a valid command, please enter a valid number.\n";
 		int i = atoi(cmdBuffer); 
 		switch(i){
 			case 1: version(); 					break;
 			case 2: ourHelp();					break;
-			case 3: quit = shutDown();				break;
+			case 3: quit = shutDown();			break;
 			case 4: getTime();					break;
 			case 5: getDate();					break;
 			case 6: setTime();					break;
@@ -105,7 +110,7 @@ int ourHelp(){
 	}
 	else{
 		int failedAbortSize = 50;
-		char failedAbort[50] = "\nNot valid command, aborting to main menu\n";
+		char failedAbort[50] = "\nNot valid command, aborting to main menu.\n";
 		sys_req(WRITE, DEFAULT_DEVICE, failedAbort, &failedAbortSize);
 		return 0;
 	}
@@ -142,12 +147,16 @@ int shutDown(){
 //		"|    |   \______ ___________  ____ _____    _____   ____  "
 //		"|    |   /  ___// __\\_  __\\/    \\__ \\  /    \\_/ __\\ "
 //		"|    |  /\\___\\  ___/|  |\\/   | \\/ __\\|  Y Y \\  ___/ "
-//		"|______//____ >\\___  >__|  |___|  (____  /__|_|  /\\___ >"
+//		"|______//____ \\___  __|  |___|  (____  /__|_|  /\\___ >"
 //		"            \\/    \\/          \\/    \\/     \\/    \\/ 
 //		"		  /    \\   ____   ____  __ __ 		   "
 //		"		 /  \ / \\_/ __\\ /   \\|  | \\		   "
 //		"		/    Y   \\  ___/|   | \\  |  /		   "
 //		"	       \\____|__ /\\___  >___|  /____/ 		   "
 //		"		       \\/    \\/    \\/       		   "
+
+
+
+
 
 
