@@ -10,8 +10,8 @@
 void getDate(){
 
 	//Variables 
-	char year[3] = "20";
-	int size = 3;
+	//char year[3] = "20";
+	//int size = 3;
 	char bckslash[2] = "/";
 	int bsSize = 2;
 	int imonth;
@@ -25,6 +25,7 @@ void getDate(){
 	int yearSize;
 
 	//Getting the month
+
 	outb(0x70, 0x08);
 	imonth = inb(0x71);
 	imonth = BCDToDEC(imonth);
@@ -48,9 +49,9 @@ void getDate(){
 	iyear = BCDToDEC(iyear);
 	cyear = itoa(iyear);
 	yearSize = strlen(cyear);
-	sys_req(WRITE, DEFAULT_DEVICE, year, &size);
 	sys_req(WRITE, DEFAULT_DEVICE, cyear, &yearSize);
-	sys_req(WRITE, DEFAULT_DEVICE, bckslash, &bsSize);
+	//sys_req(WRITE, DEFAULT_DEVICE, cyear, &yearSize);
+
 
 
 }
@@ -60,7 +61,7 @@ void getDate(){
 void setDate(){
 
 	//Variables
-	int qSize = 50;
+	//int qSize = 50;
 	int size = 3;	
 	int ySize = 5;
 	int tmp_month = 0;
@@ -105,7 +106,7 @@ void setDate(){
 	//Checking to make sure the dates are valid
 	int valid = 0;
 	int daysAmonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-	
+	while(!valid){
 	//If the month is within 1 and 12
 	if(tmp_month > 0 && tmp_month < 13){
 		if(tmp_day > 0 && tmp_day <= daysAmonth[tmp_month-1]){
@@ -117,27 +118,47 @@ void setDate(){
 			valid = 1;
 		}
 
-		if(valid == 0){
-			char error_message[50] = "Not a possible date.\nPlease try again.\n";
-			sys_req(WRITE, DEFAULT_DEVICE, error_message, &qSize); 
-		}
+		
 
 	}else{
+		serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format");
+		sys_req(WRITE, DEFAULT_DEVICE, getMonth, &size);
+		memset(month, '\0',3);
+		sys_req(READ, DEFAULT_DEVICE, month, &size);
+		imonth = atoi(month);
+		tmp_month = imonth;
+		imonth = DECToBCD(imonth);
 	
-		//Actually setting the date
-		//Disable interrupts
-		cli();
-		//month
-		outb(0x71, 0x08);
-		outb(0x71, imonth);
-		//day 
-		outb(0x71, 0x07);
-		outb(0x71, iday);
-		//year
-		outb(0x71, 0x09);
-		outb(0x71, iyear);
-		//Enable interrupts
-		sti();
+		sys_req(WRITE, DEFAULT_DEVICE, getDay, &size);
+		memset(day, '\0',3);
+		sys_req(READ, DEFAULT_DEVICE, day, &size);
+		iday = atoi(day);
+		tmp_day = iday;
+		iday = DECToBCD(iday);
+		
+		sys_req(WRITE, DEFAULT_DEVICE, getYear, &ySize);
+		memset(year, '\0',5);
+		sys_req(READ, DEFAULT_DEVICE, year, &ySize);
+		iyear = atoi(year);
+		tmp_year = iyear;
+		iyear = DECToBCD(iyear);
 	}
+	}
+
+	//Actually setting the date
+	//Disable interrupts
+	cli();
+	//month
+	sys_req(WRITE, DEFAULT_DEVICE, itoa(BCDToDEC(imonth)), &size);
+	outb(0x70, 0x08);
+	outb(0x71, imonth);
+	//day 
+	outb(0x70, 0x07);
+	outb(0x71, iday);
+	//year
+	outb(0x70, 0x09);
+	outb(0x71, iyear);
+	//Enable interrupts
+	sti();
 }	
 
