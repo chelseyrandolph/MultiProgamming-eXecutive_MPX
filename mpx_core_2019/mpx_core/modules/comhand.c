@@ -42,7 +42,7 @@ int ourHelp(){
 		return 0;
 	}
 	else if(i==3){
-		char message[300] = "Displays the current time of day.\n";		//TODO - Mohammed finish time help messages
+		char message[300] = "Displays the current time of day.\n";		
 		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 		return 0;
 	}
@@ -79,16 +79,15 @@ int shutDown(){
 	int promptInt = 50;
 	char prompt[50] = "Are you sure? \n 1. Yes \n 2. No\n";
 	int ansInt;
-	char ans[1];
-	memset(ans, '\0', 1);
+	char ans[2];
+	memset(ans, '\0', 2);
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
-	sys_req(READ, DEFAULT_DEVICE, ans , &ansInt);
+	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	sys_req(WRITE, DEFAULT_DEVICE, ans, &ansInt);
 	int i = atoi(ans);
 	
 	if(i==1){
 	
-		klogv("MPX is shuting down");
 		return 1;
 	}
 	else if(i==2){
@@ -132,7 +131,7 @@ int comhand(){
 		switch(i){
 			case 1: version(); 					break;
 			case 2: ourHelp();					break;
-			case 3: quit = shutDown();				break;
+			case 3: quit = shutDown();					break;
 			case 4: getTime();					break;
 			case 5: getDate();					break;
 			case 6: setTime();					break;
