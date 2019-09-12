@@ -80,8 +80,10 @@ int shutDown(){
 	char prompt[50] = "Are you sure? \n 1. Yes \n 2. No\n";
 	int ansInt;
 	char ans[1];
+	memset(ans, '\0', 1);
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
 	sys_req(READ, DEFAULT_DEVICE, ans , &ansInt);
+	sys_req(WRITE, DEFAULT_DEVICE, ans, &ansInt);
 	int i = atoi(ans);
 	
 	if(i==1){
