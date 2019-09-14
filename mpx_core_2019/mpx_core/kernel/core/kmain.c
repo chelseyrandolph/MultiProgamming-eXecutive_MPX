@@ -20,6 +20,7 @@
 #include "modules/mpx_supt.h"
 #include "modules/R1/polling.h"
 #include "modules/R1/comhand.h"
+#include "modules/R1/menu.h"
 
 void kmain(void)
 {
@@ -70,6 +71,7 @@ void kmain(void)
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
    sys_set_read(init_polling);
+   displayMenu();
    comhand();
 
    // 6) System Shutdown on return from your command handler
