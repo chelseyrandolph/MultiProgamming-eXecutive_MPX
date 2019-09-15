@@ -111,22 +111,26 @@ int insert_pcb(PCB *pcb){
 			int found = 0;
 			PCB *temp_pcb = ready_queue.tail;	//set temp PCB to tail of ready_queue
 			while(!found){	//for ready_queue, PCBs are inserted in order of priority 
-				klogv("reach");
+				
 				if(ready_queue.count == 0){
 					ready_queue.head = pcb;
 					ready_queue.tail = pcb;
 					ready_queue.count++;
+			
 					found = 1;
 				}else if(pcb->priority == temp_pcb->priority){	
+					klogv("1");
 					pcb->next = temp_pcb;	// There two lines insert the PCB into the linked list
 					temp_pcb->prev->next = pcb;
 					found = 1;
 				}else if(temp_pcb->next == ready_queue.head){ //if the pcb is the highest priority, make it the new head of ready_queue
+					klogv("2");
 					ready_queue.head->next = pcb; 
 					pcb->prev = ready_queue.head;
 					ready_queue.head = pcb;
 					found = 1;
 				}else{
+					klogv("3");
 					temp_pcb = temp_pcb->next;	//moves onto next PCB in linked list
 				}
 			}
@@ -318,48 +322,50 @@ int set_pcb_priority(char name[30], int new_priority){
 int show_pcb(char name[30]){
 
 	PCB *pcb = find_pcb(name);
-	int name_size = sizeof(pcb->name);
+	int name_size = sizeof(pcb->name) + 3;
 	char *pclass;
 	char *readystate_str;
 	char *suspended_str;
 	//char *priority_str;
-	char *newline = "\n";
-	int one = 1;
+	char *vertline = " |";
+	char *newline = " \n";
+	int two = 2;
 
 
 	if(pcb->process_class == 1){
-		pclass = "User Process\n";
+		pclass = " User Process   |";
 	}else if(pcb->process_class == 0){
-		pclass = "System Process\n";
+		pclass = " System Process |";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
 
 	if(pcb->readystate == 1){
-		readystate_str = "Running\n";
+		readystate_str = " Running |";
 	}else if(pcb->readystate == 0){
-		readystate_str = "Ready\n";
+		readystate_str = " Ready   |";
 	}else if(pcb->readystate == -1){
-		readystate_str = "Blocked\n";
+		readystate_str = " Blocked |";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
 
 	if(pcb->suspended == 1){
-		suspended_str = "SUSPENDED\n";
+		suspended_str = " SUSPENDED     |";
 	}else if(pcb->suspended == 0){
-		suspended_str = "not suspended\n";
+		suspended_str = " not suspended |";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
 
 
 	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);
-	sys_req(WRITE, DEFAULT_DEVICE, newline, &one);
+	sys_req(WRITE, DEFAULT_DEVICE, vertline, &two);
 	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, suspended_str, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, (char*)pcb->priority, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, newline, &two);
 
 	return 1;
 }
@@ -373,6 +379,7 @@ int show_ready(){
 		if(pcb == ready_queue.head){
 			done = 1;
 		}else {
+			klogv("pcb->next");
 			pcb = pcb->next;
 		}
 	}	
