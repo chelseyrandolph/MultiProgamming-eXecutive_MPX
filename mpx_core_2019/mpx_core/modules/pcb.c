@@ -213,10 +213,10 @@ int remove_pcb(PCB* pcb){
 
 /*========================= USER COMMANDS ========================*/
 
-int create_pcb(){ // pclass refers to process class (system or user)
+int create_pcb(){ 
 	char name[40];
 	char priority_str[2];
-	char pclass_str[2];
+	char pclass_str[2]; // pclass refers to process class (system or user)
 	char name_prompt[40] = "Please Enter a name for the process";
 	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process";
 	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest";
@@ -244,14 +244,73 @@ int create_pcb(){ // pclass refers to process class (system or user)
 		return NULL; 	//TODO ERROR CODE
 	}
 
-	insert_pcb(setup_pcb(name, pclass, priority));
+	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
 	return 0;
 }
 
+// TODO FOR ALL USER FUNCTIONS -----  ERROR CHECKING ERROR CHECKING ERROR CHECKING
 
+int delete_pcb(char name[30]){
+	PCB *pcb = find_pcb(name);
+	remove_pcb(pcb);
+	free_pcb(pcb);
+	return 0;
+}
 
+int block_pcb(char name[30]){
+	PCB *pcb = find_pcb(name);
+	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	pcb->readystate = -1;	//sets readystate = blocked
+	insert_pcb(pcb);			//inserts it into the blocked queue
+	return 0;
+}
 
+int unblock_pcb(char name[30]){
+	PCB *pcb = find_pcb(name);
+	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	pcb->readystate = 0;	//sets readystate = ready
+	insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
+	return 0;
+}
 
+int suspend_pcb(char name[30]){
+	PCB *pcb = find_pcb(name);
+	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	pcb->suspended = 1;	//sets suspended = suspended
+	insert_pcb(pcb);		//inserts it into the appropriate suspended queue
+	return 0;
+}
+
+int resume_pcb(char name[30]){
+	PCB *pcb = find_pcb(name);
+	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	pcb->suspended = 0;	//sets suspended = unsuspended
+	insert_pcb(pcb);		//inserts it into the appropriate suspended queue
+	return 0;
+}
+
+int set_pcb_priority(char name[30], int new_priority){
+	PCB *pcb = find_pcb(name);
+	pcb->priority = new_priority;
+	remove_pcb(pcb);
+	insert_pcb(pcb);
+	return 0;
+}
+
+int show_pcb(char name[30]){
+	PCB *pcb = find_pcb(name);
+	int name_size = sizeof(pcb->name);
+	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);
+	/* TODO
+	-print name
+	
+	-print class
+	-print priority
+	-print state
+	-print suspended status
+	*/
+	return 1;
+}
 
 
 

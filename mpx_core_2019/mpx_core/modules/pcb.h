@@ -26,7 +26,21 @@ int insert_pcb(PCB* pcb);
 
 int remove_pcb(PCB* pcb);
 
-int create_pcb();
+int create_pcb(); // may need to add parameters... for now we get the data from user input within the function
+
+int delete_pcb(char name[30]);
+
+int block_pcb(char name[30]);
+
+int unblock_pcb(char name[30]);
+
+int suspend_pcb(char name[30]);
+
+int resume_pcb(char name[30]);
+
+int show_pcb(char name[30]);
+
+int set_pcb_priority(char name[30], int new_priority);
 
 typedef struct queue {
 	PCB *head;
