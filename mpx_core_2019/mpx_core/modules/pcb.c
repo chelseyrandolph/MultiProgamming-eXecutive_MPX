@@ -17,21 +17,26 @@ PCB* allocate_pcb(){
 	return pcb;
 }
 
-PCB* setup_pcb(char *name, int pclass, int priority){
+PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
-
-	strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
-	new_pcb -> priority = priority;		// sets the new process's priority to priority parameter
-	new_pcb -> process_class = pclass;	// sets the new process's class to the pclass parameter
 	
-	/*
-		TODO - check each param 
-		* pclass either 0 or 1
-		* name is a valid str with length AT LEAST 8
-		* priority between 0 and 9
-		* return ERROR MESSAGES
-	*/
+	if(strlen(name) <8){	// Process name must be at least 8 characters
+		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
+	}else{
+		return NULL; // TODO ERROR CODE
+	}
+	if(priority >= 0 && priority <= 9){		// priority must be a number between 0 and 9
+		new_pcb -> priority = priority;		// sets the new process's priority to priority parameter
+	}else{
+		return NULL; // TODO ERROR CODE
+	}
+	if(pclass == 0 || pclass ==1){			// process class must be either 0 for system, or 1 for user process
+		new_pcb -> process_class = pclass;	// sets the new process's class to the pclass parameter
+	}else{
+		return NULL; // TODO ERROR CODE
+	}
+
 	return new_pcb;
 }
 
@@ -136,6 +141,70 @@ int insert_pcb(PCB *pcb){
 				}
 			}
 		}
+	}
+	return 0;
+}
+
+int remove_pcb(PCB* pcb){
+	if(pcb->readystate == 0 && pcb->suspended == 0){	//ready
+		PCB* temp_pcb = ready_queue.tail;
+		int found = 0;
+		while(!found){
+			if(pcb == temp_pcb){
+				temp_pcb->next->prev = temp_pcb->prev;
+				temp_pcb->prev->next = temp_pcb->next;
+			}else if(temp_pcb == ready_queue.head){
+				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			}else{
+				temp_pcb = temp_pcb->next;
+			}
+		}
+	}
+	else if(pcb->readystate == 0 && pcb->suspended == 1){ //suspended ready
+		PCB* temp_pcb = suspended_ready_queue.tail;
+		int found = 0;
+		while(!found){
+			if(pcb == temp_pcb){
+				temp_pcb->next->prev = temp_pcb->prev;
+				temp_pcb->prev->next = temp_pcb->next;
+			}else if(temp_pcb == suspended_ready_queue.head){
+				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			}else{
+				temp_pcb = temp_pcb->next;
+			}
+		}
+	}
+	else if(pcb->readystate == -1 && pcb->suspended == 0){ //blocked
+		PCB* temp_pcb = blocked_queue.tail;
+		int found = 0;
+		while(!found){
+			if(pcb == temp_pcb){
+				temp_pcb->next->prev = temp_pcb->prev;
+				temp_pcb->prev->next = temp_pcb->next;
+			}else if(temp_pcb == blocked_queue.head){
+				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			}else{
+				temp_pcb = temp_pcb->next;
+			}
+		}		
+	}
+	else if(pcb->readystate == -1 && pcb->suspended == 1){ //suspended blocked
+		PCB* temp_pcb = suspended_blocked_queue.tail;
+		int found = 0;
+		while(!found){
+			if(pcb == temp_pcb){
+				temp_pcb->next->prev = temp_pcb->prev;
+				temp_pcb->prev->next = temp_pcb->next;
+			}else if(temp_pcb == suspended_blocked_queue.head){
+				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			}else{
+				temp_pcb = temp_pcb->next;
+			}
+		}		
+	}	
+	else{	// PROCESS NOT FOUND
+
+		return 0; // TODO ERROR CODE
 	}
 	return 0;
 }

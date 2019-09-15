@@ -14,6 +14,17 @@ typedef struct PCB {
 	int stack_size; 
 }PCB;
 
+PCB* allocate_pcb();
+
+PCB* setup_pcb(char *name, int pclass, int priority);
+
+int free_pcb(PCB* pcb);
+
+PCB* find_pcb(char *process_name);
+
+int insert_pcb(PCB* pcb);
+
+int remove_pcb(PCB* pcb);
 
 typedef struct queue {
 	PCB *head;
