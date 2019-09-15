@@ -38,7 +38,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	}else{
 		return NULL; // TODO ERROR CODE
 	}
-	new_pcb->readystate = -1;
+	new_pcb->readystate = 0;
 	new_pcb->suspended = 0;
 	return new_pcb;
 }
@@ -111,7 +111,13 @@ int insert_pcb(PCB *pcb){
 			int found = 0;
 			PCB *temp_pcb = ready_queue.tail;	//set temp PCB to tail of ready_queue
 			while(!found){	//for ready_queue, PCBs are inserted in order of priority 
-				if(pcb->priority == temp_pcb->priority){	
+				klogv("reach");
+				if(ready_queue.count == 0){
+					ready_queue.head = pcb;
+					ready_queue.tail = pcb;
+					ready_queue.count++;
+					found = 1;
+				}else if(pcb->priority == temp_pcb->priority){	
 					pcb->next = temp_pcb;	// There two lines insert the PCB into the linked list
 					temp_pcb->prev->next = pcb;
 					found = 1;
@@ -134,7 +140,12 @@ int insert_pcb(PCB *pcb){
 			int found = 0;
 			PCB *temp_pcb = suspended_ready_queue.tail;	//set temp PCB to tail of ready_queue
 			while(!found){	//for ready_queue, PCBs are inserted in order of priority 
-				if(pcb->priority == temp_pcb->priority){	
+				if(suspended_ready_queue.count == 0){
+					suspended_ready_queue.head = pcb;
+					suspended_ready_queue.tail = pcb;
+					suspended_ready_queue.count++;
+					found = 1;
+				}else if(pcb->priority == temp_pcb->priority){	
 					pcb->next = temp_pcb;	// There two lines insert the PCB into the linked list
 					temp_pcb->prev->next = pcb;
 					found = 1;
@@ -312,6 +323,8 @@ int show_pcb(char name[30]){
 	char *readystate_str;
 	char *suspended_str;
 	//char *priority_str;
+	char *newline = "\n";
+	int one = 1;
 
 
 	if(pcb->process_class == 1){
@@ -342,6 +355,7 @@ int show_pcb(char name[30]){
 
 
 	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, newline, &one);
 	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, suspended_str, &name_size);
