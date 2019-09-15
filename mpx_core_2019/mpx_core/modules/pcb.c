@@ -38,8 +38,8 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	}else{
 		return NULL; // TODO ERROR CODE
 	}
-	new_pcb->readystate = 0;
-	new_pcb->suspended = 0;
+	new_pcb->readystate = 0; //ready
+	new_pcb->suspended = 0;		//not suspended
 	return new_pcb;
 }
 
@@ -116,18 +116,30 @@ int insert_pcb(PCB *pcb){
 					ready_queue.head = pcb;
 					ready_queue.tail = pcb;
 					ready_queue.count++;
-			
 					found = 1;
+				}else if(ready_queue.count == 1){
+					if(pcb->priority <= temp_pcb->priority){
+						ready_queue.tail = pcb;
+						pcb->next = temp_pcb;
+						temp_pcb->prev = pcb;
+						//ready_queue.head = temp_pcb;
+						found = 1;
+						ready_queue.count++;
+					}
+
 				}else if(pcb->priority == temp_pcb->priority){	
 					klogv("1");
 					pcb->next = temp_pcb;	// There two lines insert the PCB into the linked list
 					temp_pcb->prev->next = pcb;
+					temp_pcb->prev = pcb;
+					ready_queue.count++;
 					found = 1;
 				}else if(temp_pcb->next == ready_queue.head){ //if the pcb is the highest priority, make it the new head of ready_queue
 					klogv("2");
 					ready_queue.head->next = pcb; 
 					pcb->prev = ready_queue.head;
 					ready_queue.head = pcb;
+					ready_queue.count++;
 					found = 1;
 				}else{
 					klogv("3");
@@ -379,7 +391,7 @@ int show_ready(){
 		if(pcb == ready_queue.head){
 			done = 1;
 		}else {
-			klogv("pcb->next");
+			//klogv("pcb->next");
 			pcb = pcb->next;
 		}
 	}	
