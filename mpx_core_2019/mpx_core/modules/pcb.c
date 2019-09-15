@@ -298,9 +298,15 @@ int set_pcb_priority(char name[30], int new_priority){
 }
 
 int show_pcb(char name[30]){
+
 	PCB *pcb = find_pcb(name);
 	int name_size = sizeof(pcb->name);
 	char *pclass;
+	char *readystate_str;
+	char *suspended_str;
+	//char *priority_str;
+
+
 	if(pcb->process_class == 1){
 		pclass = "User Process";
 	}else if(pcb->process_class == 0){
@@ -309,14 +315,31 @@ int show_pcb(char name[30]){
 		return 0; // TODO ERROR CODE
 	}
 
+	if(pcb->readystate == 1){
+		readystate_str = "Running";
+	}else if(pcb->readystate == 0){
+		readystate_str = "Ready";
+	}else if(pcb->readystate == -1){
+		readystate_str = "Blocked";
+	}else{
+		return 0; // TODO ERROR CODE
+	}
+
+	if(pcb->suspended == 1){
+		suspended_str = "SUSPENDED";
+	}else if(pcb->suspended == 0){
+		suspended_str = "not suspended";
+	}else{
+		return 0; // TODO ERROR CODE
+	}
+
+
 	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
-	
-	// TODO Label everything (now its just printing numbers
+	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, suspended_str, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, (char*)pcb->priority, &name_size);
 
-	//sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->readystate), &two);
-	//sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->suspended), &two);
-	//sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->priority), &two);
 	return 1;
 }
 
