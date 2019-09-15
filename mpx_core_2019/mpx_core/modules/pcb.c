@@ -1,6 +1,8 @@
 
 #include <string.h>
-
+#include <system.h>
+#include <core/io.h>
+#include <core/serial.h>
 #include "pcb.h" 
 #include "mpx_supt.h"
 
@@ -21,7 +23,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
 	
-	if(strlen(name) <8){	// Process name must be at least 8 characters
+	if(strlen(name) >= 8){	// Process name must be at least 8 characters
 		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
 	}else{
 		return NULL; // TODO ERROR CODE
@@ -208,6 +210,57 @@ int remove_pcb(PCB* pcb){
 	}
 	return 0;
 }
+
+/*========================= USER COMMANDS ========================*/
+
+int create_pcb(){ // pclass refers to process class (system or user)
+	char name[40];
+	char priority_str[2];
+	char pclass_str[2];
+	char name_prompt[40] = "Please Enter a name for the process";
+	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process";
+	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest";
+
+	int prompt_size = 40;
+	int prompt_size2 = 100;
+
+	sys_req(WRITE, DEFAULT_DEVICE, name_prompt, &prompt_size);
+	sys_req(READ, DEFAULT_DEVICE, name, &prompt_size);
+	sys_req(WRITE, DEFAULT_DEVICE, pclass_prompt, &prompt_size2);
+	sys_req(READ, DEFAULT_DEVICE, pclass_str, &prompt_size);
+	sys_req(WRITE, DEFAULT_DEVICE, priority_prompt, &prompt_size2);
+	sys_req(READ, DEFAULT_DEVICE, priority_str, &prompt_size);
+	
+	int pclass = atoi(pclass_str);
+	int priority = atoi(priority_str);
+
+	if(strlen(name) < 8){	// Process name must be at least 8 characters
+		return NULL; // TODO ERROR CODE
+	}
+	if(priority < 0 || priority > 9){		// priority must be a number between 0 and 9
+		return NULL;	// TODO ERROR CODE
+	}
+	if(!pclass == 0 || !pclass ==1){			// process class must be either 0 for system, or 1 for user process
+		return NULL; 	//TODO ERROR CODE
+	}
+
+	insert_pcb(setup_pcb(name, pclass, priority));
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -26,6 +26,8 @@ int insert_pcb(PCB* pcb);
 
 int remove_pcb(PCB* pcb);
 
+int create_pcb();
+
 typedef struct queue {
 	PCB *head;
 	PCB *tail;
