@@ -300,21 +300,81 @@ int set_pcb_priority(char name[30], int new_priority){
 int show_pcb(char name[30]){
 	PCB *pcb = find_pcb(name);
 	int name_size = sizeof(pcb->name);
+	char *pclass;
+	if(pcb->process_class == 1){
+		pclass = "User Process";
+	}else if(pcb->process_class == 0){
+		pclass = "System Process";
+	}else{
+		return 0; // TODO ERROR CODE
+	}
+
 	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);
-	/* TODO
-	-print name
+	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
 	
-	-print class
-	-print priority
-	-print state
-	-print suspended status
-	*/
+	// TODO Label everything (now its just printing numbers
+
+	//sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->readystate), &two);
+	//sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->suspended), &two);
+	//sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->priority), &two);
 	return 1;
 }
 
+int show_ready(){
+	
+	int done = 0;
+	PCB *pcb = ready_queue.tail;
+	while(!done){
+		show_pcb(pcb->name);
+		if(pcb == ready_queue.head){
+			done = 1;
+		}else {
+			pcb = pcb->next;
+		}
+	}	
+	done = 0;
+	pcb = suspended_ready_queue.tail;
+	while(!done){
+		show_pcb(pcb->name);
+		if(pcb == suspended_ready_queue.head){
+			done = 1;
+		}else {
+			pcb = pcb->next;
+		}
+	}
+	return 0;
+}
 
+int show_blocked(){
+	
+	int done = 0;
+	PCB *pcb = blocked_queue.tail;
+	while(!done){
+		show_pcb(pcb->name);
+		if(pcb == blocked_queue.head){
+			done = 1;
+		}else {
+			pcb = pcb->next;
+		}
+	}	
+	done = 0;
+	pcb = suspended_blocked_queue.tail;
+	while(!done){
+		show_pcb(pcb->name);
+		if(pcb == suspended_blocked_queue.head){
+			done = 1;
+		}else {
+			pcb = pcb->next;
+		}
+	}
+	return 0;
+}
 
-
+int show_all(){
+	show_ready();
+	show_blocked();
+	return 0;
+}
 
 
 
