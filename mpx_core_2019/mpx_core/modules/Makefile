@@ -16,7 +16,7 @@ mpx_supt.o\
 R1/time.o\
 R1/date.o\
 R1/comhand.o\
-pcb.o
+R2/pcb.o
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<

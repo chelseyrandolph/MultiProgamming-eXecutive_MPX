@@ -7,6 +7,7 @@
 #include "time.h"
 #include "date.h"
 #include "comhandsupport.h"
+#include "../R2/pcb.h"
 
 
 
@@ -150,6 +151,8 @@ int comhand(){
 			case 5: getDate();					break;
 			case 6: setTime();					break;
 			case 7: setDate();					break;
+			case 8: create_pcb();				break;
+			case 9: show_all();				break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}

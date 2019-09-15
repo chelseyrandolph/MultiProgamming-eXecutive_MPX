@@ -4,7 +4,7 @@
 #include <core/io.h>
 #include <core/serial.h>
 #include "pcb.h" 
-#include "mpx_supt.h"
+
 
 
 queue ready_queue = {.head = NULL, .tail = NULL, .count = 0};
