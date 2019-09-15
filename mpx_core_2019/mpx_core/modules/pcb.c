@@ -38,7 +38,8 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	}else{
 		return NULL; // TODO ERROR CODE
 	}
-
+	new_pcb->readystate = -1;
+	new_pcb->suspended = 0;
 	return new_pcb;
 }
 
@@ -101,6 +102,10 @@ int insert_pcb(PCB *pcb){
 		if(pcb->readystate == -1){ //If ready state is blocked (readystate of -1 means blocked)
 			pcb->prev = blocked_queue.head;  //adds PCB to end of queue if blocked because blocked queue is FIFO
 			blocked_queue.head = pcb;
+			if(blocked_queue.count == 0){
+				blocked_queue.tail = pcb;
+
+			}
 			blocked_queue.count++;	// increment blocked_queue count
 		}else if(pcb->readystate == 0){ //If ready state is ready (readystate of 0 means ready)
 			int found = 0;
@@ -214,12 +219,12 @@ int remove_pcb(PCB* pcb){
 /*========================= USER COMMANDS ========================*/
 
 int create_pcb(){ 
-	char name[40];
+	char name[30];
 	char priority_str[2];
 	char pclass_str[2]; // pclass refers to process class (system or user)
-	char name_prompt[40] = "Please Enter a name for the process";
-	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process";
-	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest";
+	char name_prompt[40] = "Please Enter a name for the process:	";
+	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process]:	";
+	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest]:	";
 
 	int prompt_size = 40;
 	int prompt_size2 = 100;
@@ -235,15 +240,17 @@ int create_pcb(){
 	int priority = atoi(priority_str);
 
 	if(strlen(name) < 8){	// Process name must be at least 8 characters
+		klogv("invalid Name... exiting");
 		return NULL; // TODO ERROR CODE
 	}
 	if(priority < 0 || priority > 9){		// priority must be a number between 0 and 9
+		klogv("invalid priority... exiting");
 		return NULL;	// TODO ERROR CODE
 	}
-	if(!pclass == 0 || !pclass ==1){			// process class must be either 0 for system, or 1 for user process
+	if(!pclass == 0 && !pclass ==1){		// process class must be either 0 for system, or 1 for user process
+		klogv("invalid process class... exiting");
 		return NULL; 	//TODO ERROR CODE
 	}
-
 	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
 	return 0;
 }
@@ -308,27 +315,27 @@ int show_pcb(char name[30]){
 
 
 	if(pcb->process_class == 1){
-		pclass = "User Process";
+		pclass = "User Process\n";
 	}else if(pcb->process_class == 0){
-		pclass = "System Process";
+		pclass = "System Process\n";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
 
 	if(pcb->readystate == 1){
-		readystate_str = "Running";
+		readystate_str = "Running\n";
 	}else if(pcb->readystate == 0){
-		readystate_str = "Ready";
+		readystate_str = "Ready\n";
 	}else if(pcb->readystate == -1){
-		readystate_str = "Blocked";
+		readystate_str = "Blocked\n";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
 
 	if(pcb->suspended == 1){
-		suspended_str = "SUSPENDED";
+		suspended_str = "SUSPENDED\n";
 	}else if(pcb->suspended == 0){
-		suspended_str = "not suspended";
+		suspended_str = "not suspended\n";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
@@ -376,6 +383,7 @@ int show_blocked(){
 		show_pcb(pcb->name);
 		if(pcb == blocked_queue.head){
 			done = 1;
+			show_pcb(pcb->name);
 		}else {
 			pcb = pcb->next;
 		}
