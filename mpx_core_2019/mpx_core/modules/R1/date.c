@@ -129,16 +129,20 @@ void setDate(){
 	int integer_year;
 	integer_year = atoi(year);
 	int daysAmonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
 	while(!valid){
-	//If the month is within 1 and 12
-	if(tmp_month > 0 && tmp_month < 13){
-		if((tmp_day > 0 && tmp_day <= daysAmonth[tmp_month-1]) && (integer_year > 1699 && integer_year < 2101)){
+		if((tmp_month > 0 && tmp_month < 13) && (tmp_day > 0 && tmp_day <= daysAmonth[tmp_month-1]) && (integer_year > 1699 && integer_year < 2101)){
 			valid = 1;
 		//Handling leap years with February
 		}else if(tmp_month == 2 && tmp_year2 % 4 == 0 && tmp_day == 29){
 			valid = 1;
 		}else{
-			serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format");
+
+
+			//THIS IS WHERE THE ERROR IS
+			serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format\n");
+
+
 			sys_req(WRITE, DEFAULT_DEVICE, getMonth, &size);
 			memset(month, '\0',3);
 			sys_req(READ, DEFAULT_DEVICE, month, &size);
@@ -156,7 +160,6 @@ void setDate(){
 			sys_req(WRITE, DEFAULT_DEVICE, getYear, &ySize);
 			memset(year, '\0',5);
 			sys_req(READ, DEFAULT_DEVICE, year, &ySize);
-			
 			char year1[3];
 			char year2[3];
 	
@@ -177,52 +180,9 @@ void setDate(){
 			tmp_year2 = iyear2;
 			iyear2 = DECToBCD(iyear2);
 
+			break;
 		}
-
-		
-		
-		
-
-	}else{
-		serial_println("Error: INVALID DATE --- Please enter a valid date in MM/DD/YYYY format");
-		sys_req(WRITE, DEFAULT_DEVICE, getMonth, &size);
-		memset(month, '\0',3);
-		sys_req(READ, DEFAULT_DEVICE, month, &size);
-		imonth = atoi(month);
-		tmp_month = imonth;
-		imonth = DECToBCD(imonth);
 	
-		sys_req(WRITE, DEFAULT_DEVICE, getDay, &size);
-		memset(day, '\0',3);
-		sys_req(READ, DEFAULT_DEVICE, day, &size);
-		iday = atoi(day);
-		tmp_day = iday;
-		iday = DECToBCD(iday);
-		
-		sys_req(WRITE, DEFAULT_DEVICE, getYear, &ySize);
-		memset(year, '\0',5);
-		sys_req(READ, DEFAULT_DEVICE, year, &ySize);
-	
-		char year1[3];
-		char year2[3];
-	
-	
-
-		year1[0] = year[0];
-		year1[1] = year[1];
-		year1[2] = '\0';
-	
-		year2[0] = year[2];
-		year2[1] = year[3];
-		year2[2] = '\0';
-
-		iyear1 = atoi(year1);
-		iyear1 = DECToBCD(iyear1);
-
-		iyear2 = atoi(year2);
-		tmp_year2 = iyear2;
-		iyear2 = DECToBCD(iyear2);
-	}
 	}
 
 	//Actually setting the date
