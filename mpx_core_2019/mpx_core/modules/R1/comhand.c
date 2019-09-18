@@ -6,6 +6,7 @@
 #include "comhand.h"
 #include "time.h"
 #include "date.h"
+#include "comhandsupport.h"
 
 
 
@@ -77,22 +78,20 @@ int ourHelp(){
 
 int shutDown(){
 	int promptInt = 50;
-	char prompt[50] = "Are you sure? \n 1. Yes \n 2. No\n";
-	int ansInt;
-	char ans[2];
-	memset(ans, '\0', 2);
+	char prompt[50] = "Are you sure? \n 1. yes \n 2. no\n";
+	int ansInt = 5;
+	char ans[5];
+	memset(ans, '\0', 5);
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
-	//sys_req(WRITE, DEFAULT_DEVICE, ans, &ansInt);
-	int i = atoi(ans);
 	
-	if(i==1){
+	if(strcmp(ans, "yes")==0){
 
-		serial_print("MPX is shuting down");
+		serial_print("MPX is shuting down\n");
 
 		return 1;
-	}else if(i==2){
-		serial_print("Shutdown process is canceled by the user.");
+	}else if(strcmp(ans, "no")==0){
+		serial_print("Shutdown process is canceled by the user.\n");
 		return 0;
 	}else{
 		int failedAbortSize = 50;
@@ -108,26 +107,41 @@ int comhand(){
 	char cmdBuffer[100];
 	int bufferSize;
 	int quit = 0;
-	int menuSize = 2500;
-	char menu[2500] = {"\nPress Corresponding number to execute command \n 1. Version \n 2. Help \n 3. Shutdown \n 4. Get time \n 5. Get Date \n 6. Set Time \n 7. Set Date\n\n"};
-
-	serial_println(" _   _  ___  ___  _____    __    _  _____  __        __  ___");   
-	serial_println("| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|");
-	serial_println("| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ ");
-	serial_println("| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|");
-	serial_println("| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ ");
-	serial_println("|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|");
+	
 	while(!quit){
 
-		sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
+		
 
 		//get a command
 		memset(cmdBuffer, '\0', 100);
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
+		/*
+		WORK IN PROGRESS TO TOKENIZE THE INPUT COMMAND
+		char *tokenizedBuffer[5];
+		int temp=0;
+		for(;temp<2;temp++){
+			char *cmdBufferPtr = strtok(cmdBuffer, " ");
+
+			*tokenizedBuffer[temp] = strcpy(*tokenizedBuffer[temp],*cmdBufferPtr);
+		}
+//		char *cmdBufferPtr = strtok(cmdBuffer, " ");
+	//	cmdBufferPtr = strtok(cmdBuffer, " ");
+
+	
+		sys_req(WRITE,DEFAULT_DEVICE,tokenizedBuffer[1], &bufferSize);*/
+		
+		int i = -1;
+		int k;
+		int comLength = sizeof(commands)/sizeof(commands[0]);
+		for(k=0; k<comLength; k++){
+			if(strcmp(cmdBuffer, commands[k])==0){
+				i = k+1;
+			}
+		}
+	
 		int failSize = 100;
 		char failure[100] = "Not a valid command, please enter a valid number.\n";
-		int i = atoi(cmdBuffer);
 		switch(i){
 			case 1: version(); 					break;
 			case 2: ourHelp();					break;
@@ -140,6 +154,39 @@ int comhand(){
 		}
 	}
 	return -1;
+
+}
+
+void displayMenu(){
+	int headerSize = 70;
+	char header1[70] = {" _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
+	char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
+	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
+	char header4[70] = {"| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
+	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
+	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\n\n"};
+	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
+	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
+	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
+	sys_req(WRITE,DEFAULT_DEVICE,header4,&headerSize);
+	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
+	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
+//	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
+	int k;
+	int comLength = sizeof(commands)/sizeof(commands[0]);
+	for(k=0; k<comLength; k++){
+		int tempSize = 50;
+		
+		sys_req(WRITE,DEFAULT_DEVICE,commands[k],&tempSize);
+		sys_req(WRITE,DEFAULT_DEVICE,"\n",&tempSize);
+	}
+
+}
+
+void comhandinitaliz(){
+	displayMenu();
+	comhand();
+//	return -1;
 
 }
 
