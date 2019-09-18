@@ -40,6 +40,12 @@ int resume_pcb(char name[30]);
 
 int show_pcb(char name[30]);
 
+int show_blocked();
+
+int show_ready();
+
+int show_all();
+
 int set_pcb_priority(char name[30], int new_priority);
 
 typedef struct queue {
