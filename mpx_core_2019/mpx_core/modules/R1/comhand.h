@@ -5,3 +5,5 @@ int shutdown();
 int comhand();
 
 int ourHelp();
+
+void comhandinitaliz();
