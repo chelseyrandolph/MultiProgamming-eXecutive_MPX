@@ -16,5 +16,5 @@ char commands[9][30] = {
     "set-time",    
     "set-date",
 	"create-pcb",
-	"show-all"
+	"show-all",
 };

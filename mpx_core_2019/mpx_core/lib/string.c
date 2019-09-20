@@ -40,6 +40,8 @@ char* strcpy(char *s1, const char *s2)
   return rc; // return pointer to destination string
 }
 
+
+
 /*
   Procedure..: atoi
   Description..: Convert an ASCII string to an integer
