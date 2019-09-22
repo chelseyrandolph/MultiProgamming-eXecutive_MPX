@@ -115,18 +115,22 @@ int insert_pcb(PCB *pcb){
 			//klogv("inserted 1st pcb");
 		}else{
 			int found = 0;
+			PCB *temp_pcb = ready_queue.head;
 			while(!found){
-				PCB *temp_pcb = ready_queue.head;
-				if(temp_pcb->priority == pcb->priority){
-					klogv("	1 matching priorities");
+				
+				if(temp_pcb->priority <= pcb->priority){
+				//	klogv("	1 matching priorities");
 					pcb->next = temp_pcb;
 					temp_pcb->prev->next = pcb;
 					pcb->prev = temp_pcb->prev;
 					temp_pcb->prev = pcb;
 					found = 1;
+					if(pcb->prev == NULL){
+						ready_queue.head = pcb;
+					}
 					ready_queue.count++;
 				}else if(temp_pcb == ready_queue.tail){
-					klogv("	2 at the tail");
+				//	klogv("	2 at the tail");
 					ready_queue.tail = pcb;
 					temp_pcb->next = pcb;
 					pcb->prev = temp_pcb;
@@ -134,14 +138,10 @@ int insert_pcb(PCB *pcb){
 					ready_queue.count++;
 				}else{
 					temp_pcb = temp_pcb->next;
+
 				}
 			}
-			/*PCB *temp_pcb = ready_queue.head;
-			temp_pcb->prev = pcb;
-			pcb->next = temp_pcb;
-			ready_queue.head = pcb;
-			ready_queue.count++;
-			*/
+
 		}
 	}
 	if(pcb->readystate == 0 && pcb->suspended == 1){	//suspended_ready_queue
@@ -151,12 +151,34 @@ int insert_pcb(PCB *pcb){
 			suspended_ready_queue.count++;
 			//klogv("inserted 1st pcb");
 		}else{
+			int found = 0;
 			PCB *temp_pcb = suspended_ready_queue.head;
-			temp_pcb->prev = pcb;
-			pcb->next = temp_pcb;
-			suspended_ready_queue.head = pcb;
-			suspended_ready_queue.count++;
-			//klogv("inserted a pcb");
+			while(!found){
+				
+				if(temp_pcb->priority <= pcb->priority){
+				//	klogv("	1 matching priorities");
+					pcb->next = temp_pcb;
+					temp_pcb->prev->next = pcb;
+					pcb->prev = temp_pcb->prev;
+					temp_pcb->prev = pcb;
+					found = 1;
+					if(pcb->prev == NULL){
+						suspended_ready_queue.head = pcb;
+					}
+					suspended_ready_queue.count++;
+				}else if(temp_pcb == suspended_ready_queue.tail){
+				//	klogv("	2 at the tail");
+					suspended_ready_queue.tail = pcb;
+					temp_pcb->next = pcb;
+					pcb->prev = temp_pcb;
+					found = 1;
+					suspended_ready_queue.count++;
+				}else{
+					temp_pcb = temp_pcb->next;
+					
+				}
+			}
+
 		}
 	}
 	if(pcb->readystate == -1 && pcb->suspended == 0){	//blocked_queue
