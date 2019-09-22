@@ -15,8 +15,8 @@
 
 
 void version(){
-	int verSize = 20;
-	char version[20] = "Version 1.2\n";
+	int verSize = 30;
+	char version[30] = "\033[1;32mVersion 2.4\033[0m\n\n";
 	sys_req(WRITE,DEFAULT_DEVICE, version, &verSize);
 }
 
@@ -29,7 +29,7 @@ int ourHelp(){
 	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
 	char cmdBuffer[2];
 	memset(cmdBuffer, '\0', 100);
-	int bufferSize = 2;
+	int bufferSize = 20;
 	sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
 	int msg_size = 300;
 	int i = atoi(cmdBuffer); 
@@ -142,7 +142,7 @@ int comhand(){
 		}
 	
 		int failSize = 100;
-		char failure[100] = "Not a valid command, please enter a valid number.\n";
+		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
 			case 1: version(); 					break;
 			case 2: ourHelp();					break;
@@ -162,12 +162,12 @@ int comhand(){
 
 void displayMenu(){
 	int headerSize = 70;
-	char header1[70] = {" _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
+	char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
 	char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
 	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
 	char header4[70] = {"| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
 	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\n\n"};
+	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
@@ -177,12 +177,14 @@ void displayMenu(){
 //	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
 	int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
+	int one = 1;
 	for(k=0; k<comLength; k++){
 		int tempSize = 50;
 		
 		sys_req(WRITE,DEFAULT_DEVICE,commands[k],&tempSize);
-		sys_req(WRITE,DEFAULT_DEVICE,"\n",&tempSize);
+		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 	}
+	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 
 }
 

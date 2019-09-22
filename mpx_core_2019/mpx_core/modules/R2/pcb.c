@@ -31,16 +31,17 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
 		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
 	}else{
-		klogv("ERROR in setup_pcb(): invalid name");
+		klogv("ERROR in setup_pcb(): invalid name"); //TODO ERROR CODES sys_req NOT klogv
 		return NULL; // TODO ERROR CODE
 	}
 	if(priority >= 0 && priority <= 9){		// priority must be a number between 0 and 9
 		new_pcb -> priority = priority;		// sets the new process's priority to priority parameter
 	}else{
+
 		klogv("ERROR in setup_pcb(): invalid priority");
 		return NULL; // TODO ERROR CODE
 	}
-	pclass = 1; //HARD-CODED
+	//pclass = 1; //HARD-CODED
 	if(pclass == 0 || pclass ==1){			// process class must be either 0 for system, or 1 for user process
 		new_pcb -> process_class = pclass;	// sets the new process's class to the pclass parameter
 	}else{
@@ -113,12 +114,34 @@ int insert_pcb(PCB *pcb){
 			ready_queue.count++;
 			//klogv("inserted 1st pcb");
 		}else{
-			PCB *temp_pcb = ready_queue.head;
+			int found = 0;
+			while(!found){
+				PCB *temp_pcb = ready_queue.head;
+				if(temp_pcb->priority == pcb->priority){
+					klogv("	1 matching priorities");
+					pcb->next = temp_pcb;
+					temp_pcb->prev->next = pcb;
+					pcb->prev = temp_pcb->prev;
+					temp_pcb->prev = pcb;
+					found = 1;
+					ready_queue.count++;
+				}else if(temp_pcb == ready_queue.tail){
+					klogv("	2 at the tail");
+					ready_queue.tail = pcb;
+					temp_pcb->next = pcb;
+					pcb->prev = temp_pcb;
+					found = 1;
+					ready_queue.count++;
+				}else{
+					temp_pcb = temp_pcb->next;
+				}
+			}
+			/*PCB *temp_pcb = ready_queue.head;
 			temp_pcb->prev = pcb;
 			pcb->next = temp_pcb;
 			ready_queue.head = pcb;
 			ready_queue.count++;
-			//klogv("inserted a pcb");
+			*/
 		}
 	}
 	if(pcb->readystate == 0 && pcb->suspended == 1){	//suspended_ready_queue
@@ -236,22 +259,26 @@ int remove_pcb(PCB* pcb){
 /*========================= USER COMMANDS ========================*/
 
 int create_pcb(){ 
-	char name[30];
+	char name[16];
 	char priority_str[2];
 	char pclass_str[2]; // pclass refers to process class (system or user)
 	char name_prompt[50] = "Please Enter a name for the process:	";
 	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process]:	";
 	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest]:	";
 
-	int prompt_size = 40;
+	int name_size = 16;
 	int prompt_size2 = 100;
-
-	sys_req(WRITE, DEFAULT_DEVICE, name_prompt, &prompt_size);
-	sys_req(READ, DEFAULT_DEVICE, name, &prompt_size);
+	int num_size = 2;
+	
+	//memset(name, '\0', 16);
+	sys_req(WRITE, DEFAULT_DEVICE, name_prompt, &prompt_size2);
+	sys_req(READ, DEFAULT_DEVICE, name, &name_size);
+	//memset(name, '\0', 2);
 	sys_req(WRITE, DEFAULT_DEVICE, pclass_prompt, &prompt_size2);
-	sys_req(READ, DEFAULT_DEVICE, pclass_str, &prompt_size);
+	sys_req(READ, DEFAULT_DEVICE, pclass_str, &num_size);
+	//memset(name, '\0', 2);
 	sys_req(WRITE, DEFAULT_DEVICE, priority_prompt, &prompt_size2);
-	sys_req(READ, DEFAULT_DEVICE, priority_str, &prompt_size);
+	sys_req(READ, DEFAULT_DEVICE, priority_str, &num_size);
 	
 	int pclass = atoi(pclass_str);
 	int priority = atoi(priority_str);
@@ -260,14 +287,22 @@ int create_pcb(){
 		char *invalid_name_msg = "\033[1;31mINVALID NAME... exiting\033[0m\n\n";
 		int name_msg_size = sizeof(invalid_name_msg);
 		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &name_msg_size);
+		//sys_req(WRITE, DEFAULT_DEVICE, name, &name_msg_size); // just for input testing
 		return NULL; // TODO ERROR CODE
+	}else if(strlen(name) < 16){
+		// TODO fill in the rest with whitespaces or periods
 	}
 	if(priority < 0 || priority > 9){		// priority must be a number between 0 and 9
-		klogv("invalid priority... exiting");
+		char *invalid_name_msg = "\033[1;31mINVALID PRIORITY... exiting\033[0m\n\n";
+		int name_msg_size = sizeof(invalid_name_msg);
+		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &name_msg_size);
+		//sys_req(WRITE, DEFAULT_DEVICE, itoa(priority), &name_msg_size);
 		return NULL;	// TODO ERROR CODE
 	}
-	if(!pclass == 0 && !pclass ==1){		// process class must be either 0 for system, or 1 for user process
-		klogv("invalid process class... exiting");
+	if(pclass != 0 && pclass !=1){		// process class must be either 0 for system, or 1 for user process
+		char *invalid_name_msg = "\033[1;31mINVALID CLASS... exiting\033[0m\n\n";
+		int name_msg_size = sizeof(invalid_name_msg);
+		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &name_msg_size);
 		return NULL; 	//TODO ERROR CODE
 	}
 	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
@@ -337,7 +372,7 @@ int show_pcb(char name[16]){
 	if(pcb->process_class == 1){
 		pclass = " \033[0;34mUser Process\033[0m   |";
 	}else if(pcb->process_class == 0){
-		pclass = " System Process |";
+		pclass = " \033[0;36mSystem Process\033[0m |";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
