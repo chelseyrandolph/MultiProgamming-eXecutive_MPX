@@ -79,24 +79,24 @@ int ourHelp(){
 
 int shutDown(){
 	int promptInt = 50;
-	char prompt[50] = "Are you sure? \n 1. yes \n 2. no\n";
-	int ansInt = 5;
-	char ans[5];
-	memset(ans, '\0', 5);
+	char prompt[50] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
+	int ansInt = 2;
+	char ans[2];
+	memset(ans, '\0', 2);
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	
-	if(strcmp(ans, "yes")==0){
+	if(strcmp(ans, "Y")==0){
 
-		serial_print("MPX is shuting down\n");
+		sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mMPX is shutting down...\033[0m\n", &promptInt);
 
 		return 1;
-	}else if(strcmp(ans, "no")==0){
-		serial_print("Shutdown process is canceled by the user.\n");
+	}else if(strcmp(ans, "N")==0){
+		sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mShutdown canceled\033[0m\n", &promptInt);
 		return 0;
 	}else{
 		int failedAbortSize = 50;
-		char failedAbort[50] = "\nNot valid command, aborting to main menu\n";
+		char failedAbort[50] = "\n\033[1;31mNot valid command, aborting...\033[0m\n";
 		sys_req(WRITE, DEFAULT_DEVICE, failedAbort, &failedAbortSize);
 		return 0;
 	}

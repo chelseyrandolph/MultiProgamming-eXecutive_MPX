@@ -24,6 +24,9 @@ void getDate(){
 	int daySize;
 	int yearSize;
 	int yearSize2;
+	int msg_size = 30;
+
+	sys_req(WRITE, DEFAULT_DEVICE, "The date is : \033[1;36m", &msg_size);
 
 	//Getting the month
 
@@ -59,8 +62,8 @@ void getDate(){
 	yearSize2 = strlen(cyear2);
 	sys_req(WRITE, DEFAULT_DEVICE, cyear2, &yearSize2);
 
-
-	serial_println("\n");
+	
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[0m\n\n", &bsSize);
 }
 
 

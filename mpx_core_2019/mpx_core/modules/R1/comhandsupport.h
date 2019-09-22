@@ -10,7 +10,7 @@
 char commands[9][30] = {
     "version",
     "help",
-    "shut-down",
+    "shutdown",
     "get-time",
     "get-date",
     "set-time",    

@@ -3,7 +3,7 @@
 #include <core/serial.h>
 #include <core/interrupts.h>
 
-#include "mpx_supt.h"
+#include "../mpx_supt.h"
 #include "time.h"
 
 #define Invalid_hour "you enter invalid type of hour"
@@ -112,24 +112,25 @@ void getTime(){
 	secondd = secondd-((int) secondd/16)*6;
 
 
-
-	serial_print("the current time is :  ");
-
+	int msg_size = 30;
+	sys_req(WRITE, DEFAULT_DEVICE, "the current time is : \033[1;36m  ", &msg_size);
+	int digit_size = 3;
 	char *h;
 	h = itoa(hourr);
 	//h = itoi(hourr);
-	serial_print(h);
-	serial_print(":");
+	sys_req(WRITE, DEFAULT_DEVICE, h, &digit_size);
+	sys_req(WRITE, DEFAULT_DEVICE, ":", &digit_size);
 	char *m;
 	m = itoa(minutee);
 	//m = itoi(minutee);
-	serial_print(m);
-	serial_print(":");
+	sys_req(WRITE, DEFAULT_DEVICE, m, &digit_size);
+	sys_req(WRITE, DEFAULT_DEVICE, ":", &digit_size);
 	char *s;
 	s = itoa(secondd);
 	//s = itoi(secondd);
-	serial_print(s);
-	serial_print("\n");
+	sys_req(WRITE, DEFAULT_DEVICE, s, &digit_size);
+	
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[0m\n\n", &msg_size);
 
 }
 

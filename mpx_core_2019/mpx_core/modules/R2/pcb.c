@@ -31,21 +31,21 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
 		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
 	}else{
-		klogv("ERROR in setup_pcb(): invalid name"); //TODO ERROR CODES sys_req NOT klogv
+		 //TODO ERROR CODES sys_req NOT klogv
 		return NULL; // TODO ERROR CODE
 	}
 	if(priority >= 0 && priority <= 9){		// priority must be a number between 0 and 9
 		new_pcb -> priority = priority;		// sets the new process's priority to priority parameter
 	}else{
 
-		klogv("ERROR in setup_pcb(): invalid priority");
+		
 		return NULL; // TODO ERROR CODE
 	}
 	//pclass = 1; //HARD-CODED
 	if(pclass == 0 || pclass ==1){			// process class must be either 0 for system, or 1 for user process
 		new_pcb -> process_class = pclass;	// sets the new process's class to the pclass parameter
 	}else{
-		klogv("ERROR in setup_pcb(): invalid class");
+		
 		return NULL; // TODO ERROR CODE
 	}
 	new_pcb->readystate = 0; //ready
@@ -216,7 +216,7 @@ int insert_pcb(PCB *pcb){
 
 int remove_pcb(PCB* pcb){
 	if(pcb->readystate == 0 && pcb->suspended == 0){	//ready
-		PCB* temp_pcb = ready_queue.tail;
+		PCB* temp_pcb = ready_queue.head;
 		int found = 0;
 		while(!found){
 			if(pcb == temp_pcb){
@@ -230,7 +230,7 @@ int remove_pcb(PCB* pcb){
 		}
 	}
 	else if(pcb->readystate == 0 && pcb->suspended == 1){ //suspended ready
-		PCB* temp_pcb = suspended_ready_queue.tail;
+		PCB* temp_pcb = suspended_ready_queue.head;
 		int found = 0;
 		while(!found){
 			if(pcb == temp_pcb){
@@ -244,7 +244,7 @@ int remove_pcb(PCB* pcb){
 		}
 	}
 	else if(pcb->readystate == -1 && pcb->suspended == 0){ //blocked
-		PCB* temp_pcb = blocked_queue.tail;
+		PCB* temp_pcb = blocked_queue.head;
 		int found = 0;
 		while(!found){
 			if(pcb == temp_pcb){
@@ -258,7 +258,7 @@ int remove_pcb(PCB* pcb){
 		}		
 	}
 	else if(pcb->readystate == -1 && pcb->suspended == 1){ //suspended blocked
-		PCB* temp_pcb = suspended_blocked_queue.tail;
+		PCB* temp_pcb = suspended_blocked_queue.head;
 		int found = 0;
 		while(!found){
 			if(pcb == temp_pcb){
@@ -403,14 +403,14 @@ int show_pcb(char name[16]){
 	}else if(pcb->readystate == 0){
 		readystate_str = " \033[0;32mReady\033[0m   |";
 	}else if(pcb->readystate == -1){
-		readystate_str = " \033[0;31Blocked\033[0m |";
+		readystate_str = " \033[0;31mBlocked\033[0m |";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
 	if(pcb->suspended == 1){
-		suspended_str = " SUSPENDED     |";
+		suspended_str = " \033[1;31mSUSPENDED\033[0m     | ";
 	}else if(pcb->suspended == 0){
-		suspended_str = " not suspended |";
+		suspended_str = " not suspended | ";
 	}else{
 		return 0; // TODO ERROR CODE
 	}
