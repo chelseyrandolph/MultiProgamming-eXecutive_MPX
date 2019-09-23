@@ -169,15 +169,16 @@ void displayMenu(){
 	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
 	char header4[70] = {"| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
 	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
+	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header4,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
+	sys_req(WRITE,DEFAULT_DEVICE, "\033[0;36mtype help for a list of commands\033[0m\n\n\n", &headerSize);
 //	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
-	int k;
+	/*int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
 	int one = 1;
 	for(k=0; k<comLength; k++){
@@ -187,7 +188,7 @@ void displayMenu(){
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 	}
 	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
-
+	*/
 }
 
 void comhandinitaliz(){
