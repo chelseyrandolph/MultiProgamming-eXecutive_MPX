@@ -137,7 +137,7 @@ void getTime(){
 
 
 	// convert binary code decimal to string 
-	char* itoa(int number){
+char* itoa(int number){
 
 	char *string = " "; 
 	//int i;

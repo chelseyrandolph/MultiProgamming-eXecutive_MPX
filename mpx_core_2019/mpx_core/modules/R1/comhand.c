@@ -153,6 +153,8 @@ int comhand(){
 			case 7: setDate();					break;
 			case 8: create_pcb();				break;
 			case 9: show_all();				break;
+			case 10: show_blocked();			break;
+			case 11: show_ready();				break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}

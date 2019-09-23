@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-char commands[9][30] = {
+char commands[11][30] = {
     "version",
     "help",
     "shutdown",
@@ -17,4 +17,6 @@ char commands[9][30] = {
     "set-date",
 	"create-pcb",
 	"show-all",
+	"show-blocked",
+	"show-ready"
 };
