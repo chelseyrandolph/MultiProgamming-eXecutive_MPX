@@ -279,7 +279,15 @@ int remove_pcb(PCB* pcb){
 }
 
 /*========================= USER COMMANDS ========================*/
-
+void addSpace(char *string, int length){
+	int i;
+	i = strlen(string);
+	while(i < length){
+		string[i] = ' ';
+		i++;
+	}
+	string[i] = '\0';
+}
 int create_pcb(){ 
 	char name[16];
 	char priority_str[2];
@@ -305,6 +313,8 @@ int create_pcb(){
 	int pclass = atoi(pclass_str);
 	int priority = atoi(priority_str);
 
+
+	addSpace(name, 16);
 	if(strlen(name) < 8){	// Process name must be at least 8 characters
 		char *invalid_name_msg = "\033[1;31mINVALID NAME... exiting\033[0m\n\n";
 		int name_msg_size = sizeof(invalid_name_msg);

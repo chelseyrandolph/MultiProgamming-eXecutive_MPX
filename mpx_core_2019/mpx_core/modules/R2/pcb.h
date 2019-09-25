@@ -27,6 +27,8 @@ int insert_pcb(PCB* pcb);
 
 int remove_pcb(PCB* pcb);
 
+void addSpace(char *string, int length);
+
 int create_pcb(); // may need to add parameters... for now we get the data from user input within the function
 
 int delete_pcb(char name[30]);
