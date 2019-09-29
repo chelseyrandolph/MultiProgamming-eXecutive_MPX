@@ -152,16 +152,18 @@ int comhand(){
 		int failSize = 100;
 		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
-			case 1: version(); 					break;
+			case 1: version(); 						break;
 			case 2: inputHelp(tokenizedBuffer[1]);	break;
 			case 3: quit = shutDown();				break;
-			case 4: getTime();					break;
-			case 5: getDate();					break;
-			case 6: setTime();					break;
-			case 7: setDate();					break;
-			case 8: create_pcb();				break;
-			case 9: show_all();				break;
-			case 10: show_ready();			break;
+			case 4: getTime();						break;
+			case 5: getDate();						break;
+			case 6: setTime();						break;
+			case 7: setDate();						break;
+			case 8: create_pcb();					break;
+			case 9: show_all();						break;
+			case 10: show_blocked();				break;
+			case 11: show_ready();					break;
+			case 12: show_pcb(tokenizedBuffer[1]); 	break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
