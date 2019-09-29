@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <system.h>
-
 #include <core/io.h>
 #include <core/serial.h>
 #include <core/tables.h>

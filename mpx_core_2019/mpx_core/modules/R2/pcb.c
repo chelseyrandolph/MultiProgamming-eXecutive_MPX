@@ -13,6 +13,8 @@ queue blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 queue suspended_ready_queue = {.head = NULL, .tail = NULL, .count = 0};
 queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
+
+
 PCB* allocate_pcb(){
 	
 	PCB *pcb = sys_alloc_mem(sizeof(pcb));
@@ -27,7 +29,7 @@ PCB* allocate_pcb(){
 PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
-
+	
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
 		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
 	}else{
@@ -215,81 +217,98 @@ int insert_pcb(PCB *pcb){
 }
 
 int remove_pcb(PCB* pcb){
-	if(pcb->readystate == 0 && pcb->suspended == 0){	//ready
-		PCB* temp_pcb = ready_queue.head;
+	int error_msg_size = 50; // use this for sys_req(Write)
+	if(pcb->readystate == 0 && pcb->suspended == 0){ // ready_queue
+		PCB *temp_pcb = ready_queue.head;
 		int found = 0;
 		while(!found){
-			if(pcb == temp_pcb){
-				temp_pcb->next->prev = temp_pcb->prev;
-				temp_pcb->prev->next = temp_pcb->next;
-			}else if(temp_pcb == ready_queue.head){
-				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
+				if(pcb == ready_queue.head){		// reassigns head if needed
+					ready_queue.head = pcb->next;
+				}
+				if(pcb == ready_queue.tail){		// reassign tail if needed
+					ready_queue.tail = pcb->prev;
+				}
+				pcb->next->prev = pcb->prev;
+				pcb->prev->next = pcb->next;		
+			}else if(temp_pcb == ready_queue.tail && temp_pcb !=pcb){
+				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
+				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
 		}
 	}
-	else if(pcb->readystate == 0 && pcb->suspended == 1){ //suspended ready
-		PCB* temp_pcb = suspended_ready_queue.head;
+	if(pcb->readystate == 0 && pcb->suspended == 1){ // suspended_ready_queue
+		PCB *temp_pcb = suspended_ready_queue.head;
 		int found = 0;
 		while(!found){
-			if(pcb == temp_pcb){
-				temp_pcb->next->prev = temp_pcb->prev;
-				temp_pcb->prev->next = temp_pcb->next;
-			}else if(temp_pcb == suspended_ready_queue.head){
-				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
+				if(pcb == suspended_ready_queue.head){		// reassigns head if needed
+					suspended_ready_queue.head = pcb->next;
+				}
+				if(pcb == suspended_ready_queue.tail){		// reassign tail if needed
+					suspended_ready_queue.tail = pcb->prev;
+				}
+				pcb->next->prev = pcb->prev;
+				pcb->prev->next = pcb->next;		
+			}else if(temp_pcb == suspended_ready_queue.tail && temp_pcb !=pcb){
+				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
+				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
 		}
 	}
-	else if(pcb->readystate == -1 && pcb->suspended == 0){ //blocked
-		PCB* temp_pcb = blocked_queue.head;
+	if(pcb->readystate == -1 && pcb->suspended == 0){ // blocked_queue
+		PCB *temp_pcb = blocked_queue.head;
 		int found = 0;
 		while(!found){
-			if(pcb == temp_pcb){
-				temp_pcb->next->prev = temp_pcb->prev;
-				temp_pcb->prev->next = temp_pcb->next;
-			}else if(temp_pcb == blocked_queue.head){
-				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
+				if(pcb == blocked_queue.head){		// reassigns head if needed
+					blocked_queue.head = pcb->next;
+				}
+				if(pcb == blocked_queue.tail){		// reassign tail if needed
+					blocked_queue.tail = pcb->prev;
+				}
+				pcb->next->prev = pcb->prev;
+				pcb->prev->next = pcb->next;		
+			}else if(temp_pcb == blocked_queue.tail && temp_pcb !=pcb){
+				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
+				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
-		}		
+		}
 	}
-	else if(pcb->readystate == -1 && pcb->suspended == 1){ //suspended blocked
-		PCB* temp_pcb = suspended_blocked_queue.head;
+	if(pcb->readystate == -1 && pcb->suspended == 1){ // suspended_blocked_queue
+		PCB *temp_pcb = suspended_blocked_queue.head;
 		int found = 0;
 		while(!found){
-			if(pcb == temp_pcb){
-				temp_pcb->next->prev = temp_pcb->prev;
-				temp_pcb->prev->next = temp_pcb->next;
-			}else if(temp_pcb == suspended_blocked_queue.head){
-				return 0; // TODO ERROR CODE  PCB NOT FOUND
+			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
+				if(pcb == suspended_blocked_queue.head){		// reassigns head if needed
+					suspended_blocked_queue.head = pcb->next;
+				}
+				if(pcb == suspended_blocked_queue.tail){		// reassign tail if needed
+					suspended_blocked_queue.tail = pcb->prev;
+				}
+				pcb->next->prev = pcb->prev;
+				pcb->prev->next = pcb->next;		
+			}else if(temp_pcb == suspended_blocked_queue.tail && temp_pcb !=pcb){
+				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
+				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
-		}		
-	}	
-	else{	// PROCESS NOT FOUND
-
-		return 0; // TODO ERROR CODE
+		}
 	}
 	return 0;
 }
 
 /*========================= USER COMMANDS ========================*/
-void addSpace(char *string, int length){
-	int i;
-	i = strlen(string);
-	while(i < length){
-		string[i] = ' ';
-		i++;
-	}
-	string[i] = '\0';
-}
+
 int create_pcb(){ 
-	char name[16];
+	char*name = sys_alloc_mem(16); // sets memory for the name string
 	char priority_str[2];
 	char pclass_str[2]; // pclass refers to process class (system or user)
 	char name_prompt[50] = "Please Enter a name for the process:	";
@@ -298,23 +317,30 @@ int create_pcb(){
 
 	int name_size = 16;
 	int prompt_size2 = 100;
-	int num_size = 2;
+	int num_size = 3;
 	
-	//memset(name, '\0', 16);
-	sys_req(WRITE, DEFAULT_DEVICE, name_prompt, &prompt_size2);
+	
+	sys_req(WRITE, DEFAULT_DEVICE, name_prompt, &prompt_size2); // Get name
 	sys_req(READ, DEFAULT_DEVICE, name, &name_size);
-	//memset(name, '\0', 2);
-	sys_req(WRITE, DEFAULT_DEVICE, pclass_prompt, &prompt_size2);
+	
+	
+	sys_req(WRITE, DEFAULT_DEVICE, pclass_prompt, &prompt_size2); // Get class
 	sys_req(READ, DEFAULT_DEVICE, pclass_str, &num_size);
-	//memset(name, '\0', 2);
-	sys_req(WRITE, DEFAULT_DEVICE, priority_prompt, &prompt_size2);
+
+	
+	sys_req(WRITE, DEFAULT_DEVICE, priority_prompt, &prompt_size2); // Get priority
 	sys_req(READ, DEFAULT_DEVICE, priority_str, &num_size);
 	
 	int pclass = atoi(pclass_str);
 	int priority = atoi(priority_str);
+	
+	/* --This is for testing the length of name in case we run into any more problems ---
+
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[1;36mlength of name: \033[0m", &name_size);
+    sys_req(WRITE, DEFAULT_DEVICE, itoa(strlen(name)), &num_size);
+	sys_req(WRITE, DEFAULT_DEVICE, "\n", &num_size); */
 
 
-	addSpace(name, 16);
 	if(strlen(name) < 8){	// Process name must be at least 8 characters
 		char *invalid_name_msg = "\033[1;31mINVALID NAME... exiting\033[0m\n\n";
 		int name_msg_size = sizeof(invalid_name_msg);
@@ -391,6 +417,7 @@ int set_pcb_priority(char name[30], int new_priority){
 }
 
 int show_pcb(char name[16]){
+
 	PCB *pcb = find_pcb(name);
 	int name_size = 16;
 	char *pclass;
@@ -399,7 +426,11 @@ int show_pcb(char name[16]){
 	char *vertline = " |";
 	char *newline = " \n";
 	int two = 2;
-
+	char *namestr = name;
+	int i;
+	for(i = strlen(name); i < name_size; i++){
+		namestr[i] = ' ';
+	}
 
 	if(pcb->process_class == 1){
 		pclass = " \033[0;34mUser Process\033[0m   |";
@@ -498,6 +529,7 @@ int show_all(){
 	show_blocked();
 	return 0;
 }
+
 
 
 
