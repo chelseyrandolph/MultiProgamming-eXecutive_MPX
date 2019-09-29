@@ -76,6 +76,67 @@ int ourHelp(){
 	return 0;
 }
 
+void displayAllCommands(){
+	int msg_size = 100;
+	char message[100] = "Avaiable Commands are \n";
+	sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
+	int k;
+	int comLength = sizeof(commands)/sizeof(commands[0]);
+	int one = 1;
+	for(k=0; k<comLength; k++){
+		int tempSize = 50;
+		
+		sys_req(WRITE,DEFAULT_DEVICE,commands[k],&tempSize);
+		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
+	}
+	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
+}
+
+int inputHelp(char helpBuffer[]){
+	int i = -1;
+	int k;
+	int comLength = sizeof(commands)/sizeof(commands[0]);
+	for(k=0; k<comLength; k++){
+		if(strcmp(helpBuffer, commands[k])==0){
+			i = k+1;
+		}
+	}
+	int msg_size = 300;
+	char messageVersion[300] = "Version displays the version of MPX-OS currently running.\n"; 
+	char messageHelp[300] = "Help displays necessary information on the function. \n\n";
+	char messageShutdown[300] = "Shutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
+	char messageDisplayTime[300] = "Displays the current time of day.\n";
+	char messageDisplayDate[300] = "Displays the current date.\n";
+	char messageSetTime[300] = "Prompts the user for an hour, minute, and second to change the MPX clock to.\n";
+	char messageSetDate[300] = "Prompts the user for a month, day, and year to change the MPX date to.\n";	
+	char messageCreatePCB[300] = "Creates a PCB.\n";	
+	char messageShowAll[300] = "Shows all PCBs Created.\n";	
+	
+		switch(i){
+			case 1: sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &msg_size);   break;
+
+			case 2: sys_req(WRITE, DEFAULT_DEVICE, messageHelp, &msg_size); break;
+
+			case 3: sys_req(WRITE, DEFAULT_DEVICE, messageShutdown, &msg_size); break;
+
+			case 4:	sys_req(WRITE, DEFAULT_DEVICE, messageDisplayTime, &msg_size); break;
+
+			case 5: sys_req(WRITE, DEFAULT_DEVICE, messageDisplayDate, &msg_size); break;
+
+			case 6: sys_req(WRITE, DEFAULT_DEVICE, messageSetTime, &msg_size); break;
+
+			case 7: sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &msg_size); break;
+
+			case 8: sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &msg_size); break;
+
+			case 9: sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &msg_size); break;
+
+			default: displayAllCommands();
+		}
+		return 0;
+
+}
+
 
 int shutDown(){
 	int promptInt = 50;
@@ -111,41 +172,41 @@ int comhand(){
 	
 	while(!quit){
 
-		
-
-		//get a command
+//		Get a command
 		memset(cmdBuffer, '\0', 100);
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-		/*
-		WORK IN PROGRESS TO TOKENIZE THE INPUT COMMAND
-		char *tokenizedBuffer[5];
-		int temp=0;
-		for(;temp<2;temp++){
-			char *cmdBufferPtr = strtok(cmdBuffer, " ");
-
-			*tokenizedBuffer[temp] = strcpy(*tokenizedBuffer[temp],*cmdBufferPtr);
-		}
-//		char *cmdBufferPtr = strtok(cmdBuffer, " ");
-	//	cmdBufferPtr = strtok(cmdBuffer, " ");
-
-	
-		sys_req(WRITE,DEFAULT_DEVICE,tokenizedBuffer[1], &bufferSize);*/
 		
+//		WORK IN PROGRESS TO TOKENIZE THE INPUT COMMAND
+		char *tokenizedBuffer[10];
+		
+		char* token = strtok(cmdBuffer, " ");
+		
+		int index = 0;
+		for(index=0; index<2;index++){
+			tokenizedBuffer[index] = token;
+			token = strtok(NULL, " ");
+	
+			
+		}
+
+//		Comparing first token against all avaiable commands according to comhandsupport.h
 		int i = -1;
 		int k;
 		int comLength = sizeof(commands)/sizeof(commands[0]);
 		for(k=0; k<comLength; k++){
-			if(strcmp(cmdBuffer, commands[k])==0){
+			if(strcmp(tokenizedBuffer[0], commands[k])==0){
 				i = k+1;
 			}
 		}
-	
+
+		
+
 		int failSize = 100;
 		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
 			case 1: version(); 					break;
-			case 2: ourHelp();					break;
+			case 2: inputHelp(tokenizedBuffer[1]);	break;
 			case 3: quit = shutDown();				break;
 			case 4: getTime();					break;
 			case 5: getDate();					break;
@@ -192,7 +253,6 @@ void comhandinitaliz(){
 	displayMenu();
 	comhand();
 //	return -1;
-
 }
 
 
