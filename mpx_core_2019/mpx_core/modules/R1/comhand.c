@@ -20,62 +20,6 @@ void version(){
 	sys_req(WRITE,DEFAULT_DEVICE, version, &verSize);
 }
 
-/*
-	Help works the same was as comhand() but exits after an option is selected
-*/
-int ourHelp(){
-	int menuSize = 250;
-	char menu[250] = {"\nPress Corresponding number to get information on commands \n 1. Getting the Version \n 2. Shutting down MPX-OS \n 3. Getting the time \n 4. Getting the Date \n 5. Setting the Time \n 6. Setting the Date \n 7. Exit Help\n\n"};
-	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
-	char cmdBuffer[2];
-	memset(cmdBuffer, '\0', 100);
-	int bufferSize = 20;
-	sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-	int msg_size = 300;
-	int i = atoi(cmdBuffer); 
-	if(i==1){
-		char message[300] = "Version displays the version of MPX-OS currently running.\n"; 	
-		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
-		return 0;
-	}
-	else if(i==2){
-		char message[300] = "Shutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";	
-		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
-		return 0;
-	}
-	else if(i==3){
-		char message[300] = "Displays the current time of day.\n";		
-		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
-		return 0;
-	}
-	else if(i==4){
-		char message[300] = "Displays the current date.\n";	
-		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
-		return 0;
-	}
-	else if(i==5){
-		char message[300] = "Prompts the user for an hour, minute, and second to change the MPX clock to.\n";	
-		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
-		return 0;
-	}
-	else if(i==6){
-		char message[300] = "Prompts the user for a month, day, and year to change the MPX date to.\n";	
-		sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
-		return 0;
-	}
-	else if(i==7){
-		return 0;
-	}
-	else{
-		int failedAbortSize = 50;
-		char failedAbort[50] = "\nNot valid command, aborting to main menu.\n";
-		sys_req(WRITE, DEFAULT_DEVICE, failedAbort, &failedAbortSize);
-		return 0;
-	}
-	
-	return 0;
-}
-
 void displayAllCommands(){
 	int msg_size = 100;
 	char message[100] = "Avaiable Commands are \n";
@@ -103,7 +47,7 @@ int inputHelp(char helpBuffer[]){
 	}
 	int msg_size = 300;
 	char messageVersion[300] = "Version displays the version of MPX-OS currently running.\n"; 
-	char messageHelp[300] = "Help displays necessary information on the function. \n\n";
+	char messageHelp[300] = "Help displays necessary information on the function. \n";
 	char messageShutdown[300] = "Shutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
 	char messageDisplayTime[300] = "Displays the current time of day.\n";
 	char messageDisplayDate[300] = "Displays the current date.\n";
@@ -111,6 +55,7 @@ int inputHelp(char helpBuffer[]){
 	char messageSetDate[300] = "Prompts the user for a month, day, and year to change the MPX date to.\n";	
 	char messageCreatePCB[300] = "Creates a PCB.\n";	
 	char messageShowAll[300] = "Shows all PCBs Created.\n";	
+	char messageShowReady[300] = "Shows PCBs that are ready for execution,\n";
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &msg_size);   break;
@@ -130,6 +75,8 @@ int inputHelp(char helpBuffer[]){
 			case 8: sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &msg_size); break;
 
 			case 9: sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &msg_size); break;
+
+			case 10: sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &msg_size); break;
 
 			default: displayAllCommands();
 		}
@@ -214,8 +161,7 @@ int comhand(){
 			case 7: setDate();					break;
 			case 8: create_pcb();				break;
 			case 9: show_all();				break;
-			case 10: show_blocked();			break;
-			case 11: show_ready();				break;
+			case 10: show_ready();			break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
@@ -230,16 +176,15 @@ void displayMenu(){
 	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
 	char header4[70] = {"| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
 	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n\n"};
+	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header4,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
-	sys_req(WRITE,DEFAULT_DEVICE, "\033[0;36mtype help for a list of commands\033[0m\n\n\n", &headerSize);
 //	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
-	/*int k;
+	int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
 	int one = 1;
 	for(k=0; k<comLength; k++){
@@ -249,7 +194,7 @@ void displayMenu(){
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 	}
 	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
-	*/
+
 }
 
 void comhandinitaliz(){
