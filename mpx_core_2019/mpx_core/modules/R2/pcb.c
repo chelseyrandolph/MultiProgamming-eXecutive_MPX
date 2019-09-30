@@ -427,16 +427,23 @@ int resume_pcb(char *name){
 
 int set_pcb_priority(char *name, int new_priority){
 	PCB *pcb = find_pcb(name);
+	klogv("1");
 	pcb->priority = new_priority;
+	klogv("2");
 	delete_pcb(pcb->name);
 	insert_pcb(pcb);
 	return 0;
 }
 
 int show_pcb(char *name){
-
+	
 	PCB *pcb = find_pcb(name);
 	int name_size = 16;
+	sys_req(WRITE, DEFAULT_DEVICE, "\nname: ", &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, name, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, "\npcb->name: ", &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);	
+	sys_req(WRITE, DEFAULT_DEVICE, "\n", &name_size);
 	char *pclass;
 	char *readystate_str;
 	char *suspended_str;

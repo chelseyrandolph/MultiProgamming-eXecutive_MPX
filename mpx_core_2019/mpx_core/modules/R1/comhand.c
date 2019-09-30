@@ -113,19 +113,19 @@ int shutDown(){
 
 
 int comhand(){
-	char *cmdBuffer = sys_alloc_mem(100);
-	int bufferSize;
 	int quit = 0;
-	
 	while(!quit){
-
+		char *cmdBuffer = sys_alloc_mem(100);
+		int bufferSize;
+		
+	
 //		Get a command
 		memset(cmdBuffer, '\0', 100);
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
 		
 //		WORK IN PROGRESS TO TOKENIZE THE INPUT COMMAND
-		char *tokenizedBuffer[10];
+		char **tokenizedBuffer = sys_alloc_mem(10);
 		
 		char* token = strtok(cmdBuffer, " ");
 		
@@ -164,7 +164,7 @@ int comhand(){
 			case 9: show_all();						break;
 			case 10: show_blocked();				break;
 			case 11: show_ready();					break;
-			case 12: show_pcb(tokenizedBuffer[1]); 	break;
+			case 12: show_pcb(tokenizedBuffer[1]);  break;
 			case 13: delete_pcb(tokenizedBuffer[1]);break;
 			case 14: suspend_pcb(tokenizedBuffer[1]); break;
 			case 15: resume_pcb(tokenizedBuffer[1]); break;
