@@ -65,12 +65,19 @@ PCB* find_pcb(char *process_name){
 	int i;
 
 	PCB *temp_process = ready_queue.head;	//points to the PCB at the head of the queue
+	//int size = 16;
+	//sys_req(WRITE, DEFAULT_DEVICE, process_name, &size);
+	//sys_req(WRITE, DEFAULT_DEVICE, itoa(ready_queue.count), &size);
 	
-	for(i = 0; i < ready_queue.count; i++){
-		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
+	int found = 0;
+	while(!found){
+		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else {
-			temp_process = temp_process -> next;	//moves to the next PCB in the linked list
+		}else if(temp_process == ready_queue.tail){
+			found = 1;
+			//klogv("\nprocess is tail");
+		}else{
+			temp_process = temp_process->next;
 		}
 	}
 
@@ -80,7 +87,7 @@ PCB* find_pcb(char *process_name){
 		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
 			return temp_process;
 		}else {
-			temp_process = temp_process -> next;	//moves to the next PCB in the linked list
+			temp_process = temp_process->next;	//moves to the next PCB in the linked list
 		}
 	}
 
@@ -90,7 +97,7 @@ PCB* find_pcb(char *process_name){
 		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
 			return temp_process;
 		}else {
-			temp_process = temp_process -> next;	//moves to the next PCB in the linked list
+			temp_process = temp_process->next;	//moves to the next PCB in the linked list
 		}
 	}
 
@@ -100,7 +107,7 @@ PCB* find_pcb(char *process_name){
 		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
 			return temp_process;
 		}else {
-			temp_process = temp_process -> next;	//moves to the next PCB in the linked list
+			temp_process = temp_process->next;	//moves to the next PCB in the linked list
 		}
 	}
 
@@ -230,7 +237,9 @@ int remove_pcb(PCB* pcb){
 					ready_queue.tail = pcb->prev;
 				}
 				pcb->next->prev = pcb->prev;
-				pcb->prev->next = pcb->next;		
+				pcb->prev->next = pcb->next;
+				ready_queue.count--;
+				found = 1;		
 			}else if(temp_pcb == ready_queue.tail && temp_pcb !=pcb){
 				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
 				return NULL;
@@ -251,7 +260,9 @@ int remove_pcb(PCB* pcb){
 					suspended_ready_queue.tail = pcb->prev;
 				}
 				pcb->next->prev = pcb->prev;
-				pcb->prev->next = pcb->next;		
+				pcb->prev->next = pcb->next;	
+				suspended_ready_queue.count--;	
+				found = 1;
 			}else if(temp_pcb == suspended_ready_queue.tail && temp_pcb !=pcb){
 				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
 				return NULL;
@@ -273,6 +284,8 @@ int remove_pcb(PCB* pcb){
 				}
 				pcb->next->prev = pcb->prev;
 				pcb->prev->next = pcb->next;		
+				blocked_queue.count--;
+				found = 1;
 			}else if(temp_pcb == blocked_queue.tail && temp_pcb !=pcb){
 				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
 				return NULL;
@@ -294,6 +307,8 @@ int remove_pcb(PCB* pcb){
 				}
 				pcb->next->prev = pcb->prev;
 				pcb->prev->next = pcb->next;		
+				suspended_blocked_queue.count--;
+				found = 1;
 			}else if(temp_pcb == suspended_blocked_queue.tail && temp_pcb !=pcb){
 				sys_req(WRITE, DEFAULT_DEVICE, "\033[0;31mProcess Not Found... exitting\033[0m", &error_msg_size);
 				return NULL;
@@ -309,8 +324,8 @@ int remove_pcb(PCB* pcb){
 
 int create_pcb(){ 
 	char*name = sys_alloc_mem(16); // sets memory for the name string
-	char priority_str[2];
-	char pclass_str[2]; // pclass refers to process class (system or user)
+	char *priority_str = sys_alloc_mem(2);
+	char *pclass_str= sys_alloc_mem(2); // pclass refers to process class (system or user)
 	char name_prompt[50] = "Please Enter a name for the process:	";
 	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process]:	";
 	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest]:	";
@@ -369,54 +384,56 @@ int create_pcb(){
 
 // TODO FOR ALL USER FUNCTIONS -----  ERROR CHECKING ERROR CHECKING ERROR CHECKING
 
-int delete_pcb(char name[30]){
+int delete_pcb(char *name){
 	PCB *pcb = find_pcb(name);
 	remove_pcb(pcb);
 	free_pcb(pcb);
 	return 0;
 }
 
-int block_pcb(char name[30]){
+int block_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	delete_pcb(name);		//takes the pcb out of the queue its in
 	pcb->readystate = -1;	//sets readystate = blocked
 	insert_pcb(pcb);			//inserts it into the blocked queue
 	return 0;
 }
 
-int unblock_pcb(char name[30]){
+int unblock_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	delete_pcb(pcb->name);		//takes the pcb out of the queue its in
 	pcb->readystate = 0;	//sets readystate = ready
 	insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
 	return 0;
 }
 
-int suspend_pcb(char name[30]){
+int suspend_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
+	delete_pcb(pcb->name);		//takes the pcb out of the queue its in
 	pcb->suspended = 1;	//sets suspended = suspended
 	insert_pcb(pcb);		//inserts it into the appropriate suspended queue
+
 	return 0;
 }
 
-int resume_pcb(char name[30]){
+int resume_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
+
+	delete_pcb(pcb->name);		//takes the pcb out of the queue its in
 	pcb->suspended = 0;	//sets suspended = unsuspended
 	insert_pcb(pcb);		//inserts it into the appropriate suspended queue
 	return 0;
 }
 
-int set_pcb_priority(char name[30], int new_priority){
+int set_pcb_priority(char *name, int new_priority){
 	PCB *pcb = find_pcb(name);
 	pcb->priority = new_priority;
-	remove_pcb(pcb);
+	delete_pcb(pcb->name);
 	insert_pcb(pcb);
 	return 0;
 }
 
-int show_pcb(char name[16]){
+int show_pcb(char *name){
 
 	PCB *pcb = find_pcb(name);
 	int name_size = 16;

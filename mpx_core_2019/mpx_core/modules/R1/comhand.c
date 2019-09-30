@@ -113,7 +113,7 @@ int shutDown(){
 
 
 int comhand(){
-	char cmdBuffer[100];
+	char *cmdBuffer = sys_alloc_mem(100);
 	int bufferSize;
 	int quit = 0;
 	
@@ -146,7 +146,8 @@ int comhand(){
 				i = k+1;
 			}
 		}
-
+		//int size = 16;
+		//sys_req(WRITE, DEFAULT_DEVICE, tokenizedBuffer[1], &size);
 		
 
 		int failSize = 100;
@@ -164,6 +165,12 @@ int comhand(){
 			case 10: show_blocked();				break;
 			case 11: show_ready();					break;
 			case 12: show_pcb(tokenizedBuffer[1]); 	break;
+			case 13: delete_pcb(tokenizedBuffer[1]);break;
+			case 14: suspend_pcb(tokenizedBuffer[1]); break;
+			case 15: resume_pcb(tokenizedBuffer[1]); break;
+			case 16: block_pcb(tokenizedBuffer[1]); break;
+			case 17: unblock_pcb(tokenizedBuffer[1]); break;
+			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2])); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}

@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-char commands[12][30] = {
+char commands[19][30] = {
     "version",
     "help",
     "shutdown",
@@ -19,5 +19,11 @@ char commands[12][30] = {
 	"show-all",
 	"show-blocked",
 	"show-ready",
-    "show-pcb"
+    "show-pcb",
+	"delete-pcb",
+	"suspend-pcb",
+	"resume-pcb",
+	"block-pcb",
+	"unblock-pcb",
+	"set-pcb-priority"
 };
