@@ -56,6 +56,14 @@ int inputHelp(char helpBuffer[]){
 	char messageCreatePCB[300] = "Creates a PCB.\n";	
 	char messageShowAll[300] = "Shows all PCBs Created.\n";	
 	char messageShowReady[300] = "Shows PCBs that are ready for execution,\n";
+	char messageShowBlocked[300] = "Shows all the blocked PCBs.\n";
+	char messageShowPCB[300] = "Shows a single, user chosen PCB.\n";
+	char messageDeletePCB[300] = "Deletes a PCB from the appropriate queue and then free all associated memory.\n";
+	char messageSuspendPCB[300] = "Places a PCB in the suspended state.\n";
+	char messageResumePCB[300] = "Places a PCB in the not suspended state.\n";
+	char messageBlockPCB[300] = "Sets a PCB's state to blocked.\n";
+	char messageUnblockPCB[300] = "Sets a PCB's state to unblocked.\n";
+	char messageSetPCBPriority[300] = "Sets a PCB's priority.\n";
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &msg_size);   break;
@@ -77,6 +85,22 @@ int inputHelp(char helpBuffer[]){
 			case 9: sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &msg_size); break;
 
 			case 10: sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &msg_size); break;
+
+			case 11: sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &msg_size); break;
+
+			case 12: sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &msg_size); break;
+			
+			case 13: sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &msg_size); break;
+
+			case 14: sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &msg_size); break;
+
+			case 15: sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &msg_size); break;
+		
+			case 16: sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &msg_size); break;
+
+			case 17: sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &msg_size); break;
+
+			case 18: sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &msg_size); break;
 
 			default: displayAllCommands();
 		}
