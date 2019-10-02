@@ -430,9 +430,9 @@ int resume_pcb(char *name){
 
 int set_pcb_priority(char *name, int new_priority){
 	PCB *pcb = find_pcb(name);
-
+	delete_pcb(name);
 	pcb->priority = new_priority;
-
+	insert_pcb(pcb);
 	return 0;
 }
 
@@ -453,6 +453,7 @@ int show_pcb(char *name){
 	int two = 2;
 	char namestr[17];
 	strcpy(namestr, name);
+	//char printstr[17] = namestr
 	int i;
 	for(i = strlen(name); i < name_size; i++){
 		namestr[i] = ' ';
@@ -482,7 +483,7 @@ int show_pcb(char *name){
 		return 0; // TODO ERROR CODE
 	}
 
-	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, namestr, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, vertline, &two);
 	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &name_size);
@@ -553,6 +554,8 @@ int show_all(){
 	sys_req(WRITE, DEFAULT_DEVICE, process_msg, &size);
 	show_ready();
 	show_blocked();
+	int nl = 2;
+	sys_req(WRITE, DEFAULT_DEVICE, "\n", &nl);
 	return 0;
 }
 
