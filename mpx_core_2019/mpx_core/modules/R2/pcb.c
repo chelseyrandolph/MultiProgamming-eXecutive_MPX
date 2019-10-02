@@ -56,6 +56,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 }
 
 int free_pcb(PCB* pcb){
+	sys_free_mem(pcb->bottom_of_stack); 
 	sys_free_mem(pcb);
 	return 0;
 }
@@ -116,6 +117,7 @@ PCB* find_pcb(char *process_name){
 
 
 int insert_pcb(PCB *pcb){
+	
 	if(pcb->readystate == 0 && pcb->suspended == 0){	//ready_queue
 		if(ready_queue.count == 0){
 			ready_queue.head = pcb;
@@ -206,6 +208,7 @@ int insert_pcb(PCB *pcb){
 		}
 	}
 	if(pcb->readystate == -1 && pcb->suspended == 1){	//suspended_blocked_queue
+		
 		if(suspended_blocked_queue.count == 0){
 			suspended_blocked_queue.head = pcb;
 			suspended_blocked_queue.tail = pcb;
@@ -229,7 +232,7 @@ int remove_pcb(PCB* pcb){
 		PCB *temp_pcb = ready_queue.head;
 		int found = 0;
 		while(!found){
-			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
+			if(temp_pcb == pcb && temp_pcb != NULL){		//remove from queue and re-link its neighbors
 				if(pcb == ready_queue.head){		// reassigns head if needed
 					ready_queue.head = pcb->next;
 				}
@@ -251,7 +254,7 @@ int remove_pcb(PCB* pcb){
 	if(pcb->readystate == 0 && pcb->suspended == 1){ // suspended_ready_queue
 		PCB *temp_pcb = suspended_ready_queue.head;
 		int found = 0;
-		while(!found){
+		while(!found && temp_pcb != NULL){
 			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
 				if(pcb == suspended_ready_queue.head){		// reassigns head if needed
 					suspended_ready_queue.head = pcb->next;
@@ -274,7 +277,7 @@ int remove_pcb(PCB* pcb){
 	if(pcb->readystate == -1 && pcb->suspended == 0){ // blocked_queue
 		PCB *temp_pcb = blocked_queue.head;
 		int found = 0;
-		while(!found){
+		while(!found && temp_pcb != NULL){
 			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
 				if(pcb == blocked_queue.head){		// reassigns head if needed
 					blocked_queue.head = pcb->next;
@@ -323,14 +326,14 @@ int remove_pcb(PCB* pcb){
 /*========================= USER COMMANDS ========================*/
 
 int create_pcb(){ 
-	char*name = sys_alloc_mem(16); // sets memory for the name string
+	char*name = sys_alloc_mem(17); // sets memory for the name string
 	char *priority_str = sys_alloc_mem(2);
 	char *pclass_str= sys_alloc_mem(2); // pclass refers to process class (system or user)
 	char name_prompt[50] = "Please Enter a name for the process:	";
 	char pclass_prompt[100] = "Please Enter the class [ 0 for system process, 1 for user process]:	";
 	char priority_prompt[100] = "Please Enter the priority [ 0 being the lowest, and 9 being the highest]:	";
 
-	int name_size = 16;
+	int name_size = 17;
 	int prompt_size2 = 100;
 	int num_size = 3;
 	
@@ -393,7 +396,7 @@ int delete_pcb(char *name){
 
 int block_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	delete_pcb(name);		//takes the pcb out of the queue its in
+	delete_pcb(pcb->name);		//takes the pcb out of the queue its in
 	pcb->readystate = -1;	//sets readystate = blocked
 	insert_pcb(pcb);			//inserts it into the blocked queue
 	return 0;
@@ -427,11 +430,9 @@ int resume_pcb(char *name){
 
 int set_pcb_priority(char *name, int new_priority){
 	PCB *pcb = find_pcb(name);
-	klogv("1");
+
 	pcb->priority = new_priority;
-	klogv("2");
-	delete_pcb(pcb->name);
-	insert_pcb(pcb);
+
 	return 0;
 }
 
@@ -439,23 +440,24 @@ int show_pcb(char *name){
 	
 	PCB *pcb = find_pcb(name);
 	int name_size = 16;
-	sys_req(WRITE, DEFAULT_DEVICE, "\nname: ", &name_size);
-	sys_req(WRITE, DEFAULT_DEVICE, name, &name_size);
-	sys_req(WRITE, DEFAULT_DEVICE, "\npcb->name: ", &name_size);
-	sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);	
-	sys_req(WRITE, DEFAULT_DEVICE, "\n", &name_size);
+	//sys_req(WRITE, DEFAULT_DEVICE, "\nname: ", &name_size);
+	//sys_req(WRITE, DEFAULT_DEVICE, name, &name_size);
+	//sys_req(WRITE, DEFAULT_DEVICE, "\npcb->name: ", &name_size);
+	//sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);	
+	//sys_req(WRITE, DEFAULT_DEVICE, "\n", &name_size);
 	char *pclass;
 	char *readystate_str;
 	char *suspended_str;
 	char *vertline = " |";
 	char *newline = " \n";
 	int two = 2;
-	char *namestr = name;
+	char namestr[17];
+	strcpy(namestr, name);
 	int i;
 	for(i = strlen(name); i < name_size; i++){
 		namestr[i] = ' ';
 	}
-
+	namestr[16] = '\0';
 	if(pcb->process_class == 1){
 		pclass = " \033[0;34mUser Process\033[0m   |";
 	}else if(pcb->process_class == 0){
@@ -494,7 +496,7 @@ int show_ready(){
 	
 	int done = 0;
 	PCB *pcb = ready_queue.head;
-	while(!done){
+	while(!done   && pcb !=NULL){
 		show_pcb(pcb->name);
 		//int size = 30;
 		//sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &size);
@@ -508,10 +510,10 @@ int show_ready(){
 		}
 	}	
 	done = 0;
-	pcb = suspended_ready_queue.tail;
-	while(!done){
+	pcb = suspended_ready_queue.head;
+	while(!done && pcb != NULL){
 		show_pcb(pcb->name);
-		if(pcb == suspended_ready_queue.head){
+		if(pcb == suspended_ready_queue.tail){
 			done = 1;
 		}else {
 			pcb = pcb->next;
@@ -522,21 +524,21 @@ int show_ready(){
 
 int show_blocked(){
 	int done = 0;
-	PCB *pcb = blocked_queue.tail;
-	while(!done){
+	PCB *pcb = blocked_queue.head;
+	while(!done && pcb != NULL){
 		show_pcb(pcb->name);
-		if(pcb == blocked_queue.head){
+		if(pcb == blocked_queue.tail){
 			done = 1;
-			show_pcb(pcb->name);
+			//show_pcb(pcb->name);
 		}else {
 			pcb = pcb->next;
 		}
 	}	
 	done = 0;
-	pcb = suspended_blocked_queue.tail;
-	while(!done){
+	pcb = suspended_blocked_queue.head;
+	while(!done && pcb != NULL){
 		show_pcb(pcb->name);
-		if(pcb == suspended_blocked_queue.head){
+		if(pcb == suspended_blocked_queue.tail){
 			done = 1;
 		}else {
 			pcb = pcb->next;

@@ -1,7 +1,7 @@
 
 
 typedef struct PCB {
-	char name[30];
+	char name[17];
 	int process_class;	// 0 => system process  |  1 => user process
 	int priority;		// 0 - 9,   9 being the highest priority
 	int readystate; 	// -1 => blocked  |  0 => ready   |  1 => running

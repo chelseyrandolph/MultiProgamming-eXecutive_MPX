@@ -170,7 +170,7 @@ int comhand(){
 			case 15: resume_pcb(tokenizedBuffer[1]); break;
 			case 16: block_pcb(tokenizedBuffer[1]); break;
 			case 17: unblock_pcb(tokenizedBuffer[1]); break;
-			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2])); break;
+			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
