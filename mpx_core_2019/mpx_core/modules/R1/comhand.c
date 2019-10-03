@@ -8,21 +8,20 @@
 #include "date.h"
 #include "comhandsupport.h"
 #include "../R2/pcb.h"
+#include "../../lib/colortext.h"
 
 
 
 
 
-
-void version(){
-	int verSize = 30;
-	char version[30] = "\033[1;32mVersion 2.4\033[0m\n\n";
-	sys_req(WRITE,DEFAULT_DEVICE, version, &verSize);
+void version(){			//Prints the current version
+	char version[20] = "MPX-OS Version 2.70\n";
+	write_text_bold_green(version);
 }
 
 void displayAllCommands(){
 	int msg_size = 100;
-	char message[100] = "Avaiable Commands are \n";
+	char message[100] = "\033[1;34mAvaiable Commands are\033[0m \n";
 	sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 	int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
@@ -120,16 +119,14 @@ int shutDown(){
 	
 	if(strcmp(ans, "Y")==0){
 
-		sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mMPX is shutting down...\033[0m\n", &promptInt);
-
+		//sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mMPX is shutting down...\033[0m\n", &promptInt);
+		write_text_red("MPX is shutting down \n");
 		return 1;
 	}else if(strcmp(ans, "N")==0){
-		sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mShutdown canceled\033[0m\n", &promptInt);
+		write_text_bold_yellow("Shutdown canceled\n");
 		return 0;
 	}else{
-		int failedAbortSize = 50;
-		char failedAbort[50] = "\n\033[1;31mNot valid command, aborting...\033[0m\n";
-		sys_req(WRITE, DEFAULT_DEVICE, failedAbort, &failedAbortSize);
+		write_text_bold_red("Not valid command, aborting...\n");
 		return 0;
 	}
 }
@@ -209,7 +206,7 @@ void displayMenu(){
 	char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
 	char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
 	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
-	char header4[70] = {"| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
+	char header4[70] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
 	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
 	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
@@ -219,7 +216,7 @@ void displayMenu(){
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
 //	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
-	int k;
+	/*int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
 	int one = 1;
 	for(k=0; k<comLength; k++){
@@ -229,11 +226,14 @@ void displayMenu(){
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 	}
 	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
-
+	*/
 }
 
 void comhandinitaliz(){
 	displayMenu();
+	char *init_text = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
+	int init_size = sizeof(init_text);
+	sys_req(WRITE, DEFAULT_DEVICE, init_text, &init_size);
 	comhand();
 //	return -1;
 }

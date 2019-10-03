@@ -9,7 +9,8 @@ LDFLAGS =
 ASFLAGS = -f elf -g
 
 OBJFILES =\
-string.o
+string.o\
+colortext.o
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<
