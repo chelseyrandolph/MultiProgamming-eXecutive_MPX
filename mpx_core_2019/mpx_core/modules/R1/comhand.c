@@ -148,13 +148,16 @@ int comhand(){
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
 		
-//		WORK IN PROGRESS TO TOKENIZE THE INPUT COMMAND
+//		Tokenize buffer. 
+//		This set of instructions will break the buffer on white space and put it inside a *array
+//		0 index is always the command wihle everything after is the input for the command
 		char **tokenizedBuffer = sys_alloc_mem(10);
 		
 		char* token = strtok(cmdBuffer, " ");
 		
 		int index = 0;
-		for(index=0; index<2;index++){
+//		Change index number if you want to be able to input more than X number of words!
+		for(index=0; index<5;index++){
 			tokenizedBuffer[index] = token;
 			token = strtok(NULL, " ");
 	
@@ -173,7 +176,6 @@ int comhand(){
 		//int size = 16;
 		//sys_req(WRITE, DEFAULT_DEVICE, tokenizedBuffer[1], &size);
 		
-
 		int failSize = 100;
 		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
