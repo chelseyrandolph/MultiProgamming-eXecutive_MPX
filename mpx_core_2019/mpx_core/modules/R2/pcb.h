@@ -15,6 +15,24 @@ typedef struct PCB {
 	int stack_size; 
 }PCB;
 
+typedef struct context {
+	u32int gs;
+	u32int fs;
+	u32int es;
+	u32int ds;
+	u32int edi;
+	u32int esi;
+	u32int ebp;
+	u32int esp;
+	u32int ebx;
+	u32int edx;
+	u32int ecx;
+	u32int eax;
+	u32int eip;
+	u32int cs;
+	u32int eflags;
+}context;
+
 
 //This is an internal function that sets up the pcb memory and returns the size.
 PCB* allocate_pcb();
