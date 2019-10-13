@@ -404,7 +404,7 @@ int block_pcb(char *name){
 
 int unblock_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	delete_pcb(pcb->name);		//takes the pcb out of the queue its in
+	delete_pcb(name);		//takes the pcb out of the queue its in
 	pcb->readystate = 0;	//sets readystate = ready
 	insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
 	return 0;
@@ -456,6 +456,7 @@ int show_pcb(char *name){
 	//char printstr[17] = namestr
 	int i;
 	for(i = strlen(name); i < name_size; i++){
+		
 		namestr[i] = ' ';
 	}
 	namestr[16] = '\0';
