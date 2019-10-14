@@ -545,9 +545,9 @@ int show_ready(){
 }
 
 int show_blocked(){
-	char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended    Priority\033[0m\n";
+	char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n";
 	int size = sizeof(process_msg);
-	char *lines = "\033[1;34m-----------------------------------------------------------------------------------------------\033[0m\n";
+	char *lines = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
 	int linesize = sizeof(lines);
 	char *newline = "\n\n";
 	int newlineSize = sizeof(newline);
