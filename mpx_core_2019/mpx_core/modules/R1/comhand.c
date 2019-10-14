@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 #include "comhandsupport.h"
-#include "../R2/pcb.h"
+#include "../R3/pcb.h"
 #include "../../lib/colortext.h"
 
 
@@ -255,7 +255,7 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			case 8: create_pcb();					break;
+			case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
 			case 9: show_all();						break;
 			case 10: show_blocked();				break;
 			case 11: show_ready();					break;
