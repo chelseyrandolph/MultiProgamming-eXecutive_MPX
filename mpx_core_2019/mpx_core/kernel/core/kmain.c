@@ -70,8 +70,7 @@ void kmain(void)
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
    sys_set_read(init_polling);
-   //displayMenu();
-   //comhand();
+
    comhandinitaliz();
 
    // 6) System Shutdown on return from your command handler

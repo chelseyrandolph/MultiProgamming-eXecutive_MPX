@@ -7,11 +7,12 @@
 
 #include <system.h>
 
+#include "modules/R3/pcb.h"
 #include <core/io.h>
 #include <core/serial.h>
 #include <core/tables.h>
 #include <core/interrupts.h>
-
+#include "modules/mpx_supt.h"
 // Programmable Interrupt Controllers
 #define PIC1 0x20
 #define PIC2 0xA0
@@ -45,7 +46,13 @@ extern void page_fault();
 extern void reserved();
 extern void coprocessor();
 extern void rtc_isr();
-extern void sys_call_isr(); // for R3
+<<<<<<< HEAD
+
+=======
+extern void sys_call_isr();
+extern u32int* sys_call(context* registers);
+
+>>>>>>> d07d4260854c76f9c0370a74b1c0ff6a6feba91d
 extern idt_entry idt_entries[256];
 
 //Current serial handler
@@ -95,6 +102,7 @@ void init_irq(void)
   }
   // Ignore interrupts from the real time clock
   idt_set_gate(0x08, (u32int)rtc_isr, 0x08, 0x8e);
+  idt_set_gate(60, (u32int)sys_call_isr, 0x08,0x8e);
 }
 
 /*

@@ -9,7 +9,6 @@
 #include "../../lib/colortext.h"
 #include "../R1/comhand.h"
 #include "Test_process.h"
-//#include "../R2/pcb.h"
 #include "pcb.h"
 
 // create a global cop, and context switch that represent to the context in struct
@@ -61,6 +60,7 @@ void yield(){
 asm volatile("int $60");
 }
 
+
 void loadr3(){
 	int i = 1;
 	//Looping through each test process
@@ -107,3 +107,7 @@ void loadr3(){
 	}
 }
 
+
+
+
+	

@@ -1,5 +1,4 @@
 
-
 typedef struct PCB {
 	char name[17];
 	int process_class;	// 0 => system process  |  1 => user process
@@ -8,10 +7,9 @@ typedef struct PCB {
 	int suspended;   	//  0 => suspended   |   1 => not suspended
 	struct PCB *next;		//Next PCB in linked list
 	struct PCB *prev;		//Previous PCB in linked list
-	
 	unsigned char* bottom_of_stack;
 	unsigned char* top_of_stack;
-	struct content* content;
+	struct context* context;
 	int stack_size; 
 }PCB;
 
