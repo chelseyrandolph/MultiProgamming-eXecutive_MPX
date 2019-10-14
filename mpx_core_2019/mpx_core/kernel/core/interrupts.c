@@ -45,7 +45,7 @@ extern void page_fault();
 extern void reserved();
 extern void coprocessor();
 extern void rtc_isr();
-
+extern void sys_call_isr(); // for R3
 extern idt_entry idt_entries[256];
 
 //Current serial handler
