@@ -404,7 +404,7 @@ int block_pcb(char *name){
 
 int unblock_pcb(char *name){
 	PCB *pcb = find_pcb(name);
-	delete_pcb(name);		//takes the pcb out of the queue its in
+	delete_pcb(pcb->name);		//takes the pcb out of the queue its in
 	pcb->readystate = 0;	//sets readystate = ready
 	insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
 	return 0;
@@ -500,7 +500,7 @@ int show_ready(){
 	char *lines = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
 	int linesize = sizeof(lines);
 
-	char *newline = "\n\n";
+	char *newline = "\n";
 	int newlineSize = sizeof(newline);
 	char *ready_msg = "\033[1;34mReady Processes:\033[0m\n\n";
 	int ready_size = sizeof(ready_msg);
