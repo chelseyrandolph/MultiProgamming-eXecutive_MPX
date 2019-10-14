@@ -7,8 +7,8 @@
 #include "time.h"
 #include "date.h"
 #include "comhandsupport.h"
-#include "../R3/pcb.h"
 #include "../../lib/colortext.h"
+#include "../R3/Dispatcher.h"
 
 
 
@@ -99,6 +99,9 @@ int inputHelp(char helpBuffer[]){
 
 	char *messageSetPCBPriority = "\nSets a PCB's priority.\n";
 	int setPCBPrioritySize = sizeof(messageSetPCBPriority);
+
+	char *loadr3msg = "\nLoads test processes.\n";
+	int loadr3Size = sizeof(loadr3msg);
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
@@ -171,6 +174,10 @@ int inputHelp(char helpBuffer[]){
 
 			case 18: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &setPCBPrioritySize); 
+					 break;
+
+			case 19: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
 					 break;
 
 			default: displayAllCommands();
@@ -266,6 +273,7 @@ int comhand(){
 			case 16: block_pcb(tokenizedBuffer[1]); break;
 			case 17: unblock_pcb(tokenizedBuffer[1]); break;
 			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
+			case 19: loadr3(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
