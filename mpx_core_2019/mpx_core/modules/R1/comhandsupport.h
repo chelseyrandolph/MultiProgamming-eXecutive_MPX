@@ -27,10 +27,10 @@ char commands[19][30] = {
 	"unblock-pcb",
 	"set-pcb-priority"
 };
-
+//Paramarized help menu 
 char helpcommands[19][45] = {
     "version",
-    "help 'command'",
+    "help [command]",
     "shutdown",
     "get-time",
     "get-date",
@@ -40,11 +40,11 @@ char helpcommands[19][45] = {
 	"show-all",
 	"show-blocked",
 	"show-ready",
-    "show-pcb 'pcb_name'",
-	"delete-pcb 'pcb_name'",
-	"suspend-pcb 'pcb_name'",
-	"resume-pcb 'pcb_name'",
-	"block-pcb 'pcb_name'",
-	"unblock-pcb 'pcb_name'",
-	"set-pcb-priority 'pcb_name' 'new_priority'"
+    "show-pcb [pcb_name]",
+	"delete-pcb [pcb_name]",
+	"suspend-pcb [pcb_name]",
+	"resume-pcb [pcb_name]",
+	"block-pcb [pcb_name]",
+	"unblock-pcb [pcb_name]",
+	"set-pcb-priority [pcb_name] [new_priority]"
 };
