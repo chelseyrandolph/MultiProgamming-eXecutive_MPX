@@ -24,18 +24,19 @@ void displayAllCommands(){
 	char message[100] = "\033[1;34mAvaiable Commands are\033[0m \n";
 	sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 	int k;
-	int comLength = sizeof(commands)/sizeof(commands[0]);
+	int comLength = sizeof(helpcommands)/sizeof(helpcommands[0]);
 	int one = 1;
 	for(k=0; k<comLength; k++){
 		int tempSize = 50;
 		
-		sys_req(WRITE,DEFAULT_DEVICE,commands[k],&tempSize);
+		sys_req(WRITE,DEFAULT_DEVICE,helpcommands[k],&tempSize);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 	}
 	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 }
 
 int inputHelp(char helpBuffer[]){
+	int tempSize = 45;
 	int i = -1;
 	int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
@@ -44,62 +45,133 @@ int inputHelp(char helpBuffer[]){
 			i = k+1;
 		}
 	}
-	int msg_size = 300;
-	char messageVersion[300] = "Version displays the version of MPX-OS currently running.\n"; 
-	char messageHelp[300] = "Help displays necessary information on the function. \n";
-	char messageShutdown[300] = "Shutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
-	char messageDisplayTime[300] = "Displays the current time of day.\n";
-	char messageDisplayDate[300] = "Displays the current date.\n";
-	char messageSetTime[300] = "Prompts the user for an hour, minute, and second to change the MPX clock to.\n";
-	char messageSetDate[300] = "Prompts the user for a month, day, and year to change the MPX date to.\n";	
-	char messageCreatePCB[300] = "Creates a PCB.\n";	
-	char messageShowAll[300] = "Shows all PCBs Created.\n";	
-	char messageShowReady[300] = "Shows PCBs that are ready for execution,\n";
-	char messageShowBlocked[300] = "Shows all the blocked PCBs.\n";
-	char messageShowPCB[300] = "Shows a single, user chosen PCB.\n";
-	char messageDeletePCB[300] = "Deletes a PCB from the appropriate queue and then free all associated memory.\n";
-	char messageSuspendPCB[300] = "Places a PCB in the suspended state.\n";
-	char messageResumePCB[300] = "Places a PCB in the not suspended state.\n";
-	char messageBlockPCB[300] = "Sets a PCB's state to blocked.\n";
-	char messageUnblockPCB[300] = "Sets a PCB's state to unblocked.\n";
-	char messageSetPCBPriority[300] = "Sets a PCB's priority.\n";
+	
+	char *messageVersion= "Version displays the version of MPX-OS currently running.\n"; 
+	int versionSize = sizeof(messageVersion);
+
+	char *messageHelp = "Help displays necessary information on the function. \n";
+	int helpSize = sizeof(messageHelp);
+
+	char *messageShutdown = "Shutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
+	int shutdownSize = sizeof(messageShutdown);
+
+	char *messageDisplayTime = "Displays the current time of day.\n";
+	int displayTimeSize = sizeof(messageDisplayTime);
+
+	char *messageDisplayDate = "Displays the current date.\n";
+	int displayDateSize = sizeof(messageDisplayDate);
+
+	char *messageSetTime = "Prompts the user for an hour, minute, and second to change the MPX clock to.\n";
+	int setTimeSize = sizeof(messageSetTime);
+
+	char *messageSetDate = "Prompts the user for a month, day, and year to change the MPX date to.\n";	
+	int setDateSize = sizeof(messageSetDate);
+
+	char *messageCreatePCB = "Creates a PCB.\n";
+	int createPCBSize = sizeof(messageCreatePCB);
+	
+	char *messageShowAll = "Shows all PCBs Created.\n";	
+	int showAllSize = sizeof(messageShowAll);
+
+	char *messageShowReady = "Shows PCBs that are ready for execution,\n";
+	int showReadySize = sizeof(messageShowReady);
+
+	char *messageShowBlocked = "Shows all the blocked PCBs.\n";
+	int showBlockedSize = sizeof(messageShowBlocked);
+
+	char *messageShowPCB = "Shows a single, user chosen PCB.\n";
+	int showPCBSize = sizeof(messageShowPCB);
+
+	char *messageDeletePCB = "Deletes a PCB from the appropriate queue and then free all associated memory.\n";
+	int deletePCBSize = sizeof(messageDeletePCB);
+
+	char *messageSuspendPCB = "Places a PCB in the suspended state.\n";
+	int suspendPCBSize = sizeof(messageSuspendPCB);
+
+	char *messageResumePCB = "Places a PCB in the not suspended state.\n";
+	int resumePCBSize = sizeof(messageResumePCB);
+
+	char *messageBlockPCB = "Sets a PCB's state to blocked.\n";
+	int blockPCBSize = sizeof(messageBlockPCB);
+
+	char *messageUnblockPCB = "Sets a PCB's state to unblocked.\n";
+	int unblockPCBSize = sizeof(messageUnblockPCB);
+
+	char *messageSetPCBPriority = "Sets a PCB's priority.\n";
+	int setPCBPrioritySize = sizeof(messageSetPCBPriority);
 	
 		switch(i){
-			case 1: sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &msg_size);   break;
+			case 1: sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &versionSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize);   
+					break;
 
-			case 2: sys_req(WRITE, DEFAULT_DEVICE, messageHelp, &msg_size); break;
+			case 2: sys_req(WRITE, DEFAULT_DEVICE, messageHelp, &helpSize);
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize);  
+					break;
 
-			case 3: sys_req(WRITE, DEFAULT_DEVICE, messageShutdown, &msg_size); break;
+			case 3: sys_req(WRITE, DEFAULT_DEVICE, messageShutdown, &shutdownSize);
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize);  
+					break;
 
-			case 4:	sys_req(WRITE, DEFAULT_DEVICE, messageDisplayTime, &msg_size); break;
+			case 4:	sys_req(WRITE, DEFAULT_DEVICE, messageDisplayTime, &displayTimeSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					break;
 
-			case 5: sys_req(WRITE, DEFAULT_DEVICE, messageDisplayDate, &msg_size); break;
+			case 5: sys_req(WRITE, DEFAULT_DEVICE, messageDisplayDate, &displayDateSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					break;
 
-			case 6: sys_req(WRITE, DEFAULT_DEVICE, messageSetTime, &msg_size); break;
+			case 6: sys_req(WRITE, DEFAULT_DEVICE, messageSetTime, &setTimeSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					break;
 
-			case 7: sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &msg_size); break;
+			case 7: sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &setDateSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					break;
 
-			case 8: sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &msg_size); break;
+			case 8: sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &createPCBSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					break;
 
-			case 9: sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &msg_size); break;
+			case 9: sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &showAllSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					break;
 
-			case 10: sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &msg_size); break;
+			case 10: sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &showReadySize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
-			case 11: sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &msg_size); break;
+			case 11: sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &showBlockedSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
-			case 12: sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &msg_size); break;
+			case 12: sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &showPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 			
-			case 13: sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &msg_size); break;
+			case 13: sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &deletePCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
-			case 14: sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &msg_size); break;
+			case 14: sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &suspendPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
-			case 15: sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &msg_size); break;
+			case 15: sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &resumePCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 		
-			case 16: sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &msg_size); break;
+			case 16: sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &blockPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
-			case 17: sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &msg_size); break;
+			case 17: sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &unblockPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
-			case 18: sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &msg_size); break;
+			case 18: sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &setPCBPrioritySize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
+					 break;
 
 			default: displayAllCommands();
 		}
