@@ -9,6 +9,7 @@
 #include "../R1/time.h"
 #include "../../lib/colortext.h"
 #include "../R1/comhand.h"
+#include "../R3/Test_process.h"
 //#include "../R2/pcb.h"
 
 // create a global cop, and context switch that represent to the context in struct
@@ -55,3 +56,45 @@ return (u32int*) & contextSwitch;
 void Yield(){
 asm volatile("int $60");
 }
+
+void loadr3(){
+	int i = 1;
+	//Looping through each test process
+	for(i = 1; i <= 5; i++){
+		char name[9] = "process" + str(i);
+		int nameSize = sizeof(name);
+		createPCB(name, 1, 1);
+		PCB* newPCB = find_pcb(name);
+		suspend_pcb(name);
+		context* cp = (context*)(newPCB->top_of_stack);
+		memset(cp,0,sizeof(context));
+		cp->fs = 0x10;
+		cp->gs = 0x10;
+		cp->ds = 0x10;
+		cp->es = 0x10;
+		cp->cs = 0x8;
+		cp->ebp = (u32int)(newPCB->bottom_of_stack);
+		cp->esp = (u32int)(newPCB->top_of_stack);
+		cp->eflags = 0x202;
+
+		switch(i){
+		case 1:
+							//include processes file
+			cp->eip = (u32int) proc1();
+			break;
+		case 2:
+			cp->eip = (u32int) proc2();
+			break;
+		case 3:
+			cp->eip = (u32int) proc3();
+			break;
+		case 4:
+			cp->eip = (u32int) proc4();
+			break;
+		case 5:
+			cp->eip = (u32int) proc5();
+			break;
+		}
+	}
+}
+
