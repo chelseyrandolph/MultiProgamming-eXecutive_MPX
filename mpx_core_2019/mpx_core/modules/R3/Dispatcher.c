@@ -18,7 +18,7 @@ context* contextSwitch = NULL;
 extern param params;
 extern queue ready_queue;
 
-u32int* sys_call(context*registers){
+u32int* sys_call(context* registers){
 // create a temporary pcn the reperesent to the head of ready_queue
 PCB* temporary_ready = ready_queue.head;
 // check if the cop not equall null , for Idle let the pcb implies to the top of the stack then 
@@ -53,7 +53,7 @@ temporary_ready = temporary_ready->next;
 // otherwise return the function & the context switch
 return (u32int*) & contextSwitch;
 }
-void Yield(){
+void yield(){
 asm volatile("int $60");
 }
 
