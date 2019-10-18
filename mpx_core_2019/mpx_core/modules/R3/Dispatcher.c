@@ -24,20 +24,23 @@ u32int* sys_call(context* registers){
 
 	if(cop == NULL){
 		contextSwitch = registers;
-	}
+	}else{
 
-	if(params.op_code == IDLE && cop != NULL){
-		cop -> top_of_stack = (unsigned char*) registers -> esp;
-		cop -> context = registers;
-		insert_pcb(cop);
-	}else if(params.op_code == EXIT){
-		cop = NULL;
+		if(params.op_code == IDLE){
+			cop -> top_of_stack = (unsigned char*) registers -> esp;
+			cop -> context = registers;
+		
+		}else if(params.op_code == EXIT){
+			free_pcb(cop);
+		}
 	}
 
 	if(temporary_ready != NULL){
 		cop = temporary_ready;
 		remove_pcb(cop);
+		return (u32int*)cop -> top_of_stack;
 	}else{
+		free_pcb(cop);
 		cop = NULL;
 		return (u32int*) contextSwitch;
 	}
