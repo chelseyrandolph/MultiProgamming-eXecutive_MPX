@@ -2,7 +2,7 @@ void version();
 
 void displayAllCommands();
 
-int inputHelp();
+int inputHelp(char helpBuffer[]);
 
 int shutdown();
 

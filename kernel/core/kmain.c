@@ -19,7 +19,7 @@
 #include "modules/mpx_supt.h"
 #include "modules/R1/polling.h"
 #include "modules/R1/comhand.h"
-#include "modules/R3_R4/Dispatcher.h"
+#include "modules/R4/Dispatcher.h"
 
 void kmain(void)
 {

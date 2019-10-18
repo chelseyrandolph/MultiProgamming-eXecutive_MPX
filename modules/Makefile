@@ -16,9 +16,9 @@ mpx_supt.o\
 R1/time.o\
 R1/date.o\
 R1/comhand.o\
-R3_R4/pcb.o\
-R3_R4/Test_process.o\
-R3_R4/Dispatcher.o
+R4/pcb.o\
+R4/Test_process.o\
+R4/Dispatcher.o
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<

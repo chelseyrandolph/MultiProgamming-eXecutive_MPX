@@ -7,7 +7,7 @@
 
 #include <system.h>
 
-#include "modules/R3_R4/pcb.h"
+#include "modules/R4/pcb.h"
 #include <core/io.h>
 #include <core/serial.h>
 #include <core/tables.h>
