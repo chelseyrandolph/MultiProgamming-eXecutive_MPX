@@ -7,12 +7,12 @@
 
 #include <system.h>
 
+#include "modules/R3/pcb.h"
 #include <core/io.h>
 #include <core/serial.h>
 #include <core/tables.h>
 #include <core/interrupts.h>
-#include "modules/R3/pcb.h"
-
+#include "modules/mpx_supt.h"
 // Programmable Interrupt Controllers
 #define PIC1 0x20
 #define PIC2 0xA0
@@ -46,7 +46,7 @@ extern void page_fault();
 extern void reserved();
 extern void coprocessor();
 extern void rtc_isr();
-extern void sys_call_isr;
+extern void sys_call_isr();
 extern u32int* sys_call(context* registers);
 
 extern idt_entry idt_entries[256];

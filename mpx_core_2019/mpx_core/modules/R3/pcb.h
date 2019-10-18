@@ -1,5 +1,4 @@
 
-
 typedef struct PCB {
 	char name[17];
 	int process_class;	// 0 => system process  |  1 => user process

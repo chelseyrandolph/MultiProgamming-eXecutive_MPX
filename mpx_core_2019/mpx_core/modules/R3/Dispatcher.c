@@ -9,7 +9,6 @@
 #include "../../lib/colortext.h"
 #include "../R1/comhand.h"
 #include "Test_process.h"
-//#include "../R2/pcb.h"
 #include "pcb.h"
 
 // create a global cop, and context switch that represent to the context in struct

@@ -9,6 +9,7 @@
 #include "comhandsupport.h"
 #include "../../lib/colortext.h"
 #include "../R3/Dispatcher.h"
+#include "../R3/pcb.h"
 
 
 
