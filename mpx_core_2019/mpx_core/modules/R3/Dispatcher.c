@@ -19,37 +19,29 @@ extern queue ready_queue;
 
 
 u32int* sys_call(context* registers){
-
-	// create a temporary pcb that reperesents to the head of ready_queue	
+// create a temporary pcb that reperesents to the head of ready_queue	
 	PCB* temporary_ready = ready_queue.head;
-	// check if the cop not equall null , for Idle let the pcb implies to the top of the stack then 
-	// remove the cop from ready queue and insert it in the cop
-	if(cop !=NULL){
-		if(params.op_code == IDLE){
-			cop-> top_of_stack = (unsigned char*) registers;
-			//remove_pcb(cop);
-			//insert_pcb(cop); 
-		}
-		// if the params is equal to EXIt , remove the cop of pcb and free it.
-		else if(params.op_code == EXIT){
-			//remove_pcb(cop);
-			cop = NULL;
-		}
-	}
-	// if cop is not null , then let the context swithc equal to the regesters
-	else {
+
+	if(cop == NULL){
 		contextSwitch = registers;
-	} 
-		// cheacking if the temporay of the raady queue is not null, then checking if we are in the head 
-		// of ready queue , then the valuse of cop is equal to the ready_queue.head, otherwise add it the the tail.
-	if (temporary_ready !=NULL){
-		cop = temporary_ready;
-		remove_pcb(temporary_ready);
-		// return the function &cop to the to of the stack
-		return (u32int*) &cop -> top_of_stack;
 	}
-	// otherwise return the function & the context switch
-	return (u32int*) & contextSwitch;
+
+	if(params.op_code == IDLE && cop != NULL){
+		cop -> top_of_stack = (unsigned char*) registers -> esp;
+		cop -> context = registers;
+		insert_pcb(cop);
+	}else if(params.op_code == EXIT){
+		cop = NULL;
+	}
+
+	if(temporary_ready != NULL){
+		cop = temporary_ready;
+		remove_pcb(cop);
+	}else{
+		cop = NULL;
+		return (u32int*) contextSwitch;
+	}
+	return (u32int*) cop -> context;
 }
 
 
