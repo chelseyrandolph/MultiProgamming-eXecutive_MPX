@@ -37,7 +37,7 @@ u32int* sys_call(context* registers){
 
 	if(temporary_ready != NULL){
 		cop = temporary_ready;
-		remove_pcb(cop);
+		remove_pcb(temporary_ready);
 		return (u32int*)cop -> top_of_stack;
 	}else{
 		free_pcb(cop);

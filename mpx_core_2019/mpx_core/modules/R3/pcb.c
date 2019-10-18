@@ -114,7 +114,8 @@ PCB* find_pcb(char *process_name){
 
 
 int insert_pcb(PCB *pcb){
-	
+	pcb->next = NULL;
+	pcb->prev = NULL;
 	if(pcb->readystate == 0 && pcb->suspended == 0){	//ready_queue
 		if(ready_queue.count == 0){
 			ready_queue.head = pcb;
