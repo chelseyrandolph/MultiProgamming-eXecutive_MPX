@@ -67,9 +67,11 @@ int inputHelp(char helpBuffer[]){
 	char *messageSetDate = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";	
 	int setDateSize = sizeof(messageSetDate);
 
+
+/* Temporary command from R2.
 	char *messageCreatePCB = "\nCreates a PCB.\n";
 	int createPCBSize = sizeof(messageCreatePCB);
-	
+*/	
 	char *messageShowAll = "\nShows all PCBs Created.\n";	
 	int showAllSize = sizeof(messageShowAll);
 
@@ -82,8 +84,10 @@ int inputHelp(char helpBuffer[]){
 	char *messageShowPCB = "\nShows a single, user chosen PCB.\n";
 	int showPCBSize = sizeof(messageShowPCB);
 
+/* Temporary command from R2.
 	char *messageDeletePCB = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
 	int deletePCBSize = sizeof(messageDeletePCB);
+*/
 
 	char *messageSuspendPCB = "\nPlaces a PCB in the suspended state.\n";
 	int suspendPCBSize = sizeof(messageSuspendPCB);
@@ -91,11 +95,13 @@ int inputHelp(char helpBuffer[]){
 	char *messageResumePCB = "\nPlaces a PCB in the not suspended state.\n";
 	int resumePCBSize = sizeof(messageResumePCB);
 
+/* Temporary commands from R2.
 	char *messageBlockPCB = "\nSets a PCB's state to blocked.\n";
 	int blockPCBSize = sizeof(messageBlockPCB);
 
 	char *messageUnblockPCB = "\nSets a PCB's state to unblocked.\n";
 	int unblockPCBSize = sizeof(messageUnblockPCB);
+*/
 
 	char *messageSetPCBPriority = "\nSets a PCB's priority.\n";
 	int setPCBPrioritySize = sizeof(messageSetPCBPriority);
@@ -132,38 +138,38 @@ int inputHelp(char helpBuffer[]){
 					sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &setDateSize);
 					break;
 
-			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
+			/*case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
 					sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &createPCBSize); 
 					break;
-
-			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+			*/
+			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
 					sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &showAllSize);   
 					break;
 
-			case 10: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &showReadySize); 
 					 break;
 
-			case 11: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 10: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &showBlockedSize); 
 					 break;
 
-			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 11: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &showPCBSize); 
 					 break;
-			
+			/*
 			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &deletePCBSize);
 					 break;
-
-			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			*/
+			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &suspendPCBSize); 
 					 break;
 
-			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
 					 sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &resumePCBSize); 
 					 break;
-		
+			/*
 			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &blockPCBSize); 
 					 break;
@@ -171,12 +177,12 @@ int inputHelp(char helpBuffer[]){
 			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &unblockPCBSize); 
 					 break;
-
-			case 18: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			*/
+			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &setPCBPrioritySize); 
 					 break;
 
-			case 19: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
 					 break;
 
@@ -262,18 +268,18 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
-			case 9: show_all();						break;
-			case 10: show_blocked();				break;
-			case 11: show_ready();					break;
-			case 12: show_pcb(tokenizedBuffer[1]);  break;
-			case 13: delete_pcb(tokenizedBuffer[1]);break;
-			case 14: suspend_pcb(tokenizedBuffer[1]); break;
-			case 15: resume_pcb(tokenizedBuffer[1]); break;
-			case 16: block_pcb(tokenizedBuffer[1]); break;
-			case 17: unblock_pcb(tokenizedBuffer[1]); break;
-			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
-			case 19: loadr3(); break;
+			//case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
+			case 8: show_all();						break;
+			case 9: show_blocked();				break;
+			case 10: show_ready();					break;
+			case 11: show_pcb(tokenizedBuffer[1]);  break;
+			//case 13: delete_pcb(tokenizedBuffer[1]);break;
+			case 12: suspend_pcb(tokenizedBuffer[1]); break;
+			case 13: resume_pcb(tokenizedBuffer[1]); break;
+			//case 16: block_pcb(tokenizedBuffer[1]); break;
+			//case 17: unblock_pcb(tokenizedBuffer[1]); break;
+			case 14: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
+			case 15: loadr3(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
