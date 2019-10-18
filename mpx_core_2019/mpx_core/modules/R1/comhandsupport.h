@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-char commands[16][30] = {
+char commands[17][30] = {
     "version",
     "help",
     "shutdown",
@@ -26,10 +26,11 @@ char commands[16][30] = {
 	//"block-pcb",
 	"unblock-pcb",
 	"set-pcb-priority",
+	"yield",
 	"loadr3"
 };
 //Paramarized help menu 
-char helpcommands[16][70] = {
+char helpcommands[17][70] = {
     "version",
     "help [command]",
     "shutdown",
@@ -48,5 +49,6 @@ char helpcommands[16][70] = {
 	//"block-pcb \033[0;34m[pcb_name]\033[0m",
 	//"unblock-pcb \033[0;34m[pcb_name]\033[0m",
 	"set-pcb-priority \033[0;34m[pcb_name] [new_priority]\033[0m",
+	"yield",
 	"loadr3"
 };

@@ -106,6 +106,9 @@ int inputHelp(char helpBuffer[]){
 	char *messageSetPCBPriority = "\nSets a PCB's priority.\n";
 	int setPCBPrioritySize = sizeof(messageSetPCBPriority);
 
+	char *messageYield = "\nCauses comhand to yield to other processes.\n";
+	int yieldSize = sizeof(messageYield);
+
 	char *loadr3msg = "\nLoads test processes.\n";
 	int loadr3Size = sizeof(loadr3msg);
 	
@@ -178,11 +181,16 @@ int inputHelp(char helpBuffer[]){
 					 sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &unblockPCBSize); 
 					 break;
 			*/
+
 			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &setPCBPrioritySize); 
 					 break;
 
-			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+					 sys_req(WRITE, DEFAULT_DEVICE, messageYield, &yieldSize);
+					 break;
+
+			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
 					 break;
 
@@ -279,7 +287,8 @@ int comhand(){
 			//case 16: block_pcb(tokenizedBuffer[1]); break;
 			//case 17: unblock_pcb(tokenizedBuffer[1]); break;
 			case 14: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
-			case 15: loadr3(); break;
+			case 15: yield(); break;
+			case 16: loadr3(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}

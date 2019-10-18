@@ -19,17 +19,17 @@ queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 PCB* allocate_pcb(){
 	
 	PCB *pcb = sys_alloc_mem(sizeof(pcb));
-	// set up memory
 	pcb -> bottom_of_stack = sys_alloc_mem(1024);
-	pcb -> top_of_stack = pcb -> bottom_of_stack - sizeof(context) + 1024;
-	pcb -> context = (context*) pcb -> top_of_stack;
 	return pcb;
 }
 
 PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
-	//new_pcb->top_of_stack = bottom_of_stack + 1024 - sizeof(pcb->context); TODO MUST BE ADDED 
+
+	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + 1024 - sizeof(context);
+	new_pcb -> context = (context*) new_pcb -> top_of_stack;
+
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
 		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
 	}else{
