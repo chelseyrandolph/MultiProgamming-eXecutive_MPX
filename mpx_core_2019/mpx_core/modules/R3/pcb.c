@@ -63,9 +63,6 @@ PCB* find_pcb(char *process_name){
 	int i;
 
 	PCB *temp_process = ready_queue.head;	//points to the PCB at the head of the queue
-	//int size = 16;
-	//sys_req(WRITE, DEFAULT_DEVICE, process_name, &size);
-	//sys_req(WRITE, DEFAULT_DEVICE, itoa(ready_queue.count), &size);
 	
 	int found = 0;
 	while(!found){
@@ -73,7 +70,6 @@ PCB* find_pcb(char *process_name){
 			return temp_process;
 		}else if(temp_process == ready_queue.tail){
 			found = 1;
-			//klogv("\nprocess is tail");
 		}else{
 			temp_process = temp_process->next;
 		}
@@ -121,14 +117,12 @@ int insert_pcb(PCB *pcb){
 			ready_queue.head = pcb;
 			ready_queue.tail = pcb;
 			ready_queue.count++;
-			//klogv("inserted 1st pcb");
 		}else{
 			int found = 0;
 			PCB *temp_pcb = ready_queue.head;
 			while(!found){
 				
-				if(temp_pcb->priority < pcb->priority){
-				//	klogv("	1 matching priorities");
+				if(temp_pcb->priority > pcb->priority){
 					pcb->next = temp_pcb;
 					temp_pcb->prev->next = pcb;
 					pcb->prev = temp_pcb->prev;
@@ -139,7 +133,6 @@ int insert_pcb(PCB *pcb){
 					}
 					ready_queue.count++;
 				}else if(temp_pcb == ready_queue.tail){
-				//	klogv("	2 at the tail");
 					ready_queue.tail = pcb;
 					temp_pcb->next = pcb;
 					pcb->prev = temp_pcb;
@@ -158,13 +151,12 @@ int insert_pcb(PCB *pcb){
 			suspended_ready_queue.head = pcb;
 			suspended_ready_queue.tail = pcb;
 			suspended_ready_queue.count++;
-			//klogv("inserted 1st pcb");
 		}else{
 			int found = 0;
 			PCB *temp_pcb = suspended_ready_queue.head;
 			while(!found){
 				
-				if(temp_pcb->priority < pcb->priority){
+				if(temp_pcb->priority > pcb->priority){
 				//	klogv("	1 matching priorities");
 					pcb->next = temp_pcb;
 					temp_pcb->prev->next = pcb;
