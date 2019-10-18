@@ -19,11 +19,10 @@ queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 PCB* allocate_pcb(){
 	
 	PCB *pcb = sys_alloc_mem(sizeof(pcb));
-	
 	// set up memory
 	pcb -> bottom_of_stack = sys_alloc_mem(1024);
-	//pcb -> top_of_stack = pcb -> bottom_of_stack - sizeof(CONTENT) + 1024;
-	//pcb -> content = (CONTENT*) pcb -> top_of_stack;
+	pcb -> top_of_stack = pcb -> bottom_of_stack - sizeof(context) + 1024;
+	pcb -> context = (context*) pcb -> top_of_stack;
 	return pcb;
 }
 
@@ -49,6 +48,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	}
 	new_pcb->readystate = 0; //ready
 	new_pcb->suspended = 0;		//not suspended
+	
 	return new_pcb;
 }
 
