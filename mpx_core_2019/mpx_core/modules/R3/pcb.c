@@ -157,7 +157,6 @@ int insert_pcb(PCB *pcb){
 			while(!found){
 				
 				if(temp_pcb->priority > pcb->priority){
-				//	klogv("	1 matching priorities");
 					pcb->next = temp_pcb;
 					temp_pcb->prev->next = pcb;
 					pcb->prev = temp_pcb->prev;
@@ -168,7 +167,6 @@ int insert_pcb(PCB *pcb){
 					}
 					suspended_ready_queue.count++;
 				}else if(temp_pcb == suspended_ready_queue.tail){
-				//	klogv("	2 at the tail");
 					suspended_ready_queue.tail = pcb;
 					temp_pcb->next = pcb;
 					pcb->prev = temp_pcb;
@@ -187,14 +185,12 @@ int insert_pcb(PCB *pcb){
 			blocked_queue.head = pcb;
 			blocked_queue.tail = pcb;
 			blocked_queue.count++;
-			//klogv("inserted 1st pcb");
 		}else{
 			PCB *temp_pcb = blocked_queue.head;
 			temp_pcb->prev = pcb;
 			pcb->next = temp_pcb;
 			blocked_queue.head = pcb;
 			blocked_queue.count++;
-			//klogv("inserted a pcb");
 		}
 	}
 	if(pcb->readystate == -1 && pcb->suspended == 1){	//suspended_blocked_queue
@@ -203,14 +199,12 @@ int insert_pcb(PCB *pcb){
 			suspended_blocked_queue.head = pcb;
 			suspended_blocked_queue.tail = pcb;
 			suspended_blocked_queue.count++;
-			//klogv("inserted 1st pcb");
 		}else{
 			PCB *temp_pcb = ready_queue.head;
 			temp_pcb->prev = pcb;
 			pcb->next = temp_pcb;
 			suspended_blocked_queue.head = pcb;
 			suspended_blocked_queue.count++;
-			//klogv("inserted a pcb");
 		}
 	}
 	return 0;
@@ -516,9 +510,9 @@ int show_ready(){
 }
 
 int show_blocked(){
-	char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended    Priority\033[0m\n";
+	char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n";
 	int size = sizeof(process_msg);
-	char *lines = "\033[1;34m-----------------------------------------------------------------------------------------------\033[0m\n";
+	char *lines = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
 	int linesize = sizeof(lines);
 	char *newline = "\n";
 	int newlineSize = sizeof(newline);
@@ -561,9 +555,6 @@ int show_blocked(){
 }
 
 int show_all(){
-	/*char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended    Priority\033[0m\n";
-	int size = sizeof(process_msg);
-	sys_req(WRITE, DEFAULT_DEVICE, process_msg, &size);*/
 	show_ready();
 	show_blocked();
 	int nl = 2;
