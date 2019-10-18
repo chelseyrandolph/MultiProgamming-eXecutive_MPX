@@ -25,7 +25,7 @@ char commands[20][30] = {
 	"resume-pcb",
 	"block-pcb",
 	"unblock-pcb",
-	"set-pcb-priority"
+	"set-pcb-priority",
 	"loadr3"
 };
 //Paramarized help menu 
@@ -47,6 +47,6 @@ char helpcommands[20][70] = {
 	"resume-pcb \033[0;34m[pcb_name]\033[0m",
 	"block-pcb \033[0;34m[pcb_name]\033[0m",
 	"unblock-pcb \033[0;34m[pcb_name]\033[0m",
-	"set-pcb-priority \033[0;34m[pcb_name] [new_priority]\033[0m"
+	"set-pcb-priority \033[0;34m[pcb_name] [new_priority]\033[0m",
 	"loadr3"
 };
