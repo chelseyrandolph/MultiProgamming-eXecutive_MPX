@@ -64,10 +64,12 @@ void infinite(){
 		int infiniteSize = sizeof(infinite);
 		sys_req(WRITE, DEFAULT_DEVICE, infinite, &infiniteSize);
 		sys_req(IDLE, COM1, NULL,NULL);
+		delete_pcb("infinite_process");
 	}
 }
 
 void loadProcess(char* name, int class, int priority, void* function){
+
 	PCB* new_pcb = setup_pcb(name, class, priority);
 	insert_pcb(new_pcb);
 	context* cp = (context*)(new_pcb -> top_of_stack);

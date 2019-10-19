@@ -77,15 +77,15 @@ void kmain(void)
 //Loading initial processes
    // 5.-) IDLE process
    klogv("Initilizing idle process...");
-   loadProcess("idle", 0, 9, &idle);
+   loadProcess("idle_process", 0, 9, &idle);
 
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
-   loadProcess("comhand", 0, 0, &comhand);
+   loadProcess("comhand_process", 0, 0, &comhand);
 
    // 5.-) infinite process
    klogv("Initilizing infinite process...");
-   loadProcess("infinite", 1, 1, &infinite);
+   loadProcess("infinite_process", 1, 1, &infinite);
 
 
 
