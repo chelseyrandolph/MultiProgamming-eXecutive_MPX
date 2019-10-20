@@ -27,7 +27,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
 
-	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + 1024 - sizeof(context);
+	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + sizeof(new_pcb->stack) - sizeof(context);
 	new_pcb -> context = (context*) new_pcb -> top_of_stack;
 
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
@@ -40,7 +40,6 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	}else{
 		return NULL; 
 	}
-	//pclass = 1; //HARD-CODED
 	if(pclass == 0 || pclass ==1){			// process class must be either 0 for system, or 1 for user process
 		new_pcb -> process_class = pclass;	// sets the new process's class to the pclass parameter
 	}else{
@@ -50,6 +49,29 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	new_pcb->suspended = 0;		//not suspended
 	
 	return new_pcb;
+}
+
+void remove_all(){
+	PCB* pcb = ready_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
+	pcb = suspended_ready_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
+	pcb = blocked_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
+	pcb = suspended_blocked_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
 }
 
 int free_pcb(PCB* pcb){
@@ -404,11 +426,6 @@ int set_pcb_priority(char *name, int new_priority){
 int show_pcb(char *name){
 	PCB *pcb = find_pcb(name);
 	int name_size = 16;
-	//sys_req(WRITE, DEFAULT_DEVICE, "\nname: ", &name_size);
-	//sys_req(WRITE, DEFAULT_DEVICE, name, &name_size);
-	//sys_req(WRITE, DEFAULT_DEVICE, "\npcb->name: ", &name_size);
-	//sys_req(WRITE, DEFAULT_DEVICE, pcb->name, &name_size);	
-	//sys_req(WRITE, DEFAULT_DEVICE, "\n", &name_size);
 	char *pclass;
 	char *readystate_str;
 	char *suspended_str;
@@ -417,7 +434,6 @@ int show_pcb(char *name){
 	int two = 2;
 	char namestr[17];
 	strcpy(namestr, name);
-	//char printstr[17] = namestr
 	int i;
 	for(i = strlen(name); i < name_size; i++){
 		

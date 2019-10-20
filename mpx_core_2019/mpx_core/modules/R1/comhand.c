@@ -9,10 +9,6 @@
 #include "comhandsupport.h"
 #include "../../lib/colortext.h"
 #include "../R3/Dispatcher.h"
-//#include "../R3/pcb.h"
-
-
-
 
 
 void version(){			//Prints the current version
@@ -34,6 +30,12 @@ void displayAllCommands(){
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 	}
 	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
+}
+
+void clear(){
+	int size = 10;
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[2J", &size);
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[1;1H", &size);
 }
 
 int inputHelp(char helpBuffer[]){
@@ -112,6 +114,9 @@ int inputHelp(char helpBuffer[]){
 
 	char *loadr3msg = "\nLoads test processes.\n";
 	int loadr3Size = sizeof(loadr3msg);
+	
+	char *clearMsg = "\nThis clears the terminal.\n";
+	int clearSize = sizeof(clearMsg);
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
@@ -195,6 +200,10 @@ int inputHelp(char helpBuffer[]){
 					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
 					 break;
 
+			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, clearMsg, &clearSize); 
+					 break;
+
 			default: displayAllCommands();
 		}
 		return 0;
@@ -212,8 +221,6 @@ int shutDown(){
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	
 	if(strcmp(ans, "Y")==0){
-
-		//sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mMPX is shutting down...\033[0m\n", &promptInt);
 		write_text_red("MPX is shutting down \n");
 		return 1;
 	}else if(strcmp(ans, "N")==0){
@@ -277,22 +284,25 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
-			case 9: show_all();						break;
-			case 10: show_blocked();				break;
-			case 11: show_ready();					break;
-			case 12: show_pcb(tokenizedBuffer[1]);  break;
-			case 13: delete_pcb(tokenizedBuffer[1]);break;
-			case 14: suspend_pcb(tokenizedBuffer[1]); break;
-			case 15: resume_pcb(tokenizedBuffer[1]); break;
-			case 16: block_pcb(tokenizedBuffer[1]); break;
-			case 17: unblock_pcb(tokenizedBuffer[1]); break;
-			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
-			case 19: yield(); break;
-			case 20: loadr3(); break;
+			//case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
+			case 8: show_all();						break;
+			case 9: show_blocked();				break;
+			case 10: show_ready();					break;
+			case 11: show_pcb(tokenizedBuffer[1]);  break;
+			//case 13: delete_pcb(tokenizedBuffer[1]);break;
+			case 12: suspend_pcb(tokenizedBuffer[1]); break;
+			case 13: resume_pcb(tokenizedBuffer[1]); break;
+			//case 16: block_pcb(tokenizedBuffer[1]); break;
+			//case 17: unblock_pcb(tokenizedBuffer[1]); break;
+			case 14: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
+			case 15: yield(); break;
+			case 16: loadr3(); break;
+			case 17: clear(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
+	remove_all();
+	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 	return -1;
 
 }
@@ -311,28 +321,12 @@ void displayMenu(){
 	sys_req(WRITE,DEFAULT_DEVICE,header4,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
-//	sys_req(WRITE,DEFAULT_DEVICE, menu, &menuSize);
-	/*int k;
-	int comLength = sizeof(commands)/sizeof(commands[0]);
-	int one = 1;
-	for(k=0; k<comLength; k++){
-		int tempSize = 50;
-		
-		sys_req(WRITE,DEFAULT_DEVICE,commands[k],&tempSize);
-		sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
-	}
-	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
-	*/
-}
 
-void comhandinitaliz(){
-	displayMenu();
 	char *init_text = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
 	int init_size = sizeof(init_text);
 	sys_req(WRITE, DEFAULT_DEVICE, init_text, &init_size);
-	comhand();
-//	return -1;
 }
+
 
 
 

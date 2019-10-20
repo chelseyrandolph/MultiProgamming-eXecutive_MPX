@@ -25,9 +25,8 @@ u32int* sys_call(context* registers){
 	if(cop == NULL){
 		contextSwitch = registers;
 	}else{
-
 		if(params.op_code == IDLE){
-			cop -> top_of_stack = (unsigned char*) registers -> esp;
+			cop -> top_of_stack = (unsigned char*) registers;
 			cop -> context = registers;
 		
 		}else if(params.op_code == EXIT){
@@ -52,14 +51,6 @@ void yield(){
 asm volatile("int $60");
 }
 
-void infinite(){
-	while(1){
-		char *infinite = "Infinite";
-		int infiniteSize = sizeof(infinite);
-		sys_req(WRITE, DEFAULT_DEVICE, infinite, &infiniteSize);
-		sys_req(IDLE, COM1, NULL,NULL);
-	}
-}
 
 void loadProcess(char* name, int class, int priority, void* function){
 	PCB* new_pcb = setup_pcb(name,class,priority);
@@ -77,16 +68,16 @@ void loadProcess(char* name, int class, int priority, void* function){
 }
 
 void loadr3(){
-	loadProcess("process1", 1, 1, &proc1);
-	suspend_pcb("process1");
-	loadProcess("process2", 1, 1, &proc2);
-	suspend_pcb("process2");
-	loadProcess("process3", 1, 1, &proc3);
-	suspend_pcb("process3");
-	loadProcess("process4", 1, 1, &proc4);
-	suspend_pcb("process4");
-	loadProcess("process5", 1, 1, &proc5);
-	suspend_pcb("process5");
+	loadProcess("process01", 1, 1, &proc1);
+	suspend_pcb("process01");
+	loadProcess("process02", 1, 1, &proc2);
+	suspend_pcb("process02");
+	loadProcess("process03", 1, 1, &proc3);
+	suspend_pcb("process03");
+	loadProcess("process04", 1, 1, &proc4);
+	suspend_pcb("process04");
+	loadProcess("process05", 1, 1, &proc5);
+	suspend_pcb("process05");
 
 }
 
