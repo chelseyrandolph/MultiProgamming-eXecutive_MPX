@@ -83,10 +83,11 @@ void kmain(void)
    klogv("Transferring control to commhand...");
    loadProcess("comhand_process", 0, 0, &comhand);
 
-   // 5.-) infinite process
+   // 5.-) Infinite process
    klogv("Initilizing infinite process...");
    loadProcess("infinite_process", 1, 1, &infinite);
 
+   yield();
 
 
 
