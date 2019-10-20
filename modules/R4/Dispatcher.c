@@ -36,8 +36,10 @@ u32int* sys_call(context* registers){
 	}
 
 	if(temporary_ready != NULL){
-		cop = temporary_ready;
 		remove_pcb(temporary_ready);
+		//New processes will get added back
+		insert_pcb(cop);
+		cop = temporary_ready;
 		return (u32int*)cop -> top_of_stack;
 	}else{
 		free_pcb(cop);
@@ -53,11 +55,7 @@ asm volatile("int $60");
 }
 
 
-/*
-If NOT suspended, the process can NOT be deleted
-If suspended, it may be deleted
-***PUT IN DELETE_PCB***
-*/
+
 void infinite(){
 	while(1){
 		char *infinite = "Infinite\n";
@@ -69,7 +67,6 @@ void infinite(){
 }
 
 void loadProcess(char* name, int class, int priority, void* function){
-
 	PCB* new_pcb = setup_pcb(name, class, priority);
 	insert_pcb(new_pcb);
 	context* cp = (context*)(new_pcb -> top_of_stack);
