@@ -110,6 +110,7 @@ int inputHelp(char helpBuffer[]){
 	*/
 	char *loadr3msg = "\nLoads test processes.\n";
 	int loadr3Size = sizeof(loadr3msg);
+
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
@@ -193,6 +194,7 @@ int inputHelp(char helpBuffer[]){
 					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
 					 break;
 
+
 			default: displayAllCommands();
 		}
 		return 0;
@@ -200,9 +202,12 @@ int inputHelp(char helpBuffer[]){
 }
 
 
+
+
 int shutDown(){
-	int promptInt = 50;
-	char prompt[50] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
+
+	char *prompt = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
+	int promptInt = sizeof(prompt);
 	int ansInt = 2;
 	char ans[2];
 	memset(ans, '\0', 2);
@@ -210,8 +215,6 @@ int shutDown(){
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	
 	if(strcmp(ans, "Y")==0){
-
-		//sys_req(WRITE, DEFAULT_DEVICE, "\033[1;33mMPX is shutting down...\033[0m\n", &promptInt);
 		write_text_red("MPX is shutting down \n");
 		return 1;
 	}else if(strcmp(ans, "N")==0){
@@ -289,6 +292,10 @@ int comhand(){
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}
+//Remove and free all queues
+//When comhand quits, the queues should be empty
+
+	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 	return -1;
 
 }

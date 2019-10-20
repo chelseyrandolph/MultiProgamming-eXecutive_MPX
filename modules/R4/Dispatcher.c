@@ -27,7 +27,7 @@ u32int* sys_call(context* registers){
 	}else{
 
 		if(params.op_code == IDLE){
-			cop -> top_of_stack = (unsigned char*) registers -> esp;
+			cop -> top_of_stack = (unsigned char*) registers;
 			cop -> context = registers;
 		
 		}else if(params.op_code == EXIT){
@@ -57,12 +57,12 @@ asm volatile("int $60");
 
 
 void infinite(){
+	char *infinite = "Infinite\n";
+	int infiniteSize = sizeof(infinite);
+	memset(infinite, '\0', infiniteSize);
 	while(1){
-		char *infinite = "Infinite\n";
-		int infiniteSize = sizeof(infinite);
 		sys_req(WRITE, DEFAULT_DEVICE, infinite, &infiniteSize);
 		sys_req(IDLE, COM1, NULL,NULL);
-		delete_pcb("infinite_process");
 	}
 }
 

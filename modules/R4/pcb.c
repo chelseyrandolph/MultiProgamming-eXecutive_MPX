@@ -27,7 +27,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
 
-	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + 1024 - sizeof(context);
+	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + sizeof(new_pcb->bottom_of_stack) - sizeof(context);
 	new_pcb -> context = (context*) new_pcb -> top_of_stack;
 
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters

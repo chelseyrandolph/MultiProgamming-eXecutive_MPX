@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-char commands[17][30] = {
+char commands[16][30] = {
     "version",
     "help",
     "shutdown",
@@ -30,7 +30,7 @@ char commands[17][30] = {
 	"loadr3"
 };
 //Paramarized help menu 
-char helpcommands[17][70] = {
+char helpcommands[16][70] = {
     "version",
     "help [command]",
     "shutdown",
