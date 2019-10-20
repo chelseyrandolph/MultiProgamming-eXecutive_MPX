@@ -277,19 +277,19 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			//case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
-			case 8: show_all();						break;
-			case 9: show_blocked();				break;
-			case 10: show_ready();					break;
-			case 11: show_pcb(tokenizedBuffer[1]);  break;
-			//case 13: delete_pcb(tokenizedBuffer[1]);break;
-			case 12: suspend_pcb(tokenizedBuffer[1]); break;
-			case 13: resume_pcb(tokenizedBuffer[1]); break;
-			//case 16: block_pcb(tokenizedBuffer[1]); break;
-			//case 17: unblock_pcb(tokenizedBuffer[1]); break;
-			case 14: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
-			case 15: yield(); break;
-			case 16: loadr3(); break;
+			case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
+			case 9: show_all();						break;
+			case 10: show_blocked();				break;
+			case 11: show_ready();					break;
+			case 12: show_pcb(tokenizedBuffer[1]);  break;
+			case 13: delete_pcb(tokenizedBuffer[1]);break;
+			case 14: suspend_pcb(tokenizedBuffer[1]); break;
+			case 15: resume_pcb(tokenizedBuffer[1]); break;
+			case 16: block_pcb(tokenizedBuffer[1]); break;
+			case 17: unblock_pcb(tokenizedBuffer[1]); break;
+			case 18: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
+			case 19: yield(); break;
+			case 20: loadr3(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 	}

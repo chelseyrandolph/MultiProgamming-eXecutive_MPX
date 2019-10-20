@@ -48,7 +48,7 @@ void kmain(void)
    init_serial(COM1);
    set_serial_out(COM1);
    set_serial_in(COM1);
-   mpx_init(MODULE_R1);
+   mpx_init(MODULE_R3);
    
    // 3) Descriptor Tables
    klogv("Initializing descriptor tables...");
@@ -56,21 +56,16 @@ void kmain(void)
    init_idt();
    init_gdt();
 
-   init_irq();
-   init_pic();
-   sti();
-
-   init_paging();
-
-
    // 4) Virtual Memory
    klogv("Initializing virtual memory...");
-   
+   init_pic();
+   init_irq();
+   sti();
+   init_paging();
 
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
    sys_set_read(init_polling);
-
    comhandinitaliz();
 
    // 6) System Shutdown on return from your command handler
