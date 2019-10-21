@@ -38,7 +38,10 @@ u32int* sys_call(context* registers){
 	if(temporary_ready != NULL){
 		remove_pcb(temporary_ready);
 		//New processes will get added back
-		insert_pcb(cop);
+		if(cop != NULL && params.op_code != EXIT){
+			insert_pcb(cop);
+		}
+
 		cop = temporary_ready;
 		return (u32int*)cop -> top_of_stack;
 	}else{
