@@ -35,6 +35,12 @@ void displayAllCommands(){
 	sys_req(WRITE,DEFAULT_DEVICE,"\n",&one);
 }
 
+void clear(){
+	int size = 10;
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[2J", &size);
+	sys_req(WRITE, DEFAULT_DEVICE, "\033[1;1H", &size);
+}
+
 int inputHelp(char helpBuffer[]){
 	int tempSize = 45;
 	int i = -1;
@@ -45,155 +51,137 @@ int inputHelp(char helpBuffer[]){
 			i = k+1;
 		}
 	}
-	
-	char *messageVersion= "\nVersion displays the version of MPX-OS currently running.\n"; 
-	int versionSize = sizeof(messageVersion);
+	int size = 200;
+	char messageVersion[size] = "\nVersion displays the version of MPX-OS currently running.\n"; 
 
-	char *messageHelp = "\nHelp displays necessary information on the function. \n";
-	int helpSize = sizeof(messageHelp);
+	char messageHelp[size] = "\nHelp displays necessary information on the function. \n";
 
-	char *messageShutdown = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
-	int shutdownSize = sizeof(messageShutdown);
+	char messageShutdown[size] = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
 
-	char *messageDisplayTime = "\nDisplays the current time of day.\n";
-	int displayTimeSize = sizeof(messageDisplayTime);
+	char messageDisplayTime[size] = "\nDisplays the current time of day.\n";
 
-	char *messageDisplayDate = "\nDisplays the current date.\n";
-	int displayDateSize = sizeof(messageDisplayDate);
+	char messageDisplayDate[size] = "\nDisplays the current date.\n";
 
-	char *messageSetTime = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
-	int setTimeSize = sizeof(messageSetTime);
+	char messageSetTime[size] = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
 
-	char *messageSetDate = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";	
-	int setDateSize = sizeof(messageSetDate);
-
+	char messageSetDate[size] = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";
 
 /* Temporary command from R2.
-	char *messageCreatePCB = "\nCreates a PCB.\n";
-	int createPCBSize = sizeof(messageCreatePCB);
+	char messageCreatePCB[size] = "\nCreates a PCB.\n";
 */	
-	char *messageShowAll = "\nShows all PCBs Created.\n";	
-	int showAllSize = sizeof(messageShowAll);
+	char messageShowAll[size] = "\nShows all PCBs Created.\n";
 
-	char *messageShowReady = "\nShows PCBs that are ready for execution,\n";
-	int showReadySize = sizeof(messageShowReady);
+	char messageShowReady[size] = "\nShows PCBs that are ready for execution,\n";
 
-	char *messageShowBlocked = "\nShows all the blocked PCBs.\n";
-	int showBlockedSize = sizeof(messageShowBlocked);
+	char messageShowBlocked[size] = "\nShows all the blocked PCBs.\n";
 
-	char *messageShowPCB = "\nShows a single, user chosen PCB.\n";
-	int showPCBSize = sizeof(messageShowPCB);
+	char messageShowPCB[size] = "\nShows a single, user chosen PCB.\n";
 
-	char *messageDeletePCB = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
-	int deletePCBSize = sizeof(messageDeletePCB);
+	char messageDeletePCB[size] = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
 
+	char messageSuspendPCB[size] = "\nPlaces a PCB in the suspended state.\n";
 
-	char *messageSuspendPCB = "\nPlaces a PCB in the suspended state.\n";
-	int suspendPCBSize = sizeof(messageSuspendPCB);
-
-	char *messageResumePCB = "\nPlaces a PCB in the not suspended state.\n";
-	int resumePCBSize = sizeof(messageResumePCB);
+	char messageResumePCB[size] = "\nPlaces a PCB in the not suspended state.\n";
 
 /* Temporary commands from R2.
-	char *messageBlockPCB = "\nSets a PCB's state to blocked.\n";
-	int blockPCBSize = sizeof(messageBlockPCB);
+	char messageBlockPCB[size] = "\nSets a PCB's state to blocked.\n";
 
-	char *messageUnblockPCB = "\nSets a PCB's state to unblocked.\n";
-	int unblockPCBSize = sizeof(messageUnblockPCB);
+	char messageUnblockPCB[size] = "\nSets a PCB's state to unblocked.\n";
 */
 
-	char *messageSetPCBPriority = "\nSets a PCB's priority.\n";
-	int setPCBPrioritySize = sizeof(messageSetPCBPriority);
+	char messageSetPCBPriority[size] = "\nSets a PCB's priority.\n";
 
-	/*char *messageYield = "\nCauses comhand to yield to other processes.\n";
-	int yieldSize = sizeof(messageYield);
+	/*char messageYield[size] = "\nCauses comhand to yield to other processes.\n";
 	*/
-	char *loadr3msg = "\nLoads test processes.\n";
-	int loadr3Size = sizeof(loadr3msg);
+	char loadr3msg[size] = "\nLoads test processes.\n";
 
+	char clearMsg[size] = "\nClears the terminal.\n";
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &versionSize);
+					sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &size);
 					break;
 
 			case 2: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
-					sys_req(WRITE, DEFAULT_DEVICE, messageHelp, &helpSize);
+					sys_req(WRITE, DEFAULT_DEVICE, messageHelp, &size);
 					break;
 
 			case 3: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
-					sys_req(WRITE, DEFAULT_DEVICE, messageShutdown, &shutdownSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, messageShutdown, &size); 
 					break;
 
 			case 4:	sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
-					sys_req(WRITE, DEFAULT_DEVICE, messageDisplayTime, &displayTimeSize);
+					sys_req(WRITE, DEFAULT_DEVICE, messageDisplayTime, &size);
 					break;
 
 			case 5: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageDisplayDate, &displayDateSize);  
+					sys_req(WRITE, DEFAULT_DEVICE, messageDisplayDate, &size);  
 					break;
 
 			case 6: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					sys_req(WRITE, DEFAULT_DEVICE, messageSetTime, &setTimeSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, messageSetTime, &size); 
 					break;
 
 			case 7: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &setDateSize);
+					sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &size);
 					break;
 
 			/*case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
-					sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &createPCBSize); 
+					sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &size); 
 					break;
 			*/
 			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &showAllSize);   
+					sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &size);   
 					break;
 
 			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &showReadySize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &size); 
 					 break;
 
 			case 10: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &showBlockedSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &size); 
 					 break;
 
 			case 11: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &showPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &size); 
 					 break;
 			
 			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &deletePCBSize);
+					 sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &size);
 					 break;
 			
 			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &suspendPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &size); 
 					 break;
 
 			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					 sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &resumePCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &size); 
 					 break;
 			/*
 			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &blockPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &size); 
 					 break;
 
 			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &unblockPCBSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &size); 
 					 break;
 			*/
 
 			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &setPCBPrioritySize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &size); 
 					 break;
 			/*
 			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					 sys_req(WRITE, DEFAULT_DEVICE, messageYield, &yieldSize);
+					 sys_req(WRITE, DEFAULT_DEVICE, messageYield, &size);
 					 break;
 			*/
 			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
+					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &size); 
 					 break;
 
+			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 sys_req(WRITE, DEFAULT_DEVICE, clearMsg, &size); 
+					 break;
 
 			default: displayAllCommands();
 		}
@@ -206,13 +194,12 @@ int inputHelp(char helpBuffer[]){
 
 
 int shutDown(){
-
-	char *prompt = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
-	int promptInt = sizeof(prompt);
+	int size = 100;
+	char prompt[size] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
 	int ansInt = 2;
 	char ans[2];
 	memset(ans, '\0', 2);
-	sys_req(WRITE, DEFAULT_DEVICE, prompt, &promptInt);
+	sys_req(WRITE, DEFAULT_DEVICE, prompt, &size);
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	
 	if(strcmp(ans, "Y")==0){
@@ -230,31 +217,25 @@ int shutDown(){
 
 
 int comhand(){
-	int quit = 0;
+	int quit = 0;		
+    char *cmdBuffer = sys_alloc_mem(100);
+	int bufferSize;
+
+//	Tokenize buffer. 
+//	This set of instructions will break the buffer on white space and put it inside a *array
+//	0 index is always the command wihle everything after is the input for the command
+	char **tokenizedBuffer = sys_alloc_mem(10);	
+	char* token = strtok(cmdBuffer, " ");
 	while(!quit){
-		char *cmdBuffer = sys_alloc_mem(100);
-		int bufferSize;
-		
-	
 //		Get a command
 		memset(cmdBuffer, '\0', 100);
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-		
-//		Tokenize buffer. 
-//		This set of instructions will break the buffer on white space and put it inside a *array
-//		0 index is always the command wihle everything after is the input for the command
-		char **tokenizedBuffer = sys_alloc_mem(10);
-		
-		char* token = strtok(cmdBuffer, " ");
-		
 		int index = 0;
 //		Change index number if you want to be able to input more than X number of words!
 		for(index=0; index<5;index++){
 			tokenizedBuffer[index] = token;
-			token = strtok(NULL, " ");
-	
-			
+			token = strtok(NULL, " ");		
 		}
 
 //		Comparing first token against all avaiable commands according to comhandsupport.h
@@ -290,6 +271,7 @@ int comhand(){
 			case 15: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
 			//case 19: yield(); break;
 			case 16: loadr3(); break;
+			case 17: clear(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
 		if(quit == 0){
@@ -307,12 +289,12 @@ int comhand(){
 
 void displayMenu(){
 	int headerSize = 70;
-	char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
-	char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
-	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
-	char header4[70] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
-	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
+	char header1[headerSize] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
+	char header2[headerSize] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
+	char header3[headerSize] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
+	char header4[headerSize] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
+	char header5[headerSize] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
+	char header6[headerSize] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
@@ -320,7 +302,7 @@ void displayMenu(){
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
 
-	char *init_text = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
+	char init_text[150] = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
 	int init_size = sizeof(init_text);
 	sys_req(WRITE, DEFAULT_DEVICE, init_text, &init_size);
 
