@@ -440,15 +440,15 @@ int set_pcb_priority(char *name, int new_priority){
 
 int show_pcb(char *name){
 	int txtSize = 50;
+	int name_size = 16;
 	PCB *pcb = find_pcb(name);
-	char pclass[50];
+	char *pclass;
 	char *readystate_str;
 	char *suspended_str;
 	char vertline[50] = " |";
 	char newline[50] = " \n";
 	char namestr[17];
 	strcpy(namestr, name);
-	//char printstr[17] = namestr
 	int i;
 	for(i = strlen(name); i < name_size; i++){
 		
@@ -482,9 +482,9 @@ int show_pcb(char *name){
 
 	sys_req(WRITE, DEFAULT_DEVICE, namestr, &txtSize);
 	sys_req(WRITE, DEFAULT_DEVICE, vertline, &txtSize);
-	sys_req(WRITE, DEFAULT_DEVICE, pclass, &txtSize);
-	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &sizeof(readystate_str);
-	sys_req(WRITE, DEFAULT_DEVICE, suspended_str, &sizeof(suspended_str);
+	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, suspended_str, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->priority), &txtSize);
 	sys_req(WRITE, DEFAULT_DEVICE, newline, &txtSize);
 	return 1;
