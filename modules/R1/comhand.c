@@ -218,31 +218,35 @@ int shutDown(){
 
 int comhand(){
 	int quit = 0;		
-    char *cmdBuffer = sys_alloc_mem(100);
+	char *cmdBuffer = sys_alloc_mem(100);
+	memset(cmdBuffer, '\0', 100);
 	int bufferSize;
-
+    
 //	Tokenize buffer. 
 //	This set of instructions will break the buffer on white space and put it inside a *array
 //	0 index is always the command wihle everything after is the input for the command
-	char **tokenizedBuffer = sys_alloc_mem(10);	
-	char* token = strtok(cmdBuffer, " ");
+	char **tokenizedBuffer = sys_alloc_mem(10);
+
+
 	while(!quit){
-//		Get a command
+		//Get a command
 		memset(cmdBuffer, '\0', 100);
-		bufferSize = 99;
+	    bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
+
+		char* token = strtok(cmdBuffer, " ");
+		
 		int index = 0;
 //		Change index number if you want to be able to input more than X number of words!
-		for(index=0; index<5;index++){
+		for(index=0; index < 5; index++){
 			tokenizedBuffer[index] = token;
 			token = strtok(NULL, " ");		
 		}
-
 //		Comparing first token against all avaiable commands according to comhandsupport.h
 		int i = -1;
 		int k;
 		int comLength = sizeof(commands)/sizeof(commands[0]);
-		for(k=0; k<comLength; k++){
+		for(k = 0; k < comLength; k++){
 			if(strcmp(tokenizedBuffer[0], commands[k])==0){
 				i = k+1;
 			}
@@ -305,7 +309,7 @@ void displayMenu(){
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
 
 	char init_text[150] = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
-	int init_size = sizeof(init_text);
+	int init_size = 150;
 	sys_req(WRITE, DEFAULT_DEVICE, init_text, &init_size);
 
 }
