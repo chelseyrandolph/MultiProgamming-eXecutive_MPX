@@ -23,11 +23,36 @@ PCB* allocate_pcb(){
 	return pcb;
 }
 
-PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to process class (system or user)
+void remove_all(){
+
+	PCB* pcb = ready_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb -> next;
+	}
+	pcb = suspended_ready_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb -> next;
+	}
+	pcb = blocked_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb -> next;
+	}
+	pcb = suspended_blocked_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb -> next;
+	}
+
+}
+
+PCB* setup_pcb(char name[], int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
 
-	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + sizeof(new_pcb->bottom_of_stack) - sizeof(context);
+	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + sizeof(new_pcb->stack) - sizeof(context);
 	new_pcb -> context = (context*) new_pcb -> top_of_stack;
 
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters

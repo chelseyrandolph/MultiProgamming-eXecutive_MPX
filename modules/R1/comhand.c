@@ -197,6 +197,7 @@ int inputHelp(char helpBuffer[]){
 
 			default: displayAllCommands();
 		}
+		
 		return 0;
 
 }
@@ -271,7 +272,7 @@ int comhand(){
 		switch(i){
 			case 1: version(); 						break;
 			case 2: inputHelp(tokenizedBuffer[1]);	break;
-			case 3: quit = shutDown();				break;
+			case 3: quit = shutDown();				break; 
 			case 4: getTime();						break;
 			case 5: getDate();						break;
 			case 6: setTime();						break;
@@ -291,10 +292,14 @@ int comhand(){
 			case 16: loadr3(); break;
 			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
 		}
+		if(quit == 0){
+			sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
+		}
 	}
 //Remove and free all queues
 //When comhand quits, the queues should be empty
-
+	suspend_pcb("infinite_process");
+	remove_all();
 	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 	return -1;
 
