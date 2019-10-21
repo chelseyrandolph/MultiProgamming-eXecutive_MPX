@@ -185,7 +185,6 @@ int inputHelp(char helpBuffer[]){
 
 			default: displayAllCommands();
 		}
-		
 		return 0;
 
 }
@@ -233,9 +232,7 @@ int comhand(){
 		memset(cmdBuffer, '\0', 100);
 	    bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-
 		char* token = strtok(cmdBuffer, " ");
-		
 		int index = 0;
 //		Change index number if you want to be able to input more than X number of words!
 		for(index=0; index < 5; index++){
@@ -251,7 +248,6 @@ int comhand(){
 				i = k+1;
 			}
 		}
-		
 		int failSize = 100;
 		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
