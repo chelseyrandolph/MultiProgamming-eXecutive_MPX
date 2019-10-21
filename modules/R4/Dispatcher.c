@@ -41,7 +41,6 @@ u32int* sys_call(context* registers){
 		if(cop != NULL && params.op_code != EXIT){
 			insert_pcb(cop);
 		}
-
 		cop = temporary_ready;
 		return (u32int*)cop -> top_of_stack;
 	}else{
@@ -60,11 +59,10 @@ asm volatile("int $60");
 
 
 void infinite(){
-	char *infinite = "Infinite\n";
+	char *infinite = "INFINITE PROCESS IS EXECUTING.\n";
 	int infiniteSize = sizeof(infinite);
 	
 	while(1){
-		//klogv("infinite\n");
 		sys_req(WRITE, DEFAULT_DEVICE, infinite, &infiniteSize);
 		sys_req(IDLE, COM1, NULL,NULL);
 	}
@@ -75,10 +73,7 @@ void loadProcess(char name[], int class, int priority, void* function){
 	PCB* new_pcb = setup_pcb(name, class, priority);
 	insert_pcb(new_pcb);
 	context* cp = (context*)(new_pcb -> top_of_stack);
-	//klogv("yep");
 	memset(cp, 0, sizeof(context));		
-	//klogv("yepagain");
-
 	cp->fs = 0x10;
 	cp->gs = 0x10;
 	cp->ds = 0x10;

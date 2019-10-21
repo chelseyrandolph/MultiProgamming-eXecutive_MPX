@@ -184,7 +184,6 @@ void idle(){
   while(1){
 	char *msg = "IDLE PROCESS EXECUTING.\n";
 	int msgSize = sizeof(msg);
-	memset(msg, '\0', msgSize);
 	sys_req(WRITE, DEFAULT_DEVICE, msg, &msgSize);
     sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
   }

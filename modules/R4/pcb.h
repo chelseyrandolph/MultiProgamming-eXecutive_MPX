@@ -11,7 +11,7 @@ typedef struct PCB {
 	unsigned char* top_of_stack;
 	struct context* context;
 	int stack_size; 
-	unsigned char* stack[1024];
+	unsigned char stack[1024];
 }PCB;
 
 typedef struct context {
@@ -40,6 +40,7 @@ PCB* allocate_pcb();
 PCB* setup_pcb(char *name, int pclass, int priority);
 
 void remove_all();
+
 /*This function is an internal function that frees the pcb's memory with sys_free_mem().*/
 int free_pcb(PCB* pcb);
 
