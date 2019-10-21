@@ -15,13 +15,13 @@
 
 
 void version(){			//Prints the current version
-	char version[20] = "MPX-OS Version 2.70\n";
+	static char version[20] = "MPX-OS Version 2.70\n";
 	write_text_bold_green(version);
 }
 
 void displayAllCommands(){
-	int msg_size = 100;
-	char message[100] = "\033[1;34mAvaiable Commands are\033[0m \n";
+	static int msg_size = 100;
+	static char message[100] = "\033[1;34mAvaiable Commands are\033[0m \n";
 	sys_req(WRITE, DEFAULT_DEVICE, message, &msg_size);
 	int k;
 	int comLength = sizeof(helpcommands)/sizeof(helpcommands[0]);
@@ -36,13 +36,13 @@ void displayAllCommands(){
 }
 
 void clear(){
-	int size = 10;
+	static int size = 10;
 	sys_req(WRITE, DEFAULT_DEVICE, "\033[2J", &size);
 	sys_req(WRITE, DEFAULT_DEVICE, "\033[1;1H", &size);
 }
 
 int inputHelp(char helpBuffer[]){
-	int tempSize = 45;
+	static int tempSize = 45;
 	int i = -1;
 	int k;
 	int comLength = sizeof(commands)/sizeof(commands[0]);
@@ -51,51 +51,51 @@ int inputHelp(char helpBuffer[]){
 			i = k+1;
 		}
 	}
-	int size = 200;
-	char messageVersion[200] = "\nVersion displays the version of MPX-OS currently running.\n"; 
+	static int size = 200;
+	static char messageVersion[200] = "\nVersion displays the version of MPX-OS currently running.\n"; 
 
-	char messageHelp[200] = "\nHelp displays necessary information on the function. \n";
+	static char messageHelp[200] = "\nHelp displays necessary information on the function. \n";
 
-	char messageShutdown[200] = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
+	static char messageShutdown[200] = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
 
-	char messageDisplayTime[200] = "\nDisplays the current time of day.\n";
+	static char messageDisplayTime[200] = "\nDisplays the current time of day.\n";
 
-	char messageDisplayDate[200] = "\nDisplays the current date.\n";
+	static char messageDisplayDate[200] = "\nDisplays the current date.\n";
 
-	char messageSetTime[200] = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
+	static char messageSetTime[200] = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
 
-	char messageSetDate[200] = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";
+	static char messageSetDate[200] = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";
 
 /* Temporary command from R2.
 	char messageCreatePCB[200] = "\nCreates a PCB.\n";
 */	
-	char messageShowAll[200] = "\nShows all PCBs Created.\n";
+	static char messageShowAll[200] = "\nShows all PCBs Created.\n";
 
-	char messageShowReady[200] = "\nShows PCBs that are ready for execution,\n";
+	static char messageShowReady[200] = "\nShows PCBs that are ready for execution,\n";
 
-	char messageShowBlocked[200] = "\nShows all the blocked PCBs.\n";
+	static char messageShowBlocked[200] = "\nShows all the blocked PCBs.\n";
 
-	char messageShowPCB[200] = "\nShows a single, user chosen PCB.\n";
+	static char messageShowPCB[200] = "\nShows a single, user chosen PCB.\n";
 
-	char messageDeletePCB[200] = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
+	static char messageDeletePCB[200] = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
 
-	char messageSuspendPCB[200] = "\nPlaces a PCB in the suspended state.\n";
+	static char messageSuspendPCB[200] = "\nPlaces a PCB in the suspended state.\n";
 
-	char messageResumePCB[200] = "\nPlaces a PCB in the not suspended state.\n";
+	static char messageResumePCB[200] = "\nPlaces a PCB in the not suspended state.\n";
 
 /* Temporary commands from R2.
-	char messageBlockPCB[200] = "\nSets a PCB's state to blocked.\n";
+	static char messageBlockPCB[200] = "\nSets a PCB's state to blocked.\n";
 
-	char messageUnblockPCB[200] = "\nSets a PCB's state to unblocked.\n";
+	static char messageUnblockPCB[200] = "\nSets a PCB's state to unblocked.\n";
 */
 
-	char messageSetPCBPriority[200] = "\nSets a PCB's priority.\n";
+	static char messageSetPCBPriority[200] = "\nSets a PCB's priority.\n";
 
 	/*char messageYield[200] = "\nCauses comhand to yield to other processes.\n";
 	*/
-	char loadr3msg[200] = "\nLoads test processes.\n";
+	static char loadr3msg[200] = "\nLoads test processes.\n";
 
-	char clearMsg[200] = "\nClears the terminal.\n";
+	static char clearMsg[200] = "\nClears the terminal.\n";
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
@@ -193,10 +193,10 @@ int inputHelp(char helpBuffer[]){
 
 
 int shutDown(){
-	int size = 100;
-	char prompt[100] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
+	static int size = 100;
+	static char prompt[100] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
 	int ansInt = 2;
-	char ans[2];
+	static char ans[2];
 	memset(ans, '\0', 2);
 	sys_req(WRITE, DEFAULT_DEVICE, prompt, &size);
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
@@ -219,7 +219,7 @@ int comhand(){
 	int quit = 0;		
 	char *cmdBuffer = sys_alloc_mem(100);
 	memset(cmdBuffer, '\0', 100);
-	int bufferSize;
+	static int bufferSize;
     
 //	Tokenize buffer. 
 //	This set of instructions will break the buffer on white space and put it inside a *array
@@ -249,7 +249,7 @@ int comhand(){
 			}
 		}
 		int failSize = 100;
-		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
+		static char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
 			case 1: version(); 						break;
 			case 2: inputHelp(tokenizedBuffer[1]);	break;
@@ -289,14 +289,14 @@ int comhand(){
 
 void displayMenu(){
 	//Displays the Menu at the beginning of the OS
-	int headerSize = 70;
+	static int headerSize = 70;
 
-	char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
-	char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
-	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
-	char header4[70] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
-	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
+	static char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
+	static char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
+	static char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
+	static char header4[70] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
+	static char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
+	static char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
@@ -304,8 +304,8 @@ void displayMenu(){
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
 
-	char init_text[150] = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
-	int init_size = 150;
+	static char init_text[150] = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
+	static int init_size = 150;
 	sys_req(WRITE, DEFAULT_DEVICE, init_text, &init_size);
 
 }
