@@ -52,50 +52,50 @@ int inputHelp(char helpBuffer[]){
 		}
 	}
 	int size = 200;
-	char messageVersion[size] = "\nVersion displays the version of MPX-OS currently running.\n"; 
+	char messageVersion[200] = "\nVersion displays the version of MPX-OS currently running.\n"; 
 
-	char messageHelp[size] = "\nHelp displays necessary information on the function. \n";
+	char messageHelp[200] = "\nHelp displays necessary information on the function. \n";
 
-	char messageShutdown[size] = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
+	char messageShutdown[200] = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
 
-	char messageDisplayTime[size] = "\nDisplays the current time of day.\n";
+	char messageDisplayTime[200] = "\nDisplays the current time of day.\n";
 
-	char messageDisplayDate[size] = "\nDisplays the current date.\n";
+	char messageDisplayDate[200] = "\nDisplays the current date.\n";
 
-	char messageSetTime[size] = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
+	char messageSetTime[200] = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
 
-	char messageSetDate[size] = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";
+	char messageSetDate[200] = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";
 
 /* Temporary command from R2.
-	char messageCreatePCB[size] = "\nCreates a PCB.\n";
+	char messageCreatePCB[200] = "\nCreates a PCB.\n";
 */	
-	char messageShowAll[size] = "\nShows all PCBs Created.\n";
+	char messageShowAll[200] = "\nShows all PCBs Created.\n";
 
-	char messageShowReady[size] = "\nShows PCBs that are ready for execution,\n";
+	char messageShowReady[200] = "\nShows PCBs that are ready for execution,\n";
 
-	char messageShowBlocked[size] = "\nShows all the blocked PCBs.\n";
+	char messageShowBlocked[200] = "\nShows all the blocked PCBs.\n";
 
-	char messageShowPCB[size] = "\nShows a single, user chosen PCB.\n";
+	char messageShowPCB[200] = "\nShows a single, user chosen PCB.\n";
 
-	char messageDeletePCB[size] = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
+	char messageDeletePCB[200] = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
 
-	char messageSuspendPCB[size] = "\nPlaces a PCB in the suspended state.\n";
+	char messageSuspendPCB[200] = "\nPlaces a PCB in the suspended state.\n";
 
-	char messageResumePCB[size] = "\nPlaces a PCB in the not suspended state.\n";
+	char messageResumePCB[200] = "\nPlaces a PCB in the not suspended state.\n";
 
 /* Temporary commands from R2.
-	char messageBlockPCB[size] = "\nSets a PCB's state to blocked.\n";
+	char messageBlockPCB[200] = "\nSets a PCB's state to blocked.\n";
 
-	char messageUnblockPCB[size] = "\nSets a PCB's state to unblocked.\n";
+	char messageUnblockPCB[200] = "\nSets a PCB's state to unblocked.\n";
 */
 
-	char messageSetPCBPriority[size] = "\nSets a PCB's priority.\n";
+	char messageSetPCBPriority[200] = "\nSets a PCB's priority.\n";
 
-	/*char messageYield[size] = "\nCauses comhand to yield to other processes.\n";
+	/*char messageYield[200] = "\nCauses comhand to yield to other processes.\n";
 	*/
-	char loadr3msg[size] = "\nLoads test processes.\n";
+	char loadr3msg[200] = "\nLoads test processes.\n";
 
-	char clearMsg[size] = "\nClears the terminal.\n";
+	char clearMsg[200] = "\nClears the terminal.\n";
 	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
@@ -195,7 +195,7 @@ int inputHelp(char helpBuffer[]){
 
 int shutDown(){
 	int size = 100;
-	char prompt[size] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
+	char prompt[100] = "Are you sure? (\033[0;32mY\033[0m/\033[0;31mN\033[0m)\n";
 	int ansInt = 2;
 	char ans[2];
 	memset(ans, '\0', 2);
@@ -288,13 +288,15 @@ int comhand(){
 }
 
 void displayMenu(){
+	//Displays the Menu at the beginning of the OS
 	int headerSize = 70;
-	char header1[headerSize] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
-	char header2[headerSize] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
-	char header3[headerSize] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
-	char header4[headerSize] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
-	char header5[headerSize] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	char header6[headerSize] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
+
+	char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
+	char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
+	char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
+	char header4[70] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
+	char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
+	char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
