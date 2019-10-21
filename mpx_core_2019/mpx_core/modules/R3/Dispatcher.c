@@ -25,6 +25,7 @@ u32int* sys_call(context* registers){
 	if(cop == NULL){
 		contextSwitch = registers;
 	}else{
+
 		if(params.op_code == IDLE){
 			cop -> top_of_stack = (unsigned char*) registers;
 			cop -> context = registers;
@@ -35,8 +36,12 @@ u32int* sys_call(context* registers){
 	}
 
 	if(temporary_ready != NULL){
-		cop = temporary_ready;
 		remove_pcb(temporary_ready);
+		//New processes will get added back
+		if(cop != NULL && params.op_code != EXIT){
+			insert_pcb(cop);
+		}
+		cop = temporary_ready;
 		return (u32int*)cop -> top_of_stack;
 	}else{
 		free_pcb(cop);
@@ -45,7 +50,6 @@ u32int* sys_call(context* registers){
 	}
 	return (u32int*) cop -> context;
 }
-
 
 void yield(){
 asm volatile("int $60");
