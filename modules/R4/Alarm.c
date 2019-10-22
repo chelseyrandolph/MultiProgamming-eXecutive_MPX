@@ -9,21 +9,21 @@
 #include "../../lib/colortext.h"
 #include <Alarm.h>
 
-char introPrompt[25] = "Please enter alarm time \n\n";
-char enterHour[20] = "Hours:  ";
-char enterMin[20]  = "Minutes:  ";
-char enterSec[20]  = "Seconds:  ";
-char enterMsg[35]  = "Enter mess you want displayed:  ";
+static char introPrompt[25] = "Please enter alarm time \n\n";
+static char enterHour[20] = "Hours:  ";
+static char enterMin[20]  = "Minutes:  ";
+static char enterSec[20]  = "Seconds:  ";
+static char enterMsg[35]  = "Enter mess you want displayed:  ";
 
-int msgSize = 35;
+static int msgSize = 35;
 
-char userHour[5];
-char userMin[5];
-char userSec[5];
-char userMessage[50];
+static char userHour[5];
+static char userMin[5];
+static char userSec[5];
+static char userMessage[50];
 
-int timeInt = 5;
-int userInt = 50;
+static int timeInt = 5;
+static int userInt = 50;
 
 int hours;
 int minutes;
@@ -57,7 +57,7 @@ void alarm(){
 	   If it hits the current time then we print the user message, then the process exits
 	   If the current time does not match, then the process will print "not time yet" then the process voluntarily idles  */
 	while(1){
-		char notTime[10] = "\nnot time yet\n";
+		static char notTime[10] = "\nnot time yet\n";
 		if(checkTime(hours, minutes, seconds){
 			sys_req(WRITE, DEFAULT_DEVICE, userMessage, &userInt);
 			sys_req(EXIT, DEFAULT_DEVICE, null, null);
