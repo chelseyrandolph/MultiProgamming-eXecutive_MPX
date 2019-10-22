@@ -4,6 +4,11 @@
 #include "../modules/mpx_supt.h"
 #include "colortext.h"
 
+void write_text(char str[]){
+	int str_size = sizeof(str);
+	sys_req(WRITE, DEFAULT_DEVICE, str, &str_size);
+}
+
 void write_text_red(char str[]){
 	int size = 10;
 	int str_size = sizeof(str);
