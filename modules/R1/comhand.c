@@ -202,6 +202,11 @@ int shutDown(){
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	
 	if(strcmp(ans, "Y")==0){
+		PCB *infinite = find_pcb("infinite_process");
+		if(infinite != NULL && infinite->suspended == 0){
+			write_text_bold_yellow("Cannot shutdown while infinite process is not suspended\n");
+			return 0;
+		}	
 		write_text_red("MPX is shutting down \n");
 		return 1;
 	}else if(strcmp(ans, "N")==0){
@@ -216,6 +221,7 @@ int shutDown(){
 
 
 int comhand(){
+	
 	int quit = 0;		
 	char *cmdBuffer = sys_alloc_mem(100);
 	memset(cmdBuffer, '\0', 100);
@@ -280,6 +286,7 @@ int comhand(){
 	}
 //Remove and free all queues
 //When comhand quits, the queues should be empty
+
 	suspend_pcb("infinite_process");
 	remove_all();
 	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
