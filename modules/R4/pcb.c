@@ -23,32 +23,7 @@ PCB* allocate_pcb(){
 	return pcb;
 }
 
-void remove_all(){
-
-	PCB* pcb = ready_queue.head;
-	while(pcb != NULL){
-		delete_pcb(pcb->name);
-		pcb = pcb -> next;
-	}
-	pcb = suspended_ready_queue.head;
-	while(pcb != NULL){
-		delete_pcb(pcb->name);
-		pcb = pcb -> next;
-	}
-	pcb = blocked_queue.head;
-	while(pcb != NULL){
-		delete_pcb(pcb->name);
-		pcb = pcb -> next;
-	}
-	pcb = suspended_blocked_queue.head;
-	while(pcb != NULL){
-		delete_pcb(pcb->name);
-		pcb = pcb -> next;
-	}
-
-}
-
-PCB* setup_pcb(char name[], int pclass, int priority){ // pclass refers to process class (system or user)
+PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
 
@@ -65,7 +40,6 @@ PCB* setup_pcb(char name[], int pclass, int priority){ // pclass refers to proce
 	}else{
 		return NULL; 
 	}
-	//pclass = 1; //HARD-CODED
 	if(pclass == 0 || pclass ==1){			// process class must be either 0 for system, or 1 for user process
 		new_pcb -> process_class = pclass;	// sets the new process's class to the pclass parameter
 	}else{
@@ -75,6 +49,29 @@ PCB* setup_pcb(char name[], int pclass, int priority){ // pclass refers to proce
 	new_pcb->suspended = 0;		//not suspended
 	
 	return new_pcb;
+}
+
+void remove_all(){
+	PCB* pcb = ready_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
+	pcb = suspended_ready_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
+	pcb = blocked_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
+	pcb = suspended_blocked_queue.head;
+	while(pcb != NULL){
+		delete_pcb(pcb->name);
+		pcb = pcb->next;
+	}
 }
 
 int free_pcb(PCB* pcb){
@@ -236,7 +233,7 @@ int insert_pcb(PCB *pcb){
 }
 
 int remove_pcb(PCB* pcb){
-	static int error_msg_size = 50; // use this for sys_req(Write)
+	int error_msg_size = 50; // use this for sys_req(Write)
 	if(pcb->readystate == 0 && pcb->suspended == 0){ // ready_queue
 		PCB *temp_pcb = ready_queue.head;
 		int found = 0;
@@ -341,56 +338,44 @@ int remove_pcb(PCB* pcb){
 /*========================= USER COMMANDS ========================*/
 
 int create_pcb(char name[], int pclass, int priority){ 
-	static int msgSize = 75;
 	PCB *temp = find_pcb(name);
 	if(temp != NULL){
 		write_text_bold_yellow("There is already a process with that name\n");
 		return 0;
 	}
 	if(strlen(name) < 8){	// Process name must be at least 8 characters
-		static char invalid_name_msg[75] = "\033[1;31mINVALID NAME... exiting\033[0m\n\n";
-		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &msgSize);
+		char *invalid_name_msg = "\033[1;31mINVALID NAME... exiting\033[0m\n\n";
+		int name_msg_size = sizeof(invalid_name_msg);
+		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &name_msg_size);
+		//sys_req(WRITE, DEFAULT_DEVICE, name, &name_msg_size); // just for input testing
 		return NULL; 
 	}
 	if(priority < 0 || priority > 9){		// priority must be a number between 0 and 9
-		static char invalid_name_msg[75] = "\033[1;31mINVALID PRIORITY... exiting\033[0m\n\n";
-		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &msgSize);
+		char *invalid_name_msg = "\033[1;31mINVALID PRIORITY... exiting\033[0m\n\n";
+		int name_msg_size = sizeof(invalid_name_msg);
+		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &name_msg_size);
+		//sys_req(WRITE, DEFAULT_DEVICE, itoa(priority), &name_msg_size);
 		return NULL;	
 	}
 	if(pclass != 0 && pclass !=1){		// process class must be either 0 for system, or 1 for user process
-		static char invalid_name_msg[75] = "\033[1;31mINVALID CLASS... exiting\033[0m\n\n";
-		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &msgSize);
+		char *invalid_name_msg = "\033[1;31mINVALID CLASS... exiting\033[0m\n\n";
+		int name_msg_size = sizeof(invalid_name_msg);
+		sys_req(WRITE, DEFAULT_DEVICE, invalid_name_msg, &name_msg_size);
 		return NULL; 	
 	}
 	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
 	return 0;
 }
 
-/*
-If NOT suspended, the process can NOT be deleted
-If suspended, it may be deleted
-***INFINITE PROCESS***
-*/
-int delete_pcb(char *name){
-	static int msgSize = 75;
+
+int delete_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
-	//suspended, deleted pcb
-	if(strcmp(pcb->name,"infinite_process") == 0 && pcb->suspended == 1){
-		remove_pcb(pcb);
-		free_pcb(pcb);
-	//not suspended, does not delete
-	}else if(strcmp(pcb->name,"infinite_process") == 0 && pcb->suspended == 0){
-		static char errMsg[75] = "You must suspend the infinite process before deleting it.\n";
-		sys_req(WRITE, DEFAULT_DEVICE, errMsg, &msgSize);
-		return 0;
-	}else{
-		remove_pcb(pcb);
-		free_pcb(pcb);
-	}
+	remove_pcb(pcb);
+	free_pcb(pcb);
 	return 0;
 }
 
-int block_pcb(char *name){
+int block_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb == NULL){
 		write_text_bold_red("Process Not Found\n");
@@ -401,7 +386,7 @@ int block_pcb(char *name){
 	return 0;
 }
 
-int unblock_pcb(char *name){
+int unblock_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb == NULL){
 		write_text_bold_red("Process Not Found\n");
@@ -412,7 +397,7 @@ int unblock_pcb(char *name){
 	return 0;
 }
 
-int suspend_pcb(char *name){
+int suspend_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	remove_pcb(pcb);		//takes the pcb out of the queue its in
 	pcb->suspended = 1;	//sets suspended = suspended
@@ -421,7 +406,7 @@ int suspend_pcb(char *name){
 	return 0;
 }
 
-int resume_pcb(char *name){
+int resume_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 
 	remove_pcb(pcb);		//takes the pcb out of the queue its in
@@ -430,7 +415,7 @@ int resume_pcb(char *name){
 	return 0;
 }
 
-int set_pcb_priority(char *name, int new_priority){
+int set_pcb_priority(char name[], int new_priority){
 	PCB *pcb = find_pcb(name);
 	remove_pcb(pcb);
 	pcb->priority = new_priority;
@@ -439,15 +424,18 @@ int set_pcb_priority(char *name, int new_priority){
 }
 
 int show_pcb(char *name){
-	static int txtSize = 50;
-	static int name_size = 16;
 	PCB *pcb = find_pcb(name);
-	static char *pclass;
-	static char *readystate_str;
-	static char *suspended_str;
-	static char vertline[50] = " |";
-	static char newline[50] = " \n";
-	static char namestr[17];
+	if(pcb == NULL){
+		write_text_yellow("Process not found\n");
+	}
+	int name_size = 16;
+	char *pclass;
+	char *readystate_str;
+	char *suspended_str;
+	char *vertline = " |";
+	char *newline = " \n";
+	int two = 2;
+	char namestr[17];
 	strcpy(namestr, name);
 	int i;
 	for(i = strlen(name); i < name_size; i++){
@@ -480,36 +468,36 @@ int show_pcb(char *name){
 		return 0; 
 	}
 
-	sys_req(WRITE, DEFAULT_DEVICE, namestr, &txtSize);
-	sys_req(WRITE, DEFAULT_DEVICE, vertline, &txtSize);
+	sys_req(WRITE, DEFAULT_DEVICE, namestr, &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, vertline, &two);
 	sys_req(WRITE, DEFAULT_DEVICE, pclass, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, readystate_str, &name_size);
 	sys_req(WRITE, DEFAULT_DEVICE, suspended_str, &name_size);
-	sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->priority), &txtSize);
-	sys_req(WRITE, DEFAULT_DEVICE, newline, &txtSize);
+	sys_req(WRITE, DEFAULT_DEVICE, itoa(pcb->priority), &name_size);
+	sys_req(WRITE, DEFAULT_DEVICE, newline, &two);
 	return 1;
 }
 
 int show_ready(){
-	static int done = 0;
-	static int txtSize = 200;
+	char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n";
+	int size = sizeof(process_msg);
+	char *lines = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
+	int linesize = sizeof(lines);
+
+	char *newline = "\n";
+	int newlineSize = sizeof(newline);
+	char *ready_msg = "\033[1;35mReady Processes:\033[0m\n\n";
+	int ready_size = sizeof(ready_msg);
+	int done = 0;
 	PCB *pcb = ready_queue.head;
-	static char process_msg[200] = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n";
-	static char lines[200] = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
-	static char newline[200] = "\n";
-	static char ready_msg[200] = "\033[1;35mReady Processes:\033[0m\n\n";
-
-	if(ready_queue.head != NULL){
-		
-		sys_req(WRITE, DEFAULT_DEVICE, ready_msg, &txtSize);
-
-		
-		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &txtSize);
-		sys_req(WRITE, DEFAULT_DEVICE, lines, &txtSize);
+	if(ready_queue.head != NULL){	
+		sys_req(WRITE, DEFAULT_DEVICE, ready_msg, &ready_size);
+		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &size);
+		sys_req(WRITE, DEFAULT_DEVICE, lines, &linesize);
 		
 		while(!done   && pcb !=NULL){
 			show_pcb(pcb->name);
-			sys_req(WRITE, DEFAULT_DEVICE, newline, &txtSize);
+			sys_req(WRITE, DEFAULT_DEVICE, newline, &newlineSize);
 	
 			if(pcb == ready_queue.tail){
 				done = 1;
@@ -520,16 +508,17 @@ int show_ready(){
 	}
 	
 	done = 0;
-	static char sready_msg[200] = "\033[1;35mSuspended-ready Processes:\033[0m\n\n";
-
+	char *sready_msg = "\033[1;35mSuspended-ready Processes:\033[0m\n\n";
+	int sready_size = sizeof(sready_msg);
+	pcb = suspended_ready_queue.head;
 	if(suspended_ready_queue.head != NULL){
-		sys_req(WRITE, DEFAULT_DEVICE, sready_msg, &txtSize);
+		sys_req(WRITE, DEFAULT_DEVICE, sready_msg, &sready_size);
 		pcb = suspended_ready_queue.head;
-		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &txtSize);
-		sys_req(WRITE, DEFAULT_DEVICE, lines, &txtSize);
+		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &size);
+		sys_req(WRITE, DEFAULT_DEVICE, lines, &linesize);
 		while(!done && pcb != NULL){
 			show_pcb(pcb->name);
-			sys_req(WRITE, DEFAULT_DEVICE, newline, &txtSize);
+			sys_req(WRITE, DEFAULT_DEVICE, newline, &newlineSize);
 			if(pcb == suspended_ready_queue.tail){
 				done = 1;
 			}else {
@@ -537,27 +526,31 @@ int show_ready(){
 			}
 		}
 	}
+	
 	return 0;
 }
 
 int show_blocked(){
-	static int txtSize = 200;
-	static char process_msg[200] = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n";
-	static char lines[200] = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
-	static char newline[200] = "\n";
-	static char blocked_msg[200] = "\033[1;35mBlocked Processes:\033[0m\n\n";
-	static int done = 0;
+	char *process_msg = "\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n";
+	int size = sizeof(process_msg);
+	char *lines = "\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n";
+	int linesize = sizeof(lines);
+	char *newline = "\n";
+	int newlineSize = sizeof(newline);
+	char *blocked_msg = "\033[1;35mBlocked Processes:\033[0m\n\n";
+	int blocked_size = sizeof(blocked_msg);
+	int done = 0;
 	PCB *pcb = blocked_queue.head;
-
 	if(blocked_queue.head != NULL){
-		sys_req(WRITE, DEFAULT_DEVICE, blocked_msg, &txtSize);
-		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &txtSize);
-		sys_req(WRITE, DEFAULT_DEVICE, lines, &txtSize);
+		sys_req(WRITE, DEFAULT_DEVICE, blocked_msg, &blocked_size);
+		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &size);
+		sys_req(WRITE, DEFAULT_DEVICE, lines, &linesize);
 		while(!done && pcb != NULL){
 			show_pcb(pcb->name);
-			sys_req(WRITE, DEFAULT_DEVICE, newline, &txtSize);
+			sys_req(WRITE, DEFAULT_DEVICE, newline, &newlineSize);
 			if(pcb == blocked_queue.tail){
 				done = 1;
+				//show_pcb(pcb->name);
 			}else {
 				pcb = pcb->next;
 			}
@@ -565,23 +558,25 @@ int show_blocked(){
 	}
 	
 	done = 0;
-	static char sblocked_msg[200] = "\033[1;35mSuspended-blocked Processes:\033[0m\n\n";
-
-	if(suspended_blocked_queue.head != NULL){
-		sys_req(WRITE, DEFAULT_DEVICE, sblocked_msg, &txtSize);
+	char *sblocked_msg = "\033[1;35mSuspended-blocked Processes:\033[0m\n\n";
+	int sblocked_size = sizeof(sblocked_msg);
+	
+	pcb = suspended_blocked_queue.head;
+		if(suspended_blocked_queue.head != NULL){
+		sys_req(WRITE, DEFAULT_DEVICE, sblocked_msg, &sblocked_size);
 		pcb = suspended_blocked_queue.head;
-		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &txtSize);
-		sys_req(WRITE, DEFAULT_DEVICE, lines, &txtSize);
+		sys_req(WRITE, DEFAULT_DEVICE, process_msg, &size);
+		sys_req(WRITE, DEFAULT_DEVICE, lines, &linesize);
 		while(!done && pcb != NULL){
 			show_pcb(pcb->name);
-			sys_req(WRITE, DEFAULT_DEVICE, newline, &txtSize);
+			sys_req(WRITE, DEFAULT_DEVICE, newline, &newlineSize);
 			if(pcb == suspended_blocked_queue.tail){
 				done = 1;
 			}else {
 				pcb = pcb->next;
 			}
 		}
-	}	
+	}
 	return 0;
 }
 
@@ -592,6 +587,17 @@ int show_all(){
 	sys_req(WRITE, DEFAULT_DEVICE, "\n", &nl);
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
