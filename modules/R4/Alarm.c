@@ -13,7 +13,7 @@ static char introPrompt[25] = "Please enter alarm time \n\n";
 static char enterHour[20] = "Hours:  ";
 static char enterMin[20]  = "Minutes:  ";
 static char enterSec[20]  = "Seconds:  ";
-static char enterMsg[35]  = "Enter mess you want displayed:  ";
+static char enterMsg[35]  = "Enter message you want displayed:  ";
 
 static int msgSize = 35;
 
@@ -28,6 +28,9 @@ static int userInt = 50;
 int hours;
 int minutes;
 int seconds;
+
+/* How does this implementation handle multiple alarms? 
+We should also make a funcion to display all the current alarms that the user had made.*/
 
 
 void alarm(){
@@ -98,6 +101,7 @@ int checkTime(int hours, int minutes, int seconds){
 		return 0;
 	}
 }
+
 
 /*	pseudocode
 
