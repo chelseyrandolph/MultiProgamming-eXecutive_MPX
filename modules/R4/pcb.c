@@ -249,7 +249,7 @@ int remove_pcb(PCB* pcb){
 				ready_queue.count--;
 				found = 1;		
 			}else if(temp_pcb == ready_queue.tail && temp_pcb !=pcb){
-				write_text("\033[0;31mProcess Not Found... exitting\033[0m\n");
+				write_text_red("Process Not Found... exitting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
@@ -301,7 +301,7 @@ int remove_pcb(PCB* pcb){
 				blocked_queue.count--;
 				found = 1;
 			}else if(temp_pcb == blocked_queue.tail && temp_pcb !=pcb){
-				write_text("\033[0;31mProcess Not Found... exitting\033[0m\n");
+				write_text_red("Process Not Found... exitting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
@@ -324,7 +324,7 @@ int remove_pcb(PCB* pcb){
 				suspended_blocked_queue.count--;
 				found = 1;
 			}else if(temp_pcb == suspended_blocked_queue.tail && temp_pcb !=pcb){
-				write_text("\033[0;31mProcess Not Found... exitting\033[0m\n");
+				write_text_red("Process Not Found... exitting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
@@ -343,15 +343,15 @@ int create_pcb(char name[], int pclass, int priority){
 		return 0;
 	}
 	if(strlen(name) < 8){	// Process name must be at least 8 characters
-		write_text("\033[1;31mINVALID NAME... exiting\033[0m\n\n\n");
+		write_text_bold_red("INVALID NAME... exiting\n\n\n");
 		return NULL; 
 	}
 	if(priority < 0 || priority > 9){		// priority must be a number between 0 and 9
-		write_text("\033[1;31mINVALID PRIORITY... exiting\033[0m\n\n\n");
+		write_text_bold_red("INVALID PRIORITY... exiting\n\n\n");
 		return NULL;	
 	}
 	if(pclass != 0 && pclass !=1){		// process class must be either 0 for system, or 1 for user process
-		write_text("\033[1;31mINVALID CLASS... exiting\033[0m\n\n\n");
+		write_text_bold_red("INVALID CLASS... exiting\n\n\n");
 		return NULL; 	
 	}
 	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
@@ -420,11 +420,6 @@ int show_pcb(char name[]){
 		write_text_yellow("Process not found\n");
 	}
 	int name_size = sizeof(name);
-	char *pclass;
-	char *readystate_str;
-	char *suspended_str;
-	char *vertline = " |";
-	char *newline = " \n";
 	char namestr[17];
 	strcpy(namestr, name);
 	int i;
@@ -433,37 +428,33 @@ int show_pcb(char name[]){
 		namestr[i] = ' ';
 	}
 	namestr[16] = '\0';
-	
+	write_text(namestr);
+	write_text(" |");
 	if(pcb->process_class == 1){
-		pclass = " \033[0;34m    User Process    \033[0m   |";
+		write_text_blue("    User Process       |");
 	}else if(pcb->process_class == 0){
-		pclass = " \033[0;36m    System Process    \033[0m |";
+		write_text_blue("    System Process     |");
 	}else{
 		return 0;
 	}
 	if(pcb->readystate == 1){
-		readystate_str = "     Running     |";
+		write_text("     Running     |");
 	}else if(pcb->readystate == 0){
-		readystate_str = " \033[0;32m     Ready     \033[0m |";
+		write_text_green("      Ready      |");
 	}else if(pcb->readystate == -1){
-		readystate_str = " \033[0;31m    Blocked    \033[0m |";
+		write_text_red("     Blocked     |");
 	}else{
 		return 0;
 	}
 	if(pcb->suspended == 1){
-		suspended_str = " \033[1;31m       SUSPENDED       \033[0m     | ";
+		write_text_bold_red("        SUSPENDED            | ");
 	}else if(pcb->suspended == 0){
-		suspended_str = "        not suspended        | ";
+		write_text("        not suspended        | ");
 	}else{
 		return 0; 
 	}
-	write_text(namestr);
-	write_text(vertline);
-	write_text(pclass);
-	write_text(readystate_str);
-	write_text(suspended_str);
 	write_text(itoa(pcb->priority));
-	write_text(newline);
+	write_text(" \n\n");
 	return 1;
 }
 
@@ -471,9 +462,9 @@ int show_ready(){
 	int done = 0;
 	PCB *pcb = ready_queue.head;
 	if(ready_queue.head != NULL){	
-		write_text("\033[1;35mReady Processes:\033[0m\n\n\n");
-		write_text("\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n\n");
-		write_text("\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n\n");
+		write_text_bold_magenta("Ready Processes:\n\n\n");
+		write_text_bold_blue("     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\n\n");
+		write_text_bold_blue("----------------------------------------------------------------------------------------------------\n\n");
 		
 		while(!done   && pcb !=NULL){
 			show_pcb(pcb->name);
@@ -490,9 +481,9 @@ int show_ready(){
 	done = 0;
 	pcb = suspended_ready_queue.head;
 	if(suspended_ready_queue.head != NULL){
-		write_text("\033[1;35mSuspended-ready Processes:\033[0m\n\n\n");
-		write_text("\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n\n");
-		write_text("\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n\n");
+		write_text_bold_magenta("Suspended-ready Processes:\n\n\n");
+		write_text_bold_blue("     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\n\n");
+		write_text_bold_blue("----------------------------------------------------------------------------------------------------\n\n");
 		while(!done && pcb != NULL){
 			show_pcb(pcb->name);
 			write_text("\n\n");
@@ -511,9 +502,9 @@ int show_blocked(){
 	int done = 0;
 	PCB *pcb = blocked_queue.head;
 	if(blocked_queue.head != NULL){
-		write_text("\033[1;35mBlocked Processes:\033[0m\n\n");
-		write_text("\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n\n");
-		write_text("\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n\n");
+		write_text_bold_magenta("Blocked Processes:\n\n");
+		write_text_bold_blue("     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\n\n");
+		write_text_bold_blue("----------------------------------------------------------------------------------------------------\n");
 		while(!done && pcb != NULL){
 			show_pcb(pcb->name);
 			write_text("\n\n");
@@ -528,9 +519,9 @@ int show_blocked(){
 	done = 0;
 	pcb = suspended_blocked_queue.head;
 		if(suspended_blocked_queue.head != NULL){
-		write_text("\033[1;35mSuspended-blocked Processes:\033[0m\n\n");
-		write_text("\033[1;34m     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\033[0m\n\n");
-		write_text("\033[1;34m----------------------------------------------------------------------------------------------------\033[0m\n\n");
+		write_text_bold_magenta("Suspended-blocked Processes:\n\n");
+		write_text_bold_blue("     Name              Process Type         Ready/Blocked     Suspended/Not Suspended      Priority\n\n");
+		write_text_bold_blue("----------------------------------------------------------------------------------------------------\n\n");
 		while(!done && pcb != NULL){
 			show_pcb(pcb->name);
 			write_text("\n\n");
