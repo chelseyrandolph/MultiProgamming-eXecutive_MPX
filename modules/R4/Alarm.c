@@ -3,11 +3,11 @@
 #include <system.h>
 #include <core/io.h>
 #include <core/serial.h>
-#include "pcb.h" 
 #include "../mpx_supt.h"
 #include "../R1/time.h"
 #include "../../lib/colortext.h"
 #include "Alarm.h"
+#include "Dispatcher.h"
 
 #define HOUR 0x04
 #define MINUTE 0x02
@@ -25,6 +25,13 @@ int minutes;
 /* How does this implementation handle multiple alarms? 
 We should also make a funcion to display all the current alarms that the user had made.*/
 
+void setAlarm(){
+	write_text("Name this alarm: ");	//TODO MAKE SURE NAME IS AT LEAST 8 CHARS OR PAGE FAULT
+	int namesize = 16;
+	char name[16];
+	sys_req(READ, DEFAULT_DEVICE, name, &namesize);
+	loadProcess(name, 1, 3, &alarm);
+}
 
 void alarm(){
 	write_text_bold_red("Please enter alarm time \n\n");
@@ -84,6 +91,8 @@ int checkTime(int current_hour, int current_minute){
 	if(current_hour == int_hour && current_minute == int_minute){
 		return 1;
 	}else{
+		write_text_blue(itoa(int_hour));
+		write_text_blue(itoa(int_minute));
 		return 0;
 	}
 }
