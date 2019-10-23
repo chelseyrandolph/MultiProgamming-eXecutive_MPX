@@ -1,5 +1,0 @@
-
-
-void getDate();
-
-void setDate();
