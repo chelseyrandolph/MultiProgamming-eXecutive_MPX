@@ -7,19 +7,13 @@
 #include "../mpx_supt.h"
 #include "../R1/time.h"
 #include "../../lib/colortext.h"
-#include <Alarm.h>
+#include "Alarm.h"
 
-static char introPrompt[25] = "Please enter alarm time \n\n";
-static char enterHour[20] = "Hours:  ";
-static char enterMin[20]  = "Minutes:  ";
-static char enterSec[20]  = "Seconds:  ";
-static char enterMsg[35]  = "Enter message you want displayed:  ";
-
-static int msgSize = 35;
+#define HOUR 0x04
+#define MINUTE 0x02
 
 static char userHour[5];
 static char userMin[5];
-static char userSec[5];
 static char userMessage[50];
 
 static int timeInt = 5;
@@ -27,32 +21,29 @@ static int userInt = 50;
 
 int hours;
 int minutes;
-int seconds;
 
 /* How does this implementation handle multiple alarms? 
 We should also make a funcion to display all the current alarms that the user had made.*/
 
 
 void alarm(){
-	write_text_bold_red(introPrompt);
+	write_text_bold_red("Please enter alarm time \n\n");
+
 	//Enter Hour
 	memset(userHour,'\0', 5);
-	sys_req(WRITE, DEAFULT_DEVICE, enterHour, &msgSize);
+	write_text("Hours:  ");
 	sys_req(READ, DEFAULT_DEVICE, userHour, &timeInt);
 	hours = atoi(userHour);
+
 	//Enter Minute
 	memset(userMin,'\0', 5);
-	sys_req(WRITE, DEAFULT_DEVICE, enterMin, &msgSize);
+	write_text("Minutes:  ");
 	sys_req(READ, DEFAULT_DEVICE, userMin, &timeInt);
 	minutes = atoi(userMin);
-	//Enter Second
-	memset(userSec,'\0', 5);
-	sys_req(WRITE, DEAFULT_DEVICE, enterSec, &msgSize);
-	sys_req(READ, DEFAULT_DEVICE, userSec, &timeInt);
-	seconds = atoi(userSec);
+
 	//Enter Message
 	memset(userMessage,'\0', 35);
-	sys_req(WRITE, DEAFULT_DEVICE, enterMsg, &msgSize);
+	write_text("Enter message you want displayed:  ");
 	sys_req(READ, DEFAULT_DEVICE, userMessage, &userInt);
 	
 
@@ -60,13 +51,13 @@ void alarm(){
 	   If it hits the current time then we print the user message, then the process exits
 	   If the current time does not match, then the process will print "not time yet" then the process voluntarily idles  */
 	while(1){
-		static char notTime[10] = "\nnot time yet\n";
-		if(checkTime(hours, minutes, seconds){
+		
+		if(checkTime(hours, minutes)){
 			sys_req(WRITE, DEFAULT_DEVICE, userMessage, &userInt);
-			sys_req(EXIT, DEFAULT_DEVICE, null, null);
+			sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 		}	
-		sys_req(WRITE, DEFAULT_DEVICE, notTime, &msgSize);
-		sys_req(IDLE, DEFAULT_DEVICE, null, null);
+		write_text("Not time yet\n");
+		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 	}
 	
 	
@@ -77,25 +68,20 @@ void alarm(){
 		then it checks the hours and minutes against the user hour and minutes
 		if it passes, then it returns a 1 or yes otherwise returns a 0 or no
 */
-int checkTime(int hours, int minutes, int seconds){
-	int hourr, minutee , secondd;
-
+int checkTime(int current_hour, int current_minute){
+	int int_hour, int_minute;
 	//Hours
-	outb(0x70,HOUR);
-	hourr= inb(0x71);
-	hourr = hourr-((int) hourr/16)*6;
+	outb(0x70, HOUR);
+	//hourr= inb(0x71);
+	int_hour = HOUR-((int) HOUR/16)*6;
 
 	//Minutes
 	outb(0x70,MINUTE);
-	minutee= inb(0x71);
-	minutee = minutee-((int) minutee/16)*6;
+	//minutee= inb(0x71);
+	int_minute = MINUTE-((int) MINUTE/16)*6;
 
-	//Seconds
-	outb(0x70,SECOND);
-	secondd = inb(0x71);
-	secondd = secondd-((int) secondd/16)*6;
 
-	if(hours==hourr && minutes ==minutee){
+	if(current_hour == int_hour && current_minute == int_minute){
 		return 1;
 	}else{
 		return 0;

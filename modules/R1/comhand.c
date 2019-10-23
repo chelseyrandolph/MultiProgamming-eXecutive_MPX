@@ -9,7 +9,7 @@
 #include "comhandsupport.h"
 #include "../../lib/colortext.h"
 #include "../R4/Dispatcher.h"
-//#include "../R4/Alarm.h"
+#include "../R4/Alarm.h"
 
 
 
@@ -277,7 +277,7 @@ int comhand(){
 			//case 19: yield(); break;
 			case 16: loadr3(); break;
 			case 17: clear(); break;
-			//case 18: alarm(); break;
+			case 18: alarm(); break;
 			default: write_text_red("Not a valid command, type 'help' for options\n");
 		}
 		if(quit == 0){
