@@ -9,7 +9,7 @@
 #include "comhandsupport.h"
 #include "../../lib/colortext.h"
 #include "../R4/Dispatcher.h"
-
+//#include "../R4/Alarm.h"
 
 
 
@@ -254,8 +254,7 @@ int comhand(){
 				i = k+1;
 			}
 		}
-		int failSize = 100;
-		static char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
+	
 		switch(i){
 			case 1: version(); 						break;
 			case 2: inputHelp(tokenizedBuffer[1]);	break;
@@ -278,7 +277,8 @@ int comhand(){
 			//case 19: yield(); break;
 			case 16: loadr3(); break;
 			case 17: clear(); break;
-			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
+			//case 18: alarm(); break;
+			default: write_text_red("Not a valid command, type 'help' for options\n");
 		}
 		if(quit == 0){
 			sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);

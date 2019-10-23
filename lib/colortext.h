@@ -22,3 +22,4 @@ void write_text_cyan(char str[]);
 
 void write_text_bold_cyan(char str[]);
 
+void write_text(char str[]);
