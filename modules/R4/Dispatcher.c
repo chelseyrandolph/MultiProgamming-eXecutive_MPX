@@ -62,31 +62,26 @@ asm volatile("int $60");
 
 
 void infinite(){
-	char *infinite = "INFINITE PROCESS IS EXECUTING.\n";
-	
-	int infiniteSize = sizeof(infinite);
-	
 	while(1){
-		sys_req(WRITE, DEFAULT_DEVICE, infinite, &infiniteSize);
+		write_text("INFINITE PROCESS IS EXECUTING.\n\n");
 		sys_req(IDLE, COM1, NULL,NULL);
 	}
 }
 
 void loadProcess(char name[], int class, int priority, void* function){
-
-		create_pcb(name, class, priority);
-		PCB *new_pcb = find_pcb(name);
-		if(new_pcb != NULL){
-			context* cp = (context*)(new_pcb -> top_of_stack);
-			memset(cp, 0, sizeof(context));		
-			cp->fs = 0x10;
-			cp->gs = 0x10;
-			cp->ds = 0x10;
-			cp->es = 0x10;
-			cp->cs = 0x8;
-			cp->ebp = (u32int)(new_pcb->bottom_of_stack);
-			cp->esp = (u32int)(new_pcb->top_of_stack);
-			cp->eip = (u32int) function;
+	create_pcb(name, class, priority);
+	PCB *new_pcb = find_pcb(name);
+	if(new_pcb != NULL){
+		context* cp = (context*)(new_pcb -> top_of_stack);
+		memset(cp, 0, sizeof(context));		
+		cp->fs = 0x10;
+		cp->gs = 0x10;
+		cp->ds = 0x10;
+		cp->es = 0x10;
+		cp->cs = 0x8;
+		cp->ebp = (u32int)(new_pcb->bottom_of_stack);
+		cp->esp = (u32int)(new_pcb->top_of_stack);
+		cp->eip = (u32int) function;
 	}
 }
 
@@ -101,7 +96,6 @@ void loadr3(){
 	suspend_pcb("process04");
 	loadProcess("process05", 1, 1, &proc5);
 	suspend_pcb("process05");
-	//show_ready();
 
 }
 
