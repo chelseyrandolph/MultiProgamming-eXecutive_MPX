@@ -263,7 +263,7 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			//case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
+			//	break;
 			case 8: show_all();						break;
 			case 9: show_blocked();				break;
 			case 10: show_ready();					break;
@@ -278,6 +278,7 @@ int comhand(){
 			case 16: loadr3(); break;
 			case 17: clear(); break;
 			case 18: setAlarm(); break;
+			case 19: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));
 			default: write_text_red("Not a valid command, type 'help' for options\n");
 		}
 		if(quit == 0){

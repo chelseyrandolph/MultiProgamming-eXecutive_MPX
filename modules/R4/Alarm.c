@@ -19,45 +19,74 @@ static char userMessage[50];
 static int timeInt = 5;
 static int userInt = 50;
 
-int hours;
-int minutes;
 
-/* How does this implementation handle multiple alarms? 
-We should also make a funcion to display all the current alarms that the user had made.*/
+alarmQueue alarm_queue = {.head = NULL, .tail = NULL, .count = 0};
 
-void setAlarm(){
-	write_text("Name this alarm: ");	//TODO MAKE SURE NAME IS AT LEAST 8 CHARS OR PAGE FAULT
-	int namesize = 16;
-	char name[16];
-	sys_req(READ, DEFAULT_DEVICE, name, &namesize);
-	loadProcess(name, 1, 3, &alarm);
+
+void remove_alarm(alarm* ralarm){
+	if(alarm_queue.count ==1){
+		alarm_queue.head = NULL;
+		alarm_queue.tail = NULL;
+		alarm_queue.count--;
+	}else{
+		alarm *temp = alarm_queue.head;
+		while(temp->next != ralarm || temp->next != NULL){
+			temp = temp->next;
+		}
+		if(temp->next == ralarm){
+			temp->next = ralarm->next;
+			alarm_queue.count--;
+		}
+	}
+	sys_free_mem(ralarm);
 }
-
-void alarm(){
-	write_text_bold_red("Please enter alarm time \n\n");
+void setAlarm(){
+	if(find_pcb("alarm_check") == NULL){
+		loadProcess("alarm_check", 1, 2, &checkAlarms);
+	}
+	alarm *new_alarm = sys_alloc_mem(sizeof(alarm));
+	
+	write_text_bold_blue("Please enter alarm time \n");
 
 	//Enter Hour
 	memset(userHour,'\0', 5);
 	write_text("Hours:  ");
 	sys_req(READ, DEFAULT_DEVICE, userHour, &timeInt);
-	hours = atoi(userHour);
+	new_alarm->Hour = atoi(userHour);
 
 	//Enter Minute
 	memset(userMin,'\0', 5);
 	write_text("Minutes:  ");
 	sys_req(READ, DEFAULT_DEVICE, userMin, &timeInt);
-	minutes = atoi(userMin);
+	new_alarm->Minute = atoi(userMin);
 
 	//Enter Message
 	memset(userMessage,'\0', 35);
 	write_text("Enter message you want displayed:  ");
 	sys_req(READ, DEFAULT_DEVICE, userMessage, &userInt);
-	
+//  	INSERTS NEW ALARM
+
+	if(alarm_queue.count == 0){
+		alarm_queue.head = new_alarm;
+		alarm_queue.tail = new_alarm;
+		alarm_queue.count++;
+	}else{
+		alarm* temp_alarm = alarm_queue.head;
+		while(new_alarm->next != NULL){
+			temp_alarm = temp_alarm->next;
+		}
+		temp_alarm -> next = new_alarm;
+		alarm_queue.tail = new_alarm;
+		alarm_queue.count++;
+	}
+
+//==========================================================================
+
 
 	/*While loop that continuously checks if the alarm has hit the current time
 	   If it hits the current time then we print the user message, then the process exits
 	   If the current time does not match, then the process will print "not time yet" then the process voluntarily idles  */
-	while(1){
+	/*while(1){
 		
 		if(checkTime(hours, minutes)){
 			sys_req(WRITE, DEFAULT_DEVICE, userMessage, &userInt);
@@ -65,7 +94,7 @@ void alarm(){
 		}	
 		write_text("Not time yet\n");
 		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
-	}
+	}*/
 	
 	
 }
@@ -75,26 +104,54 @@ void alarm(){
 		then it checks the hours and minutes against the user hour and minutes
 		if it passes, then it returns a 1 or yes otherwise returns a 0 or no
 */
-int checkTime(int current_hour, int current_minute){
-	int int_hour, int_minute;
-	//Hours
-	outb(0x70, HOUR);
-	int_hour= inb(0x71);
-	int_hour = int_hour-((int) int_hour/16)*6;
-
-	//Minutes
-	outb(0x70,MINUTE);
-	int_minute= inb(0x71);
-	int_minute = int_minute-((int) int_minute/16)*6;
-
-
-	if(current_hour == int_hour && current_minute == int_minute){
-		return 1;
+void checkAlarms(){
+	klogv("reach0");
+	if(alarm_queue.count == 0){
+		klogv("here");
+		sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
+		klogv("here2");
 	}else{
-		write_text_blue(itoa(int_hour));
-		write_text_blue(itoa(int_minute));
-		return 0;
+		klogv("here3");
+		alarm *temp_alarm = alarm_queue.head;
+		int run = 1;
+		while(run){
+			int int_hour, int_minute;
+			//Hours
+			outb(0x70, HOUR);
+			int_hour= inb(0x71);
+			int_hour = int_hour-((int) int_hour/16)*6;
+
+			//Minutes
+			outb(0x70,MINUTE);
+			int_minute= inb(0x71);
+			int_minute = int_minute-((int) int_minute/16)*6;
+
+	
+			if(temp_alarm->Hour == int_hour && temp_alarm->Minute == int_minute){
+				sys_req(WRITE, DEFAULT_DEVICE, userMessage, &userInt);
+				remove_alarm(temp_alarm);
+				sys_req(WRITE, DEFAULT_DEVICE, itoa(alarm_queue.count), &userInt);
+			}else{
+				write_text_blue(itoa(int_hour));
+				write_text_blue(itoa(int_minute));
+				write_text_green(itoa(temp_alarm->Hour));
+				write_text_green(itoa(temp_alarm->Minute));
+				write_text_magenta("ALARM: Not time yet\n");
+			
+			}
+			klogv("reach4");
+			if(temp_alarm -> next != NULL){
+			
+				temp_alarm = temp_alarm->next;	
+			}else{
+				run = 0;
+			}
+			klogv("reach5");
+		}
+		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 	}
+
+
 }
 
 
