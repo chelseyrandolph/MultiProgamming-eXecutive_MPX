@@ -79,13 +79,13 @@ int checkTime(int current_hour, int current_minute){
 	int int_hour, int_minute;
 	//Hours
 	outb(0x70, HOUR);
-	//hourr= inb(0x71);
-	int_hour = HOUR-((int) HOUR/16)*6;
+	int_hour= inb(0x71);
+	int_hour = int_hour-((int) int_hour/16)*6;
 
 	//Minutes
 	outb(0x70,MINUTE);
-	//minutee= inb(0x71);
-	int_minute = MINUTE-((int) MINUTE/16)*6;
+	int_minute= inb(0x71);
+	int_minute = int_minute-((int) int_minute/16)*6;
 
 
 	if(current_hour == int_hour && current_minute == int_minute){
