@@ -277,7 +277,7 @@ int comhand(){
 			//case 19: yield(); break;
 			case 16: loadr3(); break;
 			case 17: clear(); break;
-			case 18: alarm(); break;
+			case 18: setAlarm(); break;
 			default: write_text_red("Not a valid command, type 'help' for options\n");
 		}
 		if(quit == 0){

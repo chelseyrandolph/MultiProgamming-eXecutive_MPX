@@ -18,7 +18,8 @@ R1/date.o\
 R1/comhand.o\
 R4/pcb.o\
 R4/Test_process.o\
-R4/Dispatcher.o
+R4/Dispatcher.o\
+R4/Alarm.o
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<
