@@ -353,6 +353,7 @@ int create_pcb(char name[], int pclass, int priority){
 		write_text_bold_red("INVALID CLASS... exiting\n\n\n");
 		return NULL; 	
 	}
+
 	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
 	return 0;
 }
@@ -365,6 +366,7 @@ int delete_pcb(char name[]){
 	return 0;
 }
 
+// Temporary user command
 int block_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb == NULL){
@@ -376,40 +378,52 @@ int block_pcb(char name[]){
 	return 0;
 }
 
+// Temporary user command
 int unblock_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
-	if(pcb == NULL){
-		write_text_bold_red("Process Not Found\n");
+	if(pcb != NULL){
+		remove_pcb(pcb);		//takes the pcb out of the queue its in
+		pcb->readystate = 0;	//sets readystate = ready
+		insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
+	}else{
+		write_text_yellow("Process not found\n\n");
 	}
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
-	pcb->readystate = 0;	//sets readystate = ready
-	insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
 	return 0;
 }
 
 int suspend_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
-	pcb->suspended = 1;	//sets suspended = suspended
-	insert_pcb(pcb);		//inserts it into the appropriate suspended queue
-
+	if(pcb != NULL){
+		remove_pcb(pcb);		//takes the pcb out of the queue its in
+		pcb->suspended = 1;	//sets suspended = suspended
+		insert_pcb(pcb);		//inserts it into the appropriate suspended queue
+	}else{
+		write_text_yellow("Process not found\n\n");
+	}
 	return 0;
 }
 
 int resume_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
-
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
-	pcb->suspended = 0;	//sets suspended = unsuspended
-	insert_pcb(pcb);		//inserts it into the appropriate suspended queue
+	if(pcb != NULL){
+		remove_pcb(pcb);		//takes the pcb out of the queue its in
+		pcb->suspended = 0;	//sets suspended = unsuspended
+		insert_pcb(pcb);		//inserts it into the appropriate suspended queue
+	}else{
+		write_text_yellow("Process not found\n\n");
+	}
 	return 0;
 }
 
 int set_pcb_priority(char name[], int new_priority){
 	PCB *pcb = find_pcb(name);
-	remove_pcb(pcb);
-	pcb->priority = new_priority;
-	insert_pcb(pcb);
+	if(pcb != NULL){
+		remove_pcb(pcb);
+		pcb->priority = new_priority;
+		insert_pcb(pcb);
+	}else{
+		write_text_yellow("Process not found\n\n");
+	}
 	return 0;
 }
 
