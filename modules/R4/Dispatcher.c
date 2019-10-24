@@ -40,8 +40,6 @@ u32int* sys_call(context* registers){
 		
 		if(cop != NULL && params.op_code != EXIT){
 			insert_pcb(cop);
-			
-			
 		}
 		cop = temporary_ready;
 		return (u32int*)cop -> top_of_stack;
@@ -63,8 +61,10 @@ asm volatile("int $60");
 
 void infinite(){
 	while(1){
-		write_text("INFINITE PROCESS IS EXECUTING.\n\n");
-		sys_req(IDLE, COM1, NULL,NULL);
+		char msg[50] = "INFINITE PROCESS EXECUTING.\n";
+		int msgSize = sizeof(msg);
+		sys_req(WRITE, DEFAULT_DEVICE, msg, &msgSize);
+		sys_req(IDLE, DEFAULT_DEVICE, NULL,NULL);
 	}
 }
 
@@ -86,19 +86,18 @@ void loadProcess(char name[], int class, int priority, void* function){
 }
 
 void loadr3(){
-	loadProcess("process01", 1, 1, &proc1);
+	loadProcess("process01", 1, 2, &proc1);
 	suspend_pcb("process01");
-	loadProcess("process02", 1, 1, &proc2);
+	loadProcess("process02", 1, 2, &proc2);
 	suspend_pcb("process02");
-	loadProcess("process03", 1, 1, &proc3);
+	loadProcess("process03", 1, 2, &proc3);
 	suspend_pcb("process03");
-	loadProcess("process04", 1, 1, &proc4);
+	loadProcess("process04", 1, 2, &proc4);
 	suspend_pcb("process04");
-	loadProcess("process05", 1, 1, &proc5);
+	loadProcess("process05", 1, 2, &proc5);
 	suspend_pcb("process05");
 
 }
-
 
 
 
