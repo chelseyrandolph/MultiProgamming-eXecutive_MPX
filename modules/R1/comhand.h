@@ -10,7 +10,6 @@ int comhand();
 
 void displayMenu();
 
-
 void clear();
 
 void auto_complete(char partial_str[]);
