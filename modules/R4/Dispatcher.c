@@ -57,7 +57,9 @@ void yield(){
 asm volatile("int $60");
 }
 
-
+void temp_function(){
+	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
+}
 
 void infinite(){
 	while(1){
@@ -86,6 +88,7 @@ void loadProcess(char name[], int class, int priority, void* function){
 }
 
 void loadr3(){
+	loadProcess("temporary", 1, 0, &temp_function);
 	loadProcess("process01", 1, 2, &proc1);
 	suspend_pcb("process01");
 	loadProcess("process02", 1, 2, &proc2);
@@ -98,6 +101,14 @@ void loadr3(){
 	suspend_pcb("process05");
 
 }
+
+
+
+
+
+
+
+
 
 
 
