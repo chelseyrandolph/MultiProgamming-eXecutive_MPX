@@ -318,6 +318,28 @@ void displayMenu(){
 
 }
 
+void auto_complete(char partial_str[]){
+	int i;
+	int num_cmds = sizeof(commands);
+	write_text(itoa(num_cmds));
+	for(i = 0; i < num_cmds; i++){
+		char cmd_str[30];
+		strcpy(cmd_str, commands[i]);
+		int k;
+		int same = 1;
+		int str_size = sizeof(partial_str);
+		for(k = 0; k < str_size; i++){
+			if(partial_str[k] != cmd_str[k]){
+				same = 0;
+			}
+		}
+		if(same == 1){
+			serial_print(commands[i]);
+		}else{
+			serial_print("");
+		}
+	}
+}
 
 
 

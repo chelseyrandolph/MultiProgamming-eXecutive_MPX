@@ -9,6 +9,7 @@
 #include <string.h>
 #include "../mpx_supt.h"
 #include "polling.h"
+#include "comhand.h"
 
 
 char tmp_buf[4];
@@ -159,6 +160,9 @@ int init_polling(char *buffer, int *count){
 						}
 					}
 				break;
+				case 9:
+					auto_complete(buffer);
+				break;
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers
 					
@@ -210,5 +214,7 @@ int init_polling(char *buffer, int *count){
 	}
 	return 1;
 }
+
+
 
 
