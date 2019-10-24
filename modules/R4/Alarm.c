@@ -12,9 +12,6 @@
 #define HOUR 0x04
 #define MINUTE 0x02
 
-static char userHour[5];
-static char userMin[5];
-static char userMessage[50];
 
 static int timeInt = 5;
 static int userInt = 50;
@@ -30,15 +27,19 @@ void remove_alarm(alarm* ralarm){
 		alarm_queue.count--;
 	}else{
 		alarm *temp = alarm_queue.head;
-		while(temp->next != ralarm || temp->next != NULL){
+		while(temp != ralarm){
 			temp = temp->next;
-		}
-		if(temp->next == ralarm){
-			temp->next = ralarm->next;
-			alarm_queue.count--;
+			if(temp->next == ralarm){
+				if(temp->next->next == NULL){
+					temp->next = ralarm->next;
+				}else{
+					alarm_queue.tail = temp;
+				}
+				alarm_queue.count--;
+			}	
 		}
 	}
-	sys_free_mem(ralarm);
+	sys_free_mem(ralarm);	
 }
 void setAlarm(){
 	if(find_pcb("alarm_check") == NULL){
@@ -49,21 +50,24 @@ void setAlarm(){
 	write_text_bold_blue("Please enter alarm time \n");
 
 	//Enter Hour
+	char userHour[5];
 	memset(userHour,'\0', 5);
 	write_text("Hours:  ");
 	sys_req(READ, DEFAULT_DEVICE, userHour, &timeInt);
 	new_alarm->Hour = atoi(userHour);
 
 	//Enter Minute
+	char userMin[5];
 	memset(userMin,'\0', 5);
 	write_text("Minutes:  ");
 	sys_req(READ, DEFAULT_DEVICE, userMin, &timeInt);
 	new_alarm->Minute = atoi(userMin);
 
 	//Enter Message
-	memset(userMessage,'\0', 35);
+	char userMessage[50];
 	write_text("Enter message you want displayed:  ");
 	sys_req(READ, DEFAULT_DEVICE, userMessage, &userInt);
+	strcpy(new_alarm->message, userMessage);
 //  	INSERTS NEW ALARM
 
 	if(alarm_queue.count == 0){		//If there arent any alarms, first alarm becomes head and tail
@@ -102,16 +106,11 @@ void setAlarm(){
 		if it passes, then it returns a 1 or yes otherwise returns a 0 or no
 */
 void checkAlarms(){
-	//klogv("reach0");
 	if(alarm_queue.count == 0){
-		//klogv("here");
-		sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
-		//klogv("here2");
+		sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);	//ends the alarm process if there are no alarms
 	}else{
-		//klogv("here3");
 		alarm *temp_alarm = alarm_queue.head;
-		int run = 1;
-		while(run){
+		while(1){
 			int int_hour, int_minute;
 			//Hours
 			outb(0x70, HOUR);
@@ -125,30 +124,40 @@ void checkAlarms(){
 
 	
 			if(temp_alarm->Hour == int_hour && temp_alarm->Minute == int_minute){
-				sys_req(WRITE, DEFAULT_DEVICE, userMessage, &userInt);
+				//sys_req(WRITE, DEFAULT_DEVICE, temp_alarm->message, &userInt);
+				write_text_bold_green("ALARM COMPLETE: ");
+				write_text_green(temp_alarm->message);
 				remove_alarm(temp_alarm);
-				sys_req(WRITE, DEFAULT_DEVICE, itoa(alarm_queue.count), &userInt);
+				//klogv("remove");
+				if(alarm_queue.count == 0){
+					sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);	//ends the alarm process if there are no alarms
+				}
 			}else{
+				write_text_magenta("ALARM: Not time yet --- TIME: ");
+				write_text_magenta("	ALARM SET TO: ");
 				write_text_blue(itoa(int_hour));
 				write_text_blue(itoa(int_minute));
+				write_text_magenta("	ALARM SET TO: ");
 				write_text_green(itoa(temp_alarm->Hour));
 				write_text_green(itoa(temp_alarm->Minute));
-				write_text_magenta("ALARM: Not time yet\n");
+				write_text_magenta("	Message: ");
+				write_text_cyan(temp_alarm->message);
+				write_text("\n");
 			
 			}
-			//klogv("reach4");
-			if(temp_alarm -> next != NULL){
-			
+			if(temp_alarm != alarm_queue.tail){
 				temp_alarm = temp_alarm->next;	
 			}else{
-				run = 0;
+				sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
+				temp_alarm = alarm_queue.head;
 			}
-			//klogv("reach5");
+			
 		}
-		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
+		//sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
+		
 	}
 
-
+	
 }
 
 
