@@ -46,6 +46,7 @@ void setAlarm(){
 		if(alarm_queue.count != 0){
 			
 		}
+		loadProcess("sys_load_proc", 0, 0, &sys_load_proc);
 		loadProcess("alarm_check", 1, 2, &checkAlarms);
 	}
 	alarm *new_alarm = sys_alloc_mem(sizeof(alarm));	//allocate mem to the alarm

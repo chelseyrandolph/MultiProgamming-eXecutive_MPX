@@ -4,5 +4,5 @@ void yield();
 void loadr3();
 void loadProcess();
 void infinite();
-
+void sys_load_proc();
 
