@@ -43,6 +43,9 @@ void remove_alarm(alarm* ralarm){
 }
 void setAlarm(){
 	if(find_pcb("alarm_check") == NULL){
+		if(alarm_queue.count != 0){
+			
+		}
 		loadProcess("alarm_check", 1, 2, &checkAlarms);
 	}
 	alarm *new_alarm = sys_alloc_mem(sizeof(alarm));	//allocate mem to the alarm
