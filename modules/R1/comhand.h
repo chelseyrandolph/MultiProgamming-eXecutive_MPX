@@ -9,3 +9,5 @@ int shutdown();
 int comhand();
 
 void displayMenu();
+
+void clear();
