@@ -44,7 +44,7 @@ void setAlarm(){
 	if(find_pcb("alarm_check") == NULL){
 		loadProcess("alarm_check", 1, 2, &checkAlarms);
 	}
-	alarm *new_alarm = sys_alloc_mem(sizeof(alarm));
+	alarm *new_alarm = sys_alloc_mem(sizeof(alarm));	//allocate mem to the alarm
 	
 	write_text_bold_blue("Please enter alarm time \n");
 
@@ -66,16 +66,13 @@ void setAlarm(){
 	sys_req(READ, DEFAULT_DEVICE, userMessage, &userInt);
 //  	INSERTS NEW ALARM
 
-	if(alarm_queue.count == 0){
+	if(alarm_queue.count == 0){		//If there arent any alarms, first alarm becomes head and tail
 		alarm_queue.head = new_alarm;
 		alarm_queue.tail = new_alarm;
 		alarm_queue.count++;
-	}else{
-		alarm* temp_alarm = alarm_queue.head;
-		while(new_alarm->next != NULL){
-			temp_alarm = temp_alarm->next;
-		}
-		temp_alarm -> next = new_alarm;
+	}else{							//Append any additional alarms to tail of queue
+		alarm *old_tail = alarm_queue.tail;
+		old_tail->next = new_alarm;
 		alarm_queue.tail = new_alarm;
 		alarm_queue.count++;
 	}
@@ -105,13 +102,13 @@ void setAlarm(){
 		if it passes, then it returns a 1 or yes otherwise returns a 0 or no
 */
 void checkAlarms(){
-	klogv("reach0");
+	//klogv("reach0");
 	if(alarm_queue.count == 0){
-		klogv("here");
+		//klogv("here");
 		sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
-		klogv("here2");
+		//klogv("here2");
 	}else{
-		klogv("here3");
+		//klogv("here3");
 		alarm *temp_alarm = alarm_queue.head;
 		int run = 1;
 		while(run){
@@ -139,14 +136,14 @@ void checkAlarms(){
 				write_text_magenta("ALARM: Not time yet\n");
 			
 			}
-			klogv("reach4");
+			//klogv("reach4");
 			if(temp_alarm -> next != NULL){
 			
 				temp_alarm = temp_alarm->next;	
 			}else{
 				run = 0;
 			}
-			klogv("reach5");
+			//klogv("reach5");
 		}
 		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 	}
