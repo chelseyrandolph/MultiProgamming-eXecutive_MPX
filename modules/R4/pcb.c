@@ -18,7 +18,7 @@ queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
 PCB* allocate_pcb(){
 	
-	PCB *pcb = sys_alloc_mem(sizeof(pcb));
+	PCB *pcb = sys_alloc_mem(sizeof(PCB));
 	pcb -> bottom_of_stack = sys_alloc_mem(1024);
 	return pcb;
 }
@@ -450,7 +450,7 @@ int show_pcb(char name[]){
 		if(pcb->process_class == 1){
 			write_text_blue("    User Process       ");
 		}else if(pcb->process_class == 0){
-			write_text_blue("    System Process     ");
+			write_text_cyan("    System Process     ");
 		}else{
 			return 0;
 		}

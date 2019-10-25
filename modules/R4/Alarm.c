@@ -27,6 +27,10 @@ void remove_alarm(alarm* ralarm){
 		alarm_queue.count--;
 	}else{
 		alarm *temp = alarm_queue.head;
+		if(temp == ralarm){
+			alarm_queue.head = temp->next;
+			alarm_queue.count--;
+		}
 		while(temp != ralarm){
 			temp = temp->next;
 			if(temp->next == ralarm){
