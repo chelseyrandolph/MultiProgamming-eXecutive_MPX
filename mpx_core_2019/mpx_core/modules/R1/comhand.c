@@ -49,159 +49,90 @@ int inputHelp(char helpBuffer[]){
 		}
 	}
 	
-	char *messageVersion= "\nVersion displays the version of MPX-OS currently running.\n"; 
-	int versionSize = sizeof(messageVersion);
-
-	char *messageHelp = "\nHelp displays necessary information on the function. \n";
-	int helpSize = sizeof(messageHelp);
-
-	char *messageShutdown = "\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n";
-	int shutdownSize = sizeof(messageShutdown);
-
-	char *messageDisplayTime = "\nDisplays the current time of day.\n";
-	int displayTimeSize = sizeof(messageDisplayTime);
-
-	char *messageDisplayDate = "\nDisplays the current date.\n";
-	int displayDateSize = sizeof(messageDisplayDate);
-
-	char *messageSetTime = "\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n";
-	int setTimeSize = sizeof(messageSetTime);
-
-	char *messageSetDate = "\nPrompts the user for a month, day, and year to change the MPX date to.\n";	
-	int setDateSize = sizeof(messageSetDate);
-
-
-/* Temporary command from R2.
-	char *messageCreatePCB = "\nCreates a PCB.\n";
-	int createPCBSize = sizeof(messageCreatePCB);
-*/	
-	char *messageShowAll = "\nShows all PCBs Created.\n";	
-	int showAllSize = sizeof(messageShowAll);
-
-	char *messageShowReady = "\nShows PCBs that are ready for execution,\n";
-	int showReadySize = sizeof(messageShowReady);
-
-	char *messageShowBlocked = "\nShows all the blocked PCBs.\n";
-	int showBlockedSize = sizeof(messageShowBlocked);
-
-	char *messageShowPCB = "\nShows a single, user chosen PCB.\n";
-	int showPCBSize = sizeof(messageShowPCB);
-
-/* Temporary command from R2.
-	char *messageDeletePCB = "\nDeletes a PCB from the appropriate queue and then free all associated memory.\n";
-	int deletePCBSize = sizeof(messageDeletePCB);
-*/
-
-	char *messageSuspendPCB = "\nPlaces a PCB in the suspended state.\n";
-	int suspendPCBSize = sizeof(messageSuspendPCB);
-
-	char *messageResumePCB = "\nPlaces a PCB in the not suspended state.\n";
-	int resumePCBSize = sizeof(messageResumePCB);
-
-/* Temporary commands from R2.
-	char *messageBlockPCB = "\nSets a PCB's state to blocked.\n";
-	int blockPCBSize = sizeof(messageBlockPCB);
-
-	char *messageUnblockPCB = "\nSets a PCB's state to unblocked.\n";
-	int unblockPCBSize = sizeof(messageUnblockPCB);
-*/
-
-	char *messageSetPCBPriority = "\nSets a PCB's priority.\n";
-	int setPCBPrioritySize = sizeof(messageSetPCBPriority);
-
-	char *messageYield = "\nCauses comhand to yield to other processes.\n";
-	int yieldSize = sizeof(messageYield);
-
-	char *loadr3msg = "\nLoads test processes.\n";
-	int loadr3Size = sizeof(loadr3msg);
-	
-	char *clearMsg = "\nThis clears the terminal.\n";
-	int clearSize = sizeof(clearMsg);
-	
 		switch(i){
 			case 1: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageVersion, &versionSize);
+					write_text("\nVersion displays the version of MPX-OS currently running.\n\n");
 					break;
 
 			case 2: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
-					sys_req(WRITE, DEFAULT_DEVICE, messageHelp, &helpSize);
+					write_text("\nHelp displays necessary information on the function. \n\n");					
 					break;
 
 			case 3: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
-					sys_req(WRITE, DEFAULT_DEVICE, messageShutdown, &shutdownSize); 
+					write_text("\nShutdown will power off MPX-OS, you will first be asked for confirmation before powering off by selecting (1) to confirm, or (2) to cancel.\n\n");					
 					break;
 
 			case 4:	sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i], &tempSize); 
-					sys_req(WRITE, DEFAULT_DEVICE, messageDisplayTime, &displayTimeSize);
+					write_text("\nDisplays the current time of day.\n\n");
 					break;
 
 			case 5: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageDisplayDate, &displayDateSize);  
+					write_text("\nDisplays the current date.\n\n");  
 					break;
 
 			case 6: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					sys_req(WRITE, DEFAULT_DEVICE, messageSetTime, &setTimeSize); 
+					write_text("\nPrompts the user for an hour, minute, and second to change the MPX clock to.\n\n"); 
 					break;
 
 			case 7: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageSetDate, &setDateSize);
+					write_text("\nPrompts the user for a month, day, and year to change the MPX date to.\n\n");
 					break;
 
-			/*case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
-					sys_req(WRITE, DEFAULT_DEVICE, messageCreatePCB, &createPCBSize); 
+			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
+					write_text("\nCreates a PCB.\n\n"); 
 					break;
-			*/
-			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					sys_req(WRITE, DEFAULT_DEVICE, messageShowAll, &showAllSize);   
+			
+			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+					write_text("\nShows all PCBs Created.\n\n");   
 					break;
-
-			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageShowReady, &showReadySize); 
-					 break;
 
 			case 10: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageShowBlocked, &showBlockedSize); 
+					 write_text("\nShows PCBs that are ready for execution,\n\n"); 
 					 break;
 
 			case 11: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageShowPCB, &showPCBSize); 
+					 write_text("\nShows all the blocked PCBs.\n\n"); 
+					 break;
+
+			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 write_text("\nShows a single, user chosen PCB.\n\n"); 
 					 break;
 			/*
 			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageDeletePCB, &deletePCBSize);
+					 write_text("\nDeletes a PCB from the appropriate queue and then free all associated memory.\n\n");
 					 break;
 			*/
-			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageSuspendPCB, &suspendPCBSize); 
+			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 write_text("\nPlaces a PCB in the suspended state.\n\n"); 
 					 break;
 
-			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					 sys_req(WRITE, DEFAULT_DEVICE, messageResumePCB, &resumePCBSize); 
+			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+					 write_text("\nPlaces a PCB in the not suspended state.\n\n"); 
 					 break;
 			/*
 			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageBlockPCB, &blockPCBSize); 
+					 write_text("\nSets a PCB's state to blocked.\n\n"); 
 					 break;
 
 			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageUnblockPCB, &unblockPCBSize); 
+					 write_text("\nSets a PCB's state to unblocked.\n\n"); 
 					 break;
 			*/
 
-			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, messageSetPCBPriority, &setPCBPrioritySize); 
+			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 write_text("\nSets a PCB's priority.\n\n"); 
 					 break;
 
-			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
-					 sys_req(WRITE, DEFAULT_DEVICE, messageYield, &yieldSize);
-					 break;
-
-			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, loadr3msg, &loadr3Size); 
+			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+					 write_text("\nCauses comhand to yield to other processes.\n\n");
 					 break;
 
 			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
-					 sys_req(WRITE, DEFAULT_DEVICE, clearMsg, &clearSize); 
+					 write_text("\nLoads test processes.\n\n"); 
+					 break;
+
+			case 18: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 write_text("\nThis clears the terminal.\n\n"); 
 					 break;
 
 			default: displayAllCommands();
@@ -271,11 +202,7 @@ int comhand(){
 				i = k+1;
 			}
 		}
-		//int size = 16;
-		//sys_req(WRITE, DEFAULT_DEVICE, tokenizedBuffer[1], &size);
 		
-		int failSize = 100;
-		char failure[100] = "\033[0;31mNot a recognized command:\033[0m type 'help' to see a list of commands.\n\n";
 		switch(i){
 			case 1: version(); 						break;
 			case 2: inputHelp(tokenizedBuffer[1]);	break;
@@ -284,21 +211,24 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			//case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
-			case 8: show_all();						break;
-			case 9: show_blocked();				break;
-			case 10: show_ready();					break;
-			case 11: show_pcb(tokenizedBuffer[1]);  break;
+			case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
+			case 9: show_all();						break;
+			case 10: show_blocked();				break;
+			case 11: show_ready();					break;
+			case 12: show_pcb(tokenizedBuffer[1]);  break;
 			//case 13: delete_pcb(tokenizedBuffer[1]);break;
-			case 12: suspend_pcb(tokenizedBuffer[1]); break;
-			case 13: resume_pcb(tokenizedBuffer[1]); break;
+			case 13: suspend_pcb(tokenizedBuffer[1]); break;
+			case 14: resume_pcb(tokenizedBuffer[1]); break;
 			//case 16: block_pcb(tokenizedBuffer[1]); break;
 			//case 17: unblock_pcb(tokenizedBuffer[1]); break;
-			case 14: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
-			case 15: yield(); break;
-			case 16: loadr3(); break;
-			case 17: clear(); break;
-			default: sys_req(WRITE,DEFAULT_DEVICE, failure, &failSize);
+			case 15: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
+			case 16: yield(); break;
+			case 17: loadr3(); break;
+			case 18: clear(); break;
+			default: write_text_red("Not a valid command, type ");
+					 write_text_yellow("'help' "); 
+					 write_text_red("for options\n");
+					 break;
 		}
 	}
 	remove_all();

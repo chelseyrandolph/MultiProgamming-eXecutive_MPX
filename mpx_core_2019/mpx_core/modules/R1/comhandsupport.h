@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-char commands[17][30] = {
+char commands[18][30] = {
     "version",
     "help",
     "shutdown",
@@ -15,7 +15,7 @@ char commands[17][30] = {
     "get-date",
     "set-time",    
     "set-date",
-	//"create-pcb",
+	"create-pcb",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -31,7 +31,7 @@ char commands[17][30] = {
 	"clear"
 };
 //Paramarized help menu 
-char helpcommands[17][70] = {
+char helpcommands[18][70] = {
     "version",
     "help [command]",
     "shutdown",
@@ -39,7 +39,7 @@ char helpcommands[17][70] = {
     "get-date",
     "set-time",    
     "set-date",
-	//"create-pcb \033[0;34m[name] [class] [priority]\033[0m",
+	"create-pcb \033[0;34m[name] [class] [priority]\033[0m",
 	"show-all",
 	"show-blocked",
 	"show-ready",

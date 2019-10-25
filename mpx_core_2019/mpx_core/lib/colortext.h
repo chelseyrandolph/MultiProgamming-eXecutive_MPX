@@ -1,3 +1,5 @@
+void write_text(char str[]);
+
 void write_text_red(char str[]);
 
 void write_text_bold_red(char str[]);
