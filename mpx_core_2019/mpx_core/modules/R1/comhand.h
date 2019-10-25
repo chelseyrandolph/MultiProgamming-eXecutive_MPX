@@ -2,8 +2,6 @@ void version();
 
 void displayAllCommands();
 
-void clear();
-
 int inputHelp(char helpBuffer[]);
 
 int shutdown();
@@ -11,3 +9,5 @@ int shutdown();
 int comhand();
 
 void displayMenu();
+
+void auto_complete(char partial_str[]);

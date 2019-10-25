@@ -23,7 +23,7 @@ PCB* allocate_pcb(){
 	return pcb;
 }
 
-PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to process class (system or user)
+PCB* setup_pcb(char name[], int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
 
@@ -31,7 +31,7 @@ PCB* setup_pcb(char *name, int pclass, int priority){ // pclass refers to proces
 	new_pcb -> context = (context*) new_pcb -> top_of_stack;
 
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
-		strcpy(new_pcb -> name , name);		// sets the new process's name to name parameter
+		strcpy(new_pcb->name, name);		// sets the new process's name to name parameter
 	}else{
 		return NULL; 
 	}
@@ -75,17 +75,15 @@ void remove_all(){
 }
 
 int free_pcb(PCB* pcb){
-	sys_free_mem(pcb->bottom_of_stack); 
-	sys_free_mem(pcb);
+	if(pcb != NULL){
+		sys_free_mem(pcb->bottom_of_stack); 
+		sys_free_mem(pcb);
+	}
 	return 0;
 }
 
-PCB* find_pcb(char *process_name){
-	
-	int i;
-
+PCB* find_pcb(char process_name[]){
 	PCB *temp_process = ready_queue.head;	//points to the PCB at the head of the queue
-	
 	int found = 0;
 	while(!found){
 		if(strcmp(temp_process->name, process_name) == 0){
@@ -98,32 +96,38 @@ PCB* find_pcb(char *process_name){
 	}
 
 	temp_process = blocked_queue.head;	//points to the PCB at the head of the queue
-	
-	for(i = 0; i < blocked_queue.count; i++){
-		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
+	found = 0;
+	while(!found){
+		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else {
-			temp_process = temp_process->next;	//moves to the next PCB in the linked list
+		}else if(temp_process == blocked_queue.tail){
+			found = 1;
+		}else{
+			temp_process = temp_process->next;
 		}
 	}
 
 	temp_process = suspended_ready_queue.head;	//points to the PCB at the head of the queue
-	
-	for(i = 0; i < suspended_ready_queue.count; i++){
-		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
+	found = 0;
+	while(!found){
+		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else {
-			temp_process = temp_process->next;	//moves to the next PCB in the linked list
+		}else if(temp_process == suspended_ready_queue.tail){
+			found = 1;
+		}else{
+			temp_process = temp_process->next;
 		}
 	}
 
 	temp_process = suspended_blocked_queue.head;	//points to the PCB at the head of the queue
-	
-	for(i = 0; i < suspended_blocked_queue.count; i++){
-		if(strcmp(process_name, temp_process->name) == 0){ // checks if strcmp returns 0 (0 means they match)
+	found = 0;
+	while(!found){
+		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else {
-			temp_process = temp_process->next;	//moves to the next PCB in the linked list
+		}else if(temp_process == suspended_blocked_queue.tail){
+			found = 1;
+		}else{
+			temp_process = temp_process->next;
 		}
 	}
 
@@ -143,7 +147,6 @@ int insert_pcb(PCB *pcb){
 			int found = 0;
 			PCB *temp_pcb = ready_queue.head;
 			while(!found){
-				
 				if(temp_pcb->priority > pcb->priority){
 					pcb->next = temp_pcb;
 					temp_pcb->prev->next = pcb;
@@ -177,7 +180,6 @@ int insert_pcb(PCB *pcb){
 			int found = 0;
 			PCB *temp_pcb = suspended_ready_queue.head;
 			while(!found){
-				
 				if(temp_pcb->priority > pcb->priority){
 					pcb->next = temp_pcb;
 					temp_pcb->prev->next = pcb;
@@ -216,7 +218,6 @@ int insert_pcb(PCB *pcb){
 		}
 	}
 	if(pcb->readystate == -1 && pcb->suspended == 1){	//suspended_blocked_queue
-		
 		if(suspended_blocked_queue.count == 0){
 			suspended_blocked_queue.head = pcb;
 			suspended_blocked_queue.tail = pcb;
@@ -233,9 +234,9 @@ int insert_pcb(PCB *pcb){
 }
 
 int remove_pcb(PCB* pcb){
+	int found = 0;
 	if(pcb->readystate == 0 && pcb->suspended == 0){ // ready_queue
 		PCB *temp_pcb = ready_queue.head;
-		int found = 0;
 		while(!found){
 			if(temp_pcb == pcb && temp_pcb != NULL){		//remove from queue and re-link its neighbors
 				if(pcb == ready_queue.head){		// reassigns head if needed
@@ -249,16 +250,16 @@ int remove_pcb(PCB* pcb){
 				ready_queue.count--;
 				found = 1;		
 			}else if(temp_pcb == ready_queue.tail && temp_pcb !=pcb){
-				write_text_red("Process Not Found... exiting");
+				write_text_red("Process Not Found... exiting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
 		}
 	}
+	found = 0;
 	if(pcb->readystate == 0 && pcb->suspended == 1){ // suspended_ready_queue
 		PCB *temp_pcb = suspended_ready_queue.head;
-		int found = 0;
 		while(!found && temp_pcb != NULL){
 			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
 				if(pcb == suspended_ready_queue.head){		// reassigns head if needed
@@ -272,16 +273,16 @@ int remove_pcb(PCB* pcb){
 				suspended_ready_queue.count--;	
 				found = 1;
 			}else if(temp_pcb == suspended_ready_queue.tail && temp_pcb !=pcb){
-				write_text_red("Process Not Found... exiting");
+				write_text_red("Process Not Found... exiting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
 		}
 	}
+	found = 0;
 	if(pcb->readystate == -1 && pcb->suspended == 0){ // blocked_queue
 		PCB *temp_pcb = blocked_queue.head;
-		int found = 0;
 		while(!found && temp_pcb != NULL){
 			if(blocked_queue.count == 1){
 				blocked_queue.head = NULL;
@@ -301,16 +302,16 @@ int remove_pcb(PCB* pcb){
 				blocked_queue.count--;
 				found = 1;
 			}else if(temp_pcb == blocked_queue.tail && temp_pcb !=pcb){
-				write_text_red("Process Not Found... exiting");
+				write_text_red("Process Not Found... exiting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
 			}
 		}
 	}
+	found = 0;
 	if(pcb->readystate == -1 && pcb->suspended == 1){ // suspended_blocked_queue
 		PCB *temp_pcb = suspended_blocked_queue.head;
-		int found = 0;
 		while(!found){
 			if(temp_pcb == pcb){		//remove from queue and re-link its neighbors
 				if(pcb == suspended_blocked_queue.head){		// reassigns head if needed
@@ -324,7 +325,7 @@ int remove_pcb(PCB* pcb){
 				suspended_blocked_queue.count--;
 				found = 1;
 			}else if(temp_pcb == suspended_blocked_queue.tail && temp_pcb !=pcb){
-				write_text_red("Process Not Found... exiting");
+				write_text_red("Process Not Found... exiting\n");
 				return NULL;
 			}else{
 				temp_pcb = temp_pcb->next;
@@ -354,12 +355,13 @@ int create_pcb(char name[], int pclass, int priority){
 		write_text_bold_red("INVALID CLASS... exiting\n\n\n");
 		return NULL; 	
 	}
+
 	insert_pcb(setup_pcb(name, pclass, priority)); // Insert a setup PCB (insert_pcb() takes are of placing it in the appropriate queue
 	return 0;
 }
 
 
-int delete_pcb(char *name){
+int delete_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb != NULL){
 		remove_pcb(pcb);
@@ -370,7 +372,8 @@ int delete_pcb(char *name){
 	return 0;
 }
 
-int block_pcb(char *name){
+// Temporary user command
+int block_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb == NULL){
 		write_text_bold_red("Process Not Found\n");
@@ -381,18 +384,20 @@ int block_pcb(char *name){
 	return 0;
 }
 
-int unblock_pcb(char *name){
+// Temporary user command
+int unblock_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
-	if(pcb == NULL){
-		write_text_bold_red("Process Not Found\n");
+	if(pcb != NULL){
+		remove_pcb(pcb);		//takes the pcb out of the queue its in
+		pcb->readystate = 0;	//sets readystate = ready
+		insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
+	}else{
+		write_text_yellow("Process not found\n\n");
 	}
-	remove_pcb(pcb);		//takes the pcb out of the queue its in
-	pcb->readystate = 0;	//sets readystate = ready
-	insert_pcb(pcb);			//inserts it into the ready (or suspended_ready) queue
 	return 0;
 }
 
-int suspend_pcb(char *name){
+int suspend_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb != NULL){
 		remove_pcb(pcb);		//takes the pcb out of the queue its in
@@ -404,7 +409,7 @@ int suspend_pcb(char *name){
 	return 0;
 }
 
-int resume_pcb(char *name){
+int resume_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb != NULL){
 		remove_pcb(pcb);		//takes the pcb out of the queue its in
@@ -416,7 +421,7 @@ int resume_pcb(char *name){
 	return 0;
 }
 
-int set_pcb_priority(char *name, int new_priority){
+int set_pcb_priority(char name[], int new_priority){
 	PCB *pcb = find_pcb(name);
 	if(pcb != NULL){
 		remove_pcb(pcb);
@@ -428,7 +433,7 @@ int set_pcb_priority(char *name, int new_priority){
 	return 0;
 }
 
-int show_pcb(char *name){
+int show_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb == NULL){
 		write_text_yellow("Process not found\n\n");
@@ -445,7 +450,7 @@ int show_pcb(char *name){
 		if(pcb->process_class == 1){
 			write_text_blue("    User Process       ");
 		}else if(pcb->process_class == 0){
-			write_text_blue("    System Process     ");
+			write_text_cyan("    System Process     ");
 		}else{
 			return 0;
 		}
@@ -473,7 +478,6 @@ int show_pcb(char *name){
 	}
 	return 1;
 }
-
 
 int show_ready(){
 	int done = 0;
@@ -556,9 +560,5 @@ int show_all(){
 	write_text("\n\n");
 	return 0;
 }
-
-
-
-
 
 

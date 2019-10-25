@@ -7,12 +7,13 @@
 
 #include <system.h>
 
-#include "modules/R3/pcb.h"
+#include "modules/R4/pcb.h"
 #include <core/io.h>
 #include <core/serial.h>
 #include <core/tables.h>
 #include <core/interrupts.h>
 #include "modules/mpx_supt.h"
+
 // Programmable Interrupt Controllers
 #define PIC1 0x20
 #define PIC2 0xA0
@@ -96,10 +97,10 @@ void init_irq(void)
     if (i<17) idt_set_gate(i, isrs[i], 0x08, 0x8e);
     else idt_set_gate(i, (u32int)reserved, 0x08, 0x8e);
   }
-
+  idt_set_gate(60, (u32int)sys_call_isr, 0x08,0x8e);
   // Ignore interrupts from the real time clock
   idt_set_gate(0x08, (u32int)rtc_isr, 0x08, 0x8e);
-  idt_set_gate(60, (u32int)sys_call_isr, 0x08,0x8e);
+
 }
 
 /*

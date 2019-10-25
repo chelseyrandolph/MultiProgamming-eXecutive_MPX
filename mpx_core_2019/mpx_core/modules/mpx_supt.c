@@ -181,11 +181,10 @@ int sys_free_mem(void *ptr)
   Params..: None
 */
 void idle(){
-
   while(1){
-  	char *msg = "IDLE PROCESS EXECUTING.\n";
+	char *msg = "IDLE PROCESS EXECUTING.\n";
 	int msgSize = sizeof(msg);
-	sys_req( WRITE, DEFAULT_DEVICE, msg, &msgSize);
+	sys_req(WRITE, DEFAULT_DEVICE, msg, &msgSize);
     sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
   }
 }

@@ -19,6 +19,7 @@
 #include "modules/mpx_supt.h"
 #include "modules/R1/polling.h"
 #include "modules/R1/comhand.h"
+#include "modules/R4/Dispatcher.h"
 
 void kmain(void)
 {
@@ -47,7 +48,7 @@ void kmain(void)
    init_serial(COM1);
    set_serial_out(COM1);
    set_serial_in(COM1);
-   mpx_init(MODULE_R3);
+   mpx_init(MODULE_R4);
    
    // 3) Descriptor Tables
    klogv("Initializing descriptor tables...");
@@ -62,15 +63,39 @@ void kmain(void)
    sti();
    init_paging();
 
+
+
+   // THIS IS JUST OUR MEMU, NOT** COMHAND
+   displayMenu();
+
+    // Polling
+   sys_set_read(init_polling);
+
+
+
+
+//Loading initial processes
+   // 5.-) IDLE process
+   klogv("Initilizing idle process...");
+   loadProcess("idle_process", 0, 9, &idle);
+
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
-   sys_set_read(init_polling);
-   displayMenu();
-   comhand();
+   loadProcess("comhand_process", 0, 0, &comhand);
+
+   // 5.-) Infinite process
+   klogv("Initilizing infinite process...");
+   loadProcess("infinite_process", 1, 1, &infinite);
+
+   yield();
+
+   
+
+
 
    // 6) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
-   
+
    /* Shutdown Procedure */
    klogv("Shutdown complete. You may now turn off the machine. (QEMU: C-a x)");
    hlt();

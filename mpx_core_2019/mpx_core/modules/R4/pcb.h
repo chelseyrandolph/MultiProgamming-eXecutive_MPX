@@ -37,9 +37,8 @@ typedef struct context {
 PCB* allocate_pcb();
 
 /*This is an internal function that includes a name of process, process class, and priority. This function is used to allocate the memory to the new pcb. The process name must be at least 8 character. The priority must be a number from 0 to 9. The process class must either be 0 for the user or 1 for the system. */
-PCB* setup_pcb(char *name, int pclass, int priority);
+PCB* setup_pcb(char name[], int pclass, int priority);
 
-/*This function removes all processes in each queue before shutting down the system. */
 void remove_all();
 
 /*This function is an internal function that frees the pcb's memory with sys_free_mem().*/
@@ -93,4 +92,5 @@ typedef struct queue {
 	int count;
 
 }queue;
+
 

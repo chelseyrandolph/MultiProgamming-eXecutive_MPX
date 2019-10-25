@@ -25,11 +25,10 @@ u32int* sys_call(context* registers){
 	if(cop == NULL){
 		contextSwitch = registers;
 	}else{
-
-		if(params.op_code == IDLE){
-			cop -> top_of_stack = (unsigned char*) registers;
-			cop -> context = registers;
 		
+		if(params.op_code == IDLE){		
+			cop -> top_of_stack = (unsigned char*) registers;
+			cop -> context = registers;	
 		}else if(params.op_code == EXIT){
 			free_pcb(cop);
 		}
@@ -38,6 +37,7 @@ u32int* sys_call(context* registers){
 	if(temporary_ready != NULL){
 		remove_pcb(temporary_ready);
 		//New processes will get added back
+		
 		if(cop != NULL && params.op_code != EXIT){
 			insert_pcb(cop);
 		}
@@ -48,42 +48,65 @@ u32int* sys_call(context* registers){
 		cop = NULL;
 		return (u32int*) contextSwitch;
 	}
+	
 	return (u32int*) cop -> context;
 }
+
 
 void yield(){
 asm volatile("int $60");
 }
 
+void sys_load_proc(){
+	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
+}
 
-void loadProcess(char* name, int class, int priority, void* function){
-	PCB* new_pcb = setup_pcb(name,class,priority);
-	insert_pcb(new_pcb);
-	context* cp = (context*)(new_pcb -> top_of_stack);
-	memset(cp, 0, sizeof(context));
-	cp->fs = 0x10;
-	cp->gs = 0x10;
-	cp->ds = 0x10;
-	cp->es = 0x10;
-	cp->cs = 0x8;
-	cp->ebp = (u32int)(new_pcb->bottom_of_stack);
-	cp->esp = (u32int)(new_pcb->top_of_stack);
-	cp->eip = (u32int) function;
+void infinite(){
+	while(1){
+		char msg[50] = "INFINITE PROCESS EXECUTING.\n";
+		int msgSize = sizeof(msg);
+		sys_req(WRITE, DEFAULT_DEVICE, msg, &msgSize);
+		sys_req(IDLE, DEFAULT_DEVICE, NULL,NULL);
+	}
+}
+
+void loadProcess(char name[], int class, int priority, void* function){
+	create_pcb(name, class, priority);
+	PCB *new_pcb = find_pcb(name);
+	if(new_pcb != NULL){
+		context* cp = (context*)(new_pcb -> top_of_stack);
+		memset(cp, 0, sizeof(context));		
+		cp->fs = 0x10;
+		cp->gs = 0x10;
+		cp->ds = 0x10;
+		cp->es = 0x10;
+		cp->cs = 0x8;
+		cp->ebp = (u32int)(new_pcb->bottom_of_stack);
+		cp->esp = (u32int)(new_pcb->top_of_stack);
+		cp->eip = (u32int) function;
+	}
 }
 
 void loadr3(){
-	loadProcess("process01", 1, 1, &proc1);
+	loadProcess("sys_load_proc", 1, 0, &sys_load_proc);
+	loadProcess("process01", 1, 2, &proc1);
 	suspend_pcb("process01");
-	loadProcess("process02", 1, 1, &proc2);
+	loadProcess("process02", 1, 2, &proc2);
 	suspend_pcb("process02");
-	loadProcess("process03", 1, 1, &proc3);
+	loadProcess("process03", 1, 2, &proc3);
 	suspend_pcb("process03");
-	loadProcess("process04", 1, 1, &proc4);
+	loadProcess("process04", 1, 2, &proc4);
 	suspend_pcb("process04");
-	loadProcess("process05", 1, 1, &proc5);
+	loadProcess("process05", 1, 2, &proc5);
 	suspend_pcb("process05");
-
 }
+
+
+
+
+
+
+
 
 
 
