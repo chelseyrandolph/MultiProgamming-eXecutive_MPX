@@ -180,17 +180,11 @@ int sys_free_mem(void *ptr)
 			processes are available to execute.
   Params..: None
 */
-void idle()
-{
-  char msg[30];
-  int count=0;
-	
-	memset( msg, '\0', sizeof(msg));
-	strcpy(msg, "IDLE PROCESS EXECUTING.\n");
-	count = strlen(msg);
-  
+void idle(){
   while(1){
-	sys_req( WRITE, DEFAULT_DEVICE, msg, &count);
+	char *msg = "IDLE PROCESS EXECUTING.\n";
+	int msgSize = sizeof(msg);
+	sys_req(WRITE, DEFAULT_DEVICE, msg, &msgSize);
     sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
   }
 }

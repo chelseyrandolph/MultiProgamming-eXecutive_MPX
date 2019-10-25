@@ -7,7 +7,8 @@
 #include "time.h"
 #include "date.h"
 
-char commands[20][30] = {
+
+char commands[19][30] = {
     "version",
     "help",
     "shutdown",
@@ -15,7 +16,7 @@ char commands[20][30] = {
     "get-date",
     "set-time",    
     "set-date",
-	"create-pcb",
+	//"create-pcb",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -23,11 +24,14 @@ char commands[20][30] = {
 	"delete-pcb",
 	"suspend-pcb",
 	"resume-pcb",
-	"block-pcb",
-	"unblock-pcb",
+	//"block-pcb",
+	//"unblock-pcb",
 	"set-pcb-priority",
-	"yield",
-	"loadr3"
+	//"yield",
+	"loadr3",
+	"clear",
+	"alarm",
+	"create-pcb"
 };
 //Paramarized help menu 
 char helpcommands[17][70] = {
@@ -43,12 +47,13 @@ char helpcommands[17][70] = {
 	"show-blocked",
 	"show-ready",
     "show-pcb \033[0;34m[pcb_name]\033[0m",
-	//"delete-pcb \033[0;34m[pcb_name]\033[0m",
+	"delete-pcb \033[0;34m[pcb_name]\033[0m",
 	"suspend-pcb \033[0;34m[pcb_name]\033[0m",
 	"resume-pcb \033[0;34m[pcb_name]\033[0m",
 	//"block-pcb \033[0;34m[pcb_name]\033[0m",
 	//"unblock-pcb \033[0;34m[pcb_name]\033[0m",
 	"set-pcb-priority \033[0;34m[pcb_name] [new_priority]\033[0m",
-	"yield",
-	"loadr3"
+	//"yield",
+	"loadr3",
+	"clear"
 };

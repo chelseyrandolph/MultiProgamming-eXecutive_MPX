@@ -1,9 +1,13 @@
 void version();
 
+void displayAllCommands();
+
+int inputHelp(char helpBuffer[]);
+
 int shutdown();
 
 int comhand();
 
-int ourHelp();
+void displayMenu();
 
-void comhandinitaliz();
+void auto_complete(char partial_str[]);
