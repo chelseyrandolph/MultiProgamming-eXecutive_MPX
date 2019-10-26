@@ -20,6 +20,7 @@
 #include "modules/R1/polling.h"
 #include "modules/R1/comhand.h"
 #include "modules/R4/Dispatcher.h"
+#include "modules/R4/Alarm.h"
 #include "modules/R5/memory_man.h"
 void kmain(void)
 {
@@ -64,8 +65,8 @@ void kmain(void)
    init_paging();
 
 	init_heap(50000);
-   sys_set_malloc(alloc_mem);
-	sys_set_free(free_mem);
+   //sys_set_malloc(alloc_mem);
+  // sys_set_free(free_mem);
    // THIS IS JUST OUR MEMU, NOT** COMHAND
    displayMenu();
 
@@ -84,11 +85,9 @@ void kmain(void)
    klogv("Transferring control to commhand...");
    loadProcess("comhand_process", 0, 0, &comhand);
 
-   // 5.-) Infinite process
-   klogv("Initilizing infinite process...");
-   loadProcess("infinite_process", 1, 1, &infinite);
-
+   show_alloc_mem();
    yield();
+
 
    
 

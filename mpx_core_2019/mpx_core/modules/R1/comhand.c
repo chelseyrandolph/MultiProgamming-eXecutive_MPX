@@ -10,6 +10,7 @@
 #include "../../lib/colortext.h"
 #include "../R4/Dispatcher.h"
 #include "../R4/Alarm.h"
+#include "../R5/memory_man.h"
 
 
 
@@ -150,7 +151,7 @@ int inputHelp(char helpBuffer[]){
 					 write_text("\nThis shows the free memory blocks.\n\n");
 					 break;
 
-			case 21: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 22: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nThis shows the allocated memory blocks.\n\n");
 					 break;
 
