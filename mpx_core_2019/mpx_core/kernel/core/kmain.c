@@ -20,7 +20,7 @@
 #include "modules/R1/polling.h"
 #include "modules/R1/comhand.h"
 #include "modules/R4/Dispatcher.h"
-
+#include "modules/R5/memory_man.h"
 void kmain(void)
 {
    extern uint32_t magic;
@@ -48,8 +48,8 @@ void kmain(void)
    init_serial(COM1);
    set_serial_out(COM1);
    set_serial_in(COM1);
-   mpx_init(MODULE_R4);
-   
+   mpx_init(MODULE_R3);
+
    // 3) Descriptor Tables
    klogv("Initializing descriptor tables...");
 
@@ -63,8 +63,9 @@ void kmain(void)
    sti();
    init_paging();
 
-
-
+	init_heap(50000);
+   sys_set_malloc(alloc_mem);
+	sys_set_free(free_mem);
    // THIS IS JUST OUR MEMU, NOT** COMHAND
    displayMenu();
 

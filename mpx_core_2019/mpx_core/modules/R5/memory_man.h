@@ -27,7 +27,7 @@ int init_heap(u32int heap_size_param);
 
 u32int alloc_mem(u32int num_bytes);
 
-void free_mem(char addr[]);
+int free_mem(void *addr);
 
 int isEmpty();
 

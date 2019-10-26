@@ -6,6 +6,7 @@
 #include "pcb.h" 
 #include "../mpx_supt.h"
 #include "../R1/time.h"
+#include "../R5/memory_man.h"
 #include "../../lib/colortext.h"
 
 
