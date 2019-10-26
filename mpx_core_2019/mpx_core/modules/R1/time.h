@@ -7,7 +7,8 @@
 
 void setTime();
 void getTime();
-char* itoa(int number);
+//char* itoa(int number);
+char* itoa(int num);
 int BCDToDEC(int num);
 int DECToBCD(int num); 
 

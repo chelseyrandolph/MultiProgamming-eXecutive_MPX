@@ -2,9 +2,10 @@
 #include <core/io.h>
 #include <core/serial.h>
 #include <core/interrupts.h>
-
+#include <system.h>
 #include "../mpx_supt.h"
 #include "time.h"
+#include <stdbool.h>
 
 #define Invalid_hour "you enter invalid type of hour"
 #define Invalid_min "you enter invalid type of mintuts"
@@ -134,10 +135,72 @@ void getTime(){
 
 }
 
+char* itoa(int num)
+{
+	char* str = " ";
+	int base = 10;
+	bool isNegative = false;
 
+	/* Handle 0 explicitely, otherwise empty string is printed for 0 */
+	if (num == 0)
+
+	{
+		str[0] = '0';
+		str[1] = '\0';
+		return str;
+	}
+
+	// In standard itoa(), negative numbers are handled only with
+	// base 10. Otherwise numbers are considered unsigned.
+	if (num < 0 && base == 10)
+	{
+		isNegative = true;
+		num = -num;
+	}
+	// len will store the length of integer
+	//e.g len of 188 is 3 if base is 10
+	int len = 0;
+	if (isNegative)
+		len++;
+	int temp = num;
+	while (temp != 0)
+	{
+		len++;
+		temp /= base;
+	}
+	//null char is placed at end of str
+	str[len--] = '\0';
+	// Process individual digits
+	while (num != 0)
+	{
+		int rem = num % base;
+		char ch;
+		if (rem > 9)
+		{
+			ch = (rem - 10) + 'A';
+		}
+		else
+		{
+			ch = rem + '0';
+		}
+		//the rem is placed to it's position 
+		str[len--] = ch;
+		num = num / base;
+	}
+
+	// If number is negative, append '-' at start
+	if (isNegative)
+		str[0] = '-';
+
+
+
+
+
+	return str;
+}
 
 	// convert binary code decimal to string 
-char* itoa(int number){
+/*char* itoa(int number){
 
 	char *string = " "; 
 	//int i;
@@ -150,7 +213,10 @@ char* itoa(int number){
 	return string;
 
 
-}
+
+
+}*/
+
 
 int BCDToDEC(int num){
 return ((((num)>>4)&0x0F)*10) +(num&0x0F);
