@@ -5,7 +5,7 @@ typedef struct CMCB {
 	int type; //1 for alloc, 0 for free
 	struct CMCB* next;
 	struct CMCB* prev;
-	char startAddr[];
+	void* startAddr;
 
 }CMCB;
 
