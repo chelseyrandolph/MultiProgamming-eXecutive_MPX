@@ -25,7 +25,7 @@ typedef struct mem_queue {
 
 int init_heap(u32int heap_size_param);
 
-void alloc_mem(int num_bytes);
+u32int alloc_mem(u32int num_bytes);
 
 void free_mem(char addr[]);
 
@@ -34,3 +34,7 @@ int isEmpty();
 void show_free_mem();
 
 void show_alloc_mem();
+
+void unlink(CMCB* mcb);
+
+void insert(CMCB* mcb);
