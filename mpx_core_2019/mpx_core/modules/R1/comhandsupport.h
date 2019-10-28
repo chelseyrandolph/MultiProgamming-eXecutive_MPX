@@ -7,8 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-
-char commands[19][30] = {
+char commands[22][30] = {
     "version",
     "help",
     "shutdown",
@@ -16,7 +15,7 @@ char commands[19][30] = {
     "get-date",
     "set-time",    
     "set-date",
-	//"create-pcb",
+	"create-pcb",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -31,10 +30,13 @@ char commands[19][30] = {
 	"loadr3",
 	"clear",
 	"alarm",
-	"create-pcb"
+	"infinite",
+	"show-free-mem",
+	"show-alloc-mem"
+	
 };
 //Paramarized help menu 
-char helpcommands[17][70] = {
+char helpcommands[22][70] = {
     "version",
     "help [command]",
     "shutdown",
@@ -42,7 +44,7 @@ char helpcommands[17][70] = {
     "get-date",
     "set-time",    
     "set-date",
-	//"create-pcb \033[0;34m[name] [class] [priority]\033[0m",
+	"create-pcb \033[0;34m[name] [class] [priority]\033[0m",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -55,5 +57,9 @@ char helpcommands[17][70] = {
 	"set-pcb-priority \033[0;34m[pcb_name] [new_priority]\033[0m",
 	//"yield",
 	"loadr3",
-	"clear"
+	"clear",
+	"alarm",
+	"infinite",
+	"show-free-mem",
+	"show-alloc-mem"
 };
