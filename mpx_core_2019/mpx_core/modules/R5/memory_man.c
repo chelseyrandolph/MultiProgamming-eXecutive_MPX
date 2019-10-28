@@ -18,31 +18,40 @@ LMCB *bottom_of_heap;
 mem_queue allocated_block_list = {.head = NULL, .tail = NULL, .count = 0};
 mem_queue free_block_list = {.head = NULL, .tail = NULL, .count = 0};
 
-int heap_size = 50000;	// make this 50,000 at some point
-u32int start_of_mem;
+//TODO: CHANGED THIS 
+unsigned char *start_of_mem;
 
 // Each word is 4 bytes, you wouldn't want to break a block on a byte
 int MINIMMUM_FREE_BLOCK_SIZE = 4;
 
 int init_heap(u32int heap_size_param){
-
+	write_text_bold_blue("INSIDE INIT_HEAP\n");
 	//Rounds up to the next full word which is equal to 4 bytes
 	int roundUp = heap_size_param % 4;
 	if(roundUp > 0){
 		heap_size_param = heap_size_param + (4 - roundUp);
 	}
-	u32int start_of_mem = kmalloc(heap_size_param + sizeof(CMCB) + sizeof(LMCB));
+
+	start_of_mem = (unsigned char*)kmalloc(heap_size_param + sizeof(CMCB) + sizeof(LMCB));
+	//write_text_magenta(start_of_mem);
 	top_of_heap = (CMCB*)start_of_mem;
-	bottom_of_heap = (LMCB*)(start_of_mem + sizeof(CMCB) + heap_size_param);
-	strcpy(top_of_heap->startAddr, itoa(start_of_mem)); // + sizeof??
 	top_of_heap->type = 0;
-	bottom_of_heap->type = 0;
 	top_of_heap->size = heap_size_param;	//Doesnt include size of overhead
-	bottom_of_heap->size = heap_size_param;
+	strcpy(top_of_heap->startAddr, itoa((int)start_of_mem));
 	top_of_heap->next = NULL;
 	top_of_heap->prev = NULL;
+
 	free_block_list.head = top_of_heap;
 	free_block_list.tail = top_of_heap;
+
+	//TODO: ADDED THIS 
+	allocated_block_list.head = NULL;
+	allocated_block_list.tail = NULL;
+
+	bottom_of_heap = (LMCB*)(start_of_mem + sizeof(CMCB) + heap_size_param);
+	bottom_of_heap->type = 0;
+	bottom_of_heap->size = heap_size_param;
+
 	if(start_of_mem == NULL){
 		write_text_red("init_heap failure... \n");
 		return 0;
@@ -51,8 +60,14 @@ int init_heap(u32int heap_size_param){
 }
 
 u32int alloc_mem(u32int num_bytes){
-
+	write_text_bold_blue("INSIDE ALLOC_MEM\n");
 // ------------------------ Added This ------------------------
+	//TODO: ADDED THIS
+	//Rounds up to the next full word which is equal to 4 bytes
+	int roundUp = num_bytes % 4;
+	if(roundUp > 0){
+		num_bytes = num_bytes + (4 - roundUp);
+	}
 
 	CMCB *temp = free_block_list.head;
 
@@ -75,8 +90,6 @@ u32int alloc_mem(u32int num_bytes){
 		LMCBEnd->type = 1;
 
 		bottom_of_heap->size = bottom_of_heap->size - num_bytes - sizeof(CMCB) - sizeof(LMCB);
-		
-
 		strcpy(temp->startAddr,itoa(sizeof(temp) + sizeof(CMCB)));
 		
 		insert(temp);
@@ -91,8 +104,6 @@ u32int alloc_mem(u32int num_bytes){
 		CMCB* freeBlock = (CMCB*)((int)(LMCBEnd) + sizeof(LMCB));
 		freeBlock->type = 0;
 		freeBlock->size = temp->size - num_bytes - sizeof(CMCB) - sizeof(LMCB);
-		
-
 		strcpy(freeBlock->startAddr, itoa(sizeof(freeBlock) + sizeof(CMCB)));
 
 		//Update the end of the heap
@@ -122,7 +133,7 @@ while(temp != NULL){
 }
 
 int free_mem(void *addr){
-	
+	write_text_bold_blue("INSIDE FREE_MEM\n");
 	CMCB *temp = allocated_block_list.head;
 	while(temp != NULL){
 		if(temp->startAddr == addr){
@@ -193,8 +204,6 @@ int free_mem(void *addr){
 		insert(block_before);
 		return 0;
 	}
-
-	return 0;
 }
 
 int isEmpty(){
@@ -245,6 +254,7 @@ void show_alloc_mem(){
 }
 
 void unlink(CMCB* mcb){
+	write_text_bold_blue("INSIDE UNLINK\n");
 	//Unlinking the head of free 
 	if(mcb == free_block_list.head){
 		free_block_list.head = mcb->next;
@@ -275,6 +285,7 @@ void unlink(CMCB* mcb){
 }
 
 void insert(CMCB* mcb){
+	write_text_bold_blue("INSIDE INSERT\n");
 	CMCB* list = NULL;
 	//Determine which list we need to insert into.
 	if(mcb->type == 0){
