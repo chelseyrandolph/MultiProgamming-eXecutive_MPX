@@ -8,7 +8,7 @@
 #include "../mpx_supt.h"
 #include "../R4/pcb.h"
 #include "memory_man.h"
-#include "../../kernel/mem/heap.c"
+#include "../../include/mem/heap.h"
 #include "../R1/time.h"
 #include "../../lib/colortext.h"
 
@@ -75,8 +75,9 @@ u32int alloc_mem(u32int num_bytes){
 		LMCBEnd->type = 1;
 
 		bottom_of_heap->size = bottom_of_heap->size - num_bytes - sizeof(CMCB) - sizeof(LMCB);
-		//TODO: cast to match startAddr		
-		temp->startAddr = (temp + sizeof(CMCB));
+		
+
+		strcpy(temp->startAddr,itoa(sizeof(temp) + sizeof(CMCB)));
 		
 		insert(temp);
 	}else{
@@ -90,8 +91,9 @@ u32int alloc_mem(u32int num_bytes){
 		CMCB* freeBlock = (CMCB*)((int)(LMCBEnd) + sizeof(LMCB));
 		freeBlock->type = 0;
 		freeBlock->size = temp->size - num_bytes - sizeof(CMCB) - sizeof(LMCB);
-		//TODO: cast to match startAddr	
-		freeBlock->startAddr =  freeBlock + sizeof(CMCB);
+		
+
+		strcpy(freeBlock->startAddr, itoa(sizeof(freeBlock) + sizeof(CMCB)));
 
 		//Update the end of the heap
 		bottom_of_heap->size = bottom_of_heap->size - num_bytes;
