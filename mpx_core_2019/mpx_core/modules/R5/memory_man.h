@@ -38,3 +38,5 @@ void show_alloc_mem();
 void unlink(CMCB* mcb);
 
 void insert(CMCB* mcb);
+
+void function();
