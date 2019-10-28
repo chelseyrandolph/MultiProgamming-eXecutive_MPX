@@ -76,7 +76,6 @@ u32int init_heap(u32int heap_size_param){
 
 
 u32int alloc_mem(u32int num_bytes){
-
 	write_text_bold_green("INSIDE ALLOC_MEM\n");
 
 	//Rounds up to the next full word which is equal to 4 bytes
@@ -88,7 +87,7 @@ u32int alloc_mem(u32int num_bytes){
 	//Setting the CMCB to the free block list to allocate a new block 
 	CMCB *temp = free_block_list.head;
 	int free_bytes = temp->size;
-	write_text_bold_magenta(itoa(temp->size - sizeof(CMCB) - sizeof(LMCB)));
+
 	write_text_green("ALLOC_MEM 0\n");
 
 
@@ -128,45 +127,30 @@ u32int alloc_mem(u32int num_bytes){
 
 		insert(temp);
 		write_text_green("ALLOC_MEM 5\n");
+
+	//There is a block that will need to be split into an allocated and free block
 	}else{
-
-		//Type is allocated
+		//Creating an allocated block
 		temp->type = 1;
-		temp->startAddr = (void*)((int)start_of_mem + sizeof(CMCB));
+		temp->size = num_bytes + sizeof(CMCB) + sizeof(LMCB);
+		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
+		temp->startAddr = temp->startAddr + num_bytes + sizeof(CMCB) + sizeof(LMCB);
 
+		LMCB* end = (LMCB*)(temp->startAddr + num_bytes + sizeof(CMCB));
+		end->type = 1;
+		end->size = temp->size - sizeof(CMCB) - num_bytes;
 
-		//New LMCB for the allocated block
-		//TODO: FIX THIS
-		LMCB* LMCBEnd = (LMCB*) ((int)temp->startAddr + num_bytes);
-		write_text_green("ALLOC_MEM 6\n");
-		LMCBEnd->type = 1;
-		LMCBEnd->size = num_bytes + sizeof(LMCB);
-	
-
-		//Create a new free block
-		CMCB* freeBlock = (CMCB*)((int)(LMCBEnd) + sizeof(LMCB));
-		write_text_green("ALLOC_MEM 7\n");
+		CMCB* freeBlock = (CMCB*) (temp->startAddr + num_bytes + sizeof(CMCB) + sizeof(LMCB));
 		freeBlock->type = 0;
-		write_text_bold_magenta(itoa(temp->size - sizeof(CMCB) - sizeof(LMCB)));
-		freeBlock->size = free_bytes - sizeof(CMCB) - sizeof(LMCB);
-		//TODO: FIX THIS ? 
-		freeBlock->startAddr = (void*) ((int) freeBlock + sizeof(CMCB));
-		freeBlock->next = NULL;
-		freeBlock->prev = NULL;
-		write_text_green("ALLOC_MEM 8\n");
-
-
-		//TODO: DO WE NEED THIS ? 
-		//Update the end of the heap
-		bottom_of_heap->size = bottom_of_heap->size - num_bytes;
-		temp->size = num_bytes;
-		write_text_green("ALLOC_MEM 9\n");
-		//Insert the blocks into the correct lists (temp = allocated, free = free)
+		freeBlock->size = free_bytes - num_bytes - sizeof(CMCB) - sizeof(LMCB);
+		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
+		freeBlock->startAddr = temp->startAddr + free_bytes - num_bytes + sizeof(CMCB) + sizeof(LMCB);
+		
+		//Allocated block
 		insert(temp);
+		//Free block
 		insert(freeBlock);
 	}
-
-	write_text_bold_green("LEAVING ALLOC_MEM\n");
 	return (u32int) temp->startAddr;
 	
 }
@@ -423,97 +407,29 @@ void unlink(CMCB* mcb){
 }
 
 void insert(CMCB* mcb){
-	write_text_bold_cyan("INSIDE INSERT\n");
-	write_text_bold_cyan("INSIDE INSERT 0\n");
-	CMCB* list = NULL;
-	//Determine which list we need to insert into.
+	CMCB* temp = NULL;
 	if(mcb->type == 0){
-		write_text_cyan("INSIDE INSERT 1\n");
-		list = free_block_list.head;
-		free_block_list.count++;
-	}else if(mcb->type == 1){
-		write_text_cyan("INSIDE INSERT 2\n");
-		list = allocated_block_list.head;
-		allocated_block_list.count++;
-	}
-
-	//If the list is empty, set it to the head
-	if(list == NULL){
-		if(mcb->type == 0){
-			write_text_cyan("INSIDE INSERT 3\n");
+		temp = free_block_list.head;
+		if(temp != NULL && mcb->startAddr < temp->startAddr){
+			temp->prev = mcb;
+			mcb->next = temp;
 			free_block_list.head = mcb;
 			free_block_list.count++;
 		}else{
-			write_text_cyan("INSIDE INSERT 4\n");
-			allocated_block_list.head = mcb;
-			allocated_block_list.count++;
+			while(temp!=NULL){
+				if(mcb->startAddr < temp->startAddr){
+					//insert there
+				}else{
+					temp = temp->next;
+				}
+			}
 		}
-		write_text_bold_cyan("LEAVING INSERT 0\n");
-		return;
-	}
 
-	CMCB* temp = list;
-	write_text_cyan("INSIDE INSERT 5\n");
-
-	//Inserting a new head into the list
-	if(mcb->size < temp->size){
-		write_text_cyan("INSIDE INSERT 6\n");
-		mcb->next = temp;
-		write_text_cyan("INSIDE INSERT 7\n");
-		mcb->next->prev = mcb;
-		if(mcb->type == 0){
-			write_text_cyan("INSIDE INSERT 8\n");
-			free_block_list.head = mcb;
-			free_block_list.count++;
-		}else if(mcb->type == 1){
-			write_text_cyan("INSIDE INSERT 9 \n");
-			allocated_block_list.head = mcb;
-			allocated_block_list.count++;
-		}
-		write_text_bold_cyan("LEAVING INSERT 1\n");
-		return;
-	}
-
-		//Traversing through the list if the new mcb is larger than the current mcb
-	while(mcb->size > temp->size && temp->next != NULL){
-		write_text_cyan("INSIDE INSERT 10\n");
-		temp = temp->next;
-	}
-
-	//Inserting a new tail
-	if(temp->next == NULL && mcb->size > temp->size){
-		write_text_cyan("INSIDE INSERT 11 \n");
-		temp->next = mcb;
-		mcb->prev = temp;
-		if(mcb->type == 0){
-			write_text_cyan("INSIDE INSERT 8\n");
-			free_block_list.head = mcb;
-			free_block_list.count++;
-		}else if(mcb->type == 1){
-			write_text_cyan("INSIDE INSERT 9 \n");
-			allocated_block_list.head = mcb;
-			allocated_block_list.count++;
-		}
-		write_text_bold_cyan("LEAVING INSERT 2\n");
-		return;
-	}
-
-	//Inserting into the list in a place between the head and tail
-	write_text_cyan("INSIDE INSERT 12\n");
-	if(mcb->type == 0){
-		mcb->next = temp;
-		mcb->prev = temp->prev;
-		temp->prev->next = mcb;
-		temp->prev = mcb;
-		free_block_list.count++;
 	}else if(mcb->type == 1){
-		mcb->next = temp;
-		mcb->prev = temp->prev;
-		temp->prev->next = mcb;
-		temp->prev = mcb;
-		allocated_block_list.count++;
+
+
 	}
-	write_text_bold_cyan("LEAVING INSERT 4\n");
+	
 	return;
 }
 
