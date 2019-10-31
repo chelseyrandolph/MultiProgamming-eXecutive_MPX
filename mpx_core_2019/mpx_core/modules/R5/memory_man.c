@@ -18,7 +18,7 @@ LMCB *bottom_of_heap;
 mem_queue allocated_block_list = {.head = NULL, .tail = NULL, .count = 0};
 mem_queue free_block_list = {.head = NULL, .tail = NULL, .count = 0};
 
-int heap_size = 1000;	// make this 50,000 at some point
+int heap_size = 50000;	// make this 50,000 at some point
 u32int start_of_mem;
 
 // Each word is 4 bytes, you wouldn't want to break a block on a byte
@@ -121,8 +121,8 @@ while(temp != NULL){
 	}*/
 }
 
-void free_mem(char addr[]){
-
+int free_mem(void *addr){
+	
 	CMCB *temp = allocated_block_list.head;
 	while(temp != NULL){
 		if(temp->startAddr == addr){
@@ -162,7 +162,7 @@ void free_mem(char addr[]){
 		temp->type = 0;
 		end->type = 0;
 		insert(temp);
-		return;
+		return 0;
 	}
 	//There is an adjacement block before the free block
 	else if(temp_after != NULL && temp_before == NULL){
@@ -171,7 +171,7 @@ void free_mem(char addr[]){
 		block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + temp->size;
 		end->type = 0;
 		insert(block_before);
-		return;
+		return 0;
 	}
 	//There is an adjacement block after the free block
 	else if(temp_after != NULL && temp_before == NULL){
@@ -180,7 +180,7 @@ void free_mem(char addr[]){
 		temp->size = temp->size + sizeof(CMCB) + sizeof(LMCB) + block_after->size;
 		end_after->type = 0;
 		insert(temp);
-		return;
+		return 0;
 	}	
 	//There is an adjacement block before and after the free block
 	else{
@@ -191,8 +191,10 @@ void free_mem(char addr[]){
 		end_after->type = 0;
 		end_after->size = block_before->size;
 		insert(block_before);
-		return;
+		return 0;
 	}
+
+	return 0;
 }
 
 int isEmpty(){
