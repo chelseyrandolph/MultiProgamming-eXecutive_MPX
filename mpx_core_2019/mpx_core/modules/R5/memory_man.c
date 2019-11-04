@@ -146,6 +146,7 @@ u32int alloc_mem(u32int num_bytes){
 		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
 		freeBlock->startAddr = temp->startAddr + free_bytes - num_bytes + sizeof(CMCB) + sizeof(LMCB);
 		
+		write_text_blue("HERE----\n");
 		//Allocated block
 		insert(temp);
 		//Free block
@@ -408,25 +409,68 @@ void unlink(CMCB* mcb){
 
 void insert(CMCB* mcb){
 	CMCB* temp = NULL;
-	if(mcb->type == 0){
+
+	if(mcb->type == 0){					//If free
 		temp = free_block_list.head;
-		if(temp != NULL && mcb->startAddr < temp->startAddr){
-			temp->prev = mcb;
-			mcb->next = temp;
+		if(temp == NULL){			//if list is empty, set head and tail
 			free_block_list.head = mcb;
-			free_block_list.count++;
-		}else{
-			while(temp!=NULL){
-				if(mcb->startAddr < temp->startAddr){
-					//insert there
-				}else{
-					temp = temp->next;
+			free_block_list.tail = mcb;
+			free_block_list.count = 1;
+			return;
+		}		
+		while(temp!=NULL){
+			if(mcb->startAddr > temp->startAddr){
+				if(temp->prev == NULL){			//if head
+					mcb -> next = temp;			//insert at head
+					temp -> prev = mcb;
+					free_block_list.head = mcb;
+				}else if(temp->next == NULL){	//if tail
+					mcb -> prev = temp;			//insert at tail
+					temp -> next = mcb;
+					free_block_list.tail = mcb;
+				}else{							//if neither head nor tail
+					mcb -> next = temp;			//insert in between
+					mcb -> prev = temp -> prev;
+					temp -> prev = mcb;
+					temp -> prev -> next = mcb;
 				}
+				free_block_list.count++;		//increment count
+			}else{
+				temp = temp->next;
 			}
 		}
+		
 
-	}else if(mcb->type == 1){
-
+	}else if(mcb->type == 1){			//if allocated
+		temp = allocated_block_list.head;
+		if(temp == NULL){			//if list is empty, set head and tail
+			allocated_block_list.head = mcb;
+			allocated_block_list.tail = mcb;
+			allocated_block_list.count = 1;
+			return;
+		}
+		while(temp!=NULL){
+			if(mcb->startAddr > temp->startAddr){
+				if(temp->prev == NULL){			//if head
+					mcb -> next = temp;			//insert at head
+					temp -> prev = mcb;
+					allocated_block_list.head = mcb;
+				}else if(temp->next == NULL){	//if tail
+					mcb -> prev = temp;			//insert at tail
+					temp -> next = mcb;
+					allocated_block_list.tail = mcb;
+				}else{							//if neither head nor tail
+					mcb -> next = temp;			//insert in between
+					mcb -> prev = temp -> prev;
+					temp -> prev = mcb;
+					temp -> prev -> next = mcb;
+				}
+				allocated_block_list.count++;	//increment count
+				return;
+			}else{
+				temp = temp->next;
+			}
+		}
 
 	}
 	
