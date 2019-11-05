@@ -20,7 +20,8 @@ R4/pcb.o\
 R4/Test_process.o\
 R4/Dispatcher.o\
 R4/Alarm.o\
-R5/memory_man.o
+R5/memory_man.o\
+R5/hex.o
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $@ $<

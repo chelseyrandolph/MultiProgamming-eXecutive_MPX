@@ -11,7 +11,7 @@
 #include "../../include/mem/heap.h"
 #include "../R1/time.h"
 #include "../../lib/colortext.h"
-
+#include "hex.h"
 
 CMCB *top_of_heap = NULL;
 LMCB *bottom_of_heap = NULL;
@@ -310,15 +310,19 @@ void show_free_mem(){
 		sizestr[10] = '\0';
 		write_text_blue(sizestr);
 		write_text(" | ");
-		char addrstr[12];
+
+		
+	/*	char addrstr[12];
 		strcpy(addrstr, itoa((int)temp->startAddr));
 		i = 0;
 		for(i = strlen(itoa((int)temp->startAddr)); i < 11; i++){	
 			addrstr[i] = ' ';
 		}
 		addrstr[11] = '\0';
-		write_text_blue(addrstr);
-		write_text(" | ");
+		write_text_blue(addrstr); */
+
+		printDecToHex((int)temp->startAddr);
+		write_text("   | ");			//TODO this is lazy, fix it
 		if(temp->type == 0){
 			write_text_blue("  FREE   ");
 		}else{
@@ -362,15 +366,16 @@ void show_alloc_mem(){
 		sizestr[10] = '\0';
 		write_text_blue(sizestr);
 		write_text(" | ");
-		char addrstr[12];
+	/*	char addrstr[12];
 		strcpy(addrstr, itoa((int)temp->startAddr));
 		i = 0;
 		for(i = strlen(itoa((int)temp->startAddr)); i < 11; i++){	
 			addrstr[i] = ' ';
 		}
 		addrstr[11] = '\0';
-		write_text_blue(addrstr);
-		write_text(" | ");
+		write_text_blue(addrstr); */
+		printDecToHex((int)temp->startAddr);
+		write_text(" | ");			//TODO this is lazy, fix it
 		if(temp->type == 1){
 			write_text_blue("ALLOCATED");
 		}else{
@@ -423,7 +428,7 @@ void unlink(CMCB* mcb){
 void insert(CMCB* mcb){
 	write_text_bold_cyan("INSIDE INSERT\n");
 	CMCB* temp = NULL;
-
+	
 	if(mcb->type == 0){					//If free
 		write_text_cyan("INSIDE INSERT 0\n");
 		temp = free_block_list.head;
@@ -461,6 +466,7 @@ void insert(CMCB* mcb){
 					temp -> prev -> next = mcb;
 				}
 				free_block_list.count++;		//increment count
+				
 			}else{
 				mcb -> next = temp;			//insert at head
 				temp -> prev = mcb;
@@ -528,7 +534,7 @@ void function(){
 	show_alloc_mem();
 	show_free_mem();
 	write_text("freeing 218105000 bytes\n");
-	free_mem((void*)(218105000));
+	free_mem((void*)(218103864));
 	write_text("freed 218105000 bytes\n");
 	show_alloc_mem();
 	show_free_mem();
