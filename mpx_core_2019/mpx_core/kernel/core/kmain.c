@@ -49,7 +49,7 @@ void kmain(void)
    init_serial(COM1);
    set_serial_out(COM1);
    set_serial_in(COM1);
-   mpx_init(MODULE_R3);
+   mpx_init(MODULE_R5);
 
    // 3) Descriptor Tables
    klogv("Initializing descriptor tables...");
@@ -64,10 +64,15 @@ void kmain(void)
    sti();
    init_paging();
 
-	init_heap(50000);
+	init_heap(1000);
+	show_free_mem();
+	function();
    //sys_set_malloc(alloc_mem);
   // sys_set_free(free_mem);
-   // THIS IS JUST OUR MEMU, NOT** COMHAND
+
+
+
+   // THIS IS JUST OUR MEMU, NOT COMHAND
    displayMenu();
 
     // Polling
@@ -85,7 +90,7 @@ void kmain(void)
    klogv("Transferring control to commhand...");
    loadProcess("comhand_process", 0, 0, &comhand);
 
-   show_alloc_mem();
+   //show_alloc_mem();
    yield();
 
 

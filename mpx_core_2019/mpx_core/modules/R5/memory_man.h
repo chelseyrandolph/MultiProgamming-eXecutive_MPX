@@ -23,7 +23,7 @@ typedef struct mem_queue {
 
 
 
-int init_heap(u32int heap_size_param);
+u32int init_heap(u32int heap_size_param);
 
 u32int alloc_mem(u32int num_bytes);
 
