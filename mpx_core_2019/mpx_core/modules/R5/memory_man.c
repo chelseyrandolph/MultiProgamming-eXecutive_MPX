@@ -159,116 +159,118 @@ u32int alloc_mem(u32int num_bytes){
 }
 
 int free_mem(void *addr){
+
 	write_text_bold_blue("INSIDE FREE_MEM\n");
-	int bytes = 0;
 	//Set temp to the allocate list
 	CMCB *temp = allocated_block_list.head;
-
 	//Traverse through the list until you find the correct block to free.
 	while(temp != NULL){
 		if(temp->startAddr == addr){
+			write_text_blue("FREE_MEM 1\n");
+			unlink(temp);
+	
+	
+			LMCB* end = (LMCB*)(temp->startAddr + temp->size + sizeof(CMCB));
+			end->type = 0;
+			end->size = temp->size - sizeof(CMCB);
+			/*
+			write_text_blue("FREE_MEM 2\n");
+			//Check for adjacement blocks
+			//Checking the block after
+			CMCB* block_after = (CMCB*) (temp->startAddr + sizeof(LMCB));
+			LMCB* end_after = (LMCB*) (block_after->startAddr + block_after->size + sizeof(CMCB));
+			CMCB* temp_after = free_block_list.head;
+
+			write_text_blue("FREE_MEM 3\n");
+			while(temp_after != NULL && temp_after != block_after){
+				temp_after = temp_after->next;
+			}
+
+			write_text_blue("FREE_MEM 4\n");
+			//Checking the block before
+			LMCB* end_before = (LMCB*) ((int) temp - sizeof(LMCB));
+			CMCB* block_before = (CMCB*) ((int) end_before - end_before->size - sizeof(CMCB));
+			CMCB* temp_before = free_block_list.head;
+
+
+			write_text_blue("FREE_MEM 5\n");
+			//Traverse the lists
+			while(temp_before != NULL && temp_before != block_before){
+				temp_before = temp_before->next;
+			}
+
+			write_text_blue("FREE_MEM 6\n");
+			//No adjacement blocks
+			// We just insert it as a new free block
+			if(temp_after == NULL && temp_before == NULL){
+				write_text_blue("FREE_MEM 7\n");
+				temp->type = 0;
+				end->type = 0;
+				insert(temp);
+				write_text_bold_blue("LEAVING FREE_MEM 1\n");
+				return 0;
+			}
+
+			//There is an adjacement block before the free block
+			//We put these two blocks together into one free block.
+			else if(temp_after != NULL && temp_before == NULL){
+				write_text_blue("FREE_MEM 8\n");
+				unlink(block_before);
+				block_before->type = 0;
+				block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + temp->size;
+				end->type = 0;
+				insert(block_before);
+				write_text_bold_blue("LEAVING FREE_MEM 2\n");
+				return 0;
+			}
+
+			//There is an adjacement block after the free block
+			//We put these two blocks together into one free block.
+			else if(temp_after != NULL && temp_before == NULL){
+				write_text_blue("FREE_MEM 9\n");
+				temp->type = 0;
+				unlink(block_after);
+				temp->size = temp->size + sizeof(CMCB) + sizeof(LMCB) + block_after->size;
+				end_after->type = 0;
+				insert(temp);
+				write_text_bold_blue("LEAVING FREE_MEM 3\n");
+				return 0;
+			}	
+
+			//There is an adjacement block before and after the free block
+			//We put these three blocks together into one free block.
+			else{
+				write_text_blue("FREE_MEM 10\n");
+				unlink(block_before);
+				unlink(block_after);
+				block_before->type = 0;
+				block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + sizeof(CMCB) + sizeof(LMCB) + block_after->size + temp->size;
+				end_after->type = 0;
+				end_after->size = block_before->size;
+				insert(block_before);
+				write_text_bold_blue("LEAVING FREE_MEM 4\n");
+				return 0;
+			}
+			*/
 			write_text_blue("FREE_MEM 0\n");
 			write_text_bold_blue(itoa(temp->size));
 			write_text("\n");
+			write_text_bold_blue(itoa((int)temp->startAddr));
+			write_text("\n");
 			strcpy(temp->name, NULL);
 			temp->type = 0;
-			bytes = temp->size;
-			break;
+			insert(temp);
+			return 0;
 		}
 		temp = temp -> next;
 	}
-// ------------------------ Added This ------------------------
+
 	//If temp is null, throw an error 
 	if(temp == NULL){
 		write_text_bold_red("ERROR: Allocated block not found.\n");
 		return -1;
 	}
-	write_text_blue("FREE_MEM 1\n");
-	unlink(temp);
-	
-	
-	LMCB* end = (LMCB*)(temp->startAddr + bytes + sizeof(CMCB));
-	end->type = 0;
-	end->size = temp->size - sizeof(CMCB) - bytes;
-
-	write_text_blue("FREE_MEM 2\n");
-	//Check for adjacement blocks
-	//Checking the block after
-	CMCB* block_after = (CMCB*) (end->startAddr + sizeof(LMCB));
-	LMCB* end_after = (LMCB*) (((int) block_after->startAddr) + block_after->size);
-	CMCB* temp_after = free_block_list.head;
-
-	write_text_blue("FREE_MEM 3\n");
-	while(temp_after != NULL && temp_after != block_after){
-		temp_after = temp_after->next;
-	}
-
-	write_text_blue("FREE_MEM 4\n");
-	//Checking the block before
-	LMCB* end_before = (LMCB*) ((int) temp - sizeof(LMCB));
-	CMCB* block_before = (CMCB*) ((int) end_before - end_before->size - sizeof(CMCB));
-	CMCB* temp_before = free_block_list.head;
-
-
-	write_text_blue("FREE_MEM 5\n");
-	//Traverse the lists
-	while(temp_before != NULL && temp_before != block_before){
-		temp_before = temp_before->next;
-	}
-
-	write_text_blue("FREE_MEM 6\n");
-	//No adjacement blocks
-	// We just insert it as a new free block
-	if(temp_after == NULL && temp_before == NULL){
-		write_text_blue("FREE_MEM 7\n");
-		temp->type = 0;
-		end->type = 0;
-		temp->size = bytes;
-		insert(temp);
-		write_text_bold_blue("LEAVING FREE_MEM 1\n");
-		return 0;
-	}
-
-	//There is an adjacement block before the free block
-	//We put these two blocks together into one free block.
-	else if(temp_after != NULL && temp_before == NULL){
-		write_text_blue("FREE_MEM 8\n");
-		unlink(block_before);
-		block_before->type = 0;
-		block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + temp->size;
-		end->type = 0;
-		insert(block_before);
-		write_text_bold_blue("LEAVING FREE_MEM 2\n");
-		return 0;
-	}
-
-	//There is an adjacement block after the free block
-	//We put these two blocks together into one free block.
-	else if(temp_after != NULL && temp_before == NULL){
-		write_text_blue("FREE_MEM 9\n");
-		temp->type = 0;
-		unlink(block_after);
-		temp->size = temp->size + sizeof(CMCB) + sizeof(LMCB) + block_after->size;
-		end_after->type = 0;
-		insert(temp);
-		write_text_bold_blue("LEAVING FREE_MEM 3\n");
-		return 0;
-	}	
-
-	//There is an adjacement block before and after the free block
-	//We put these three blocks together into one free block.
-	else{
-		write_text_blue("FREE_MEM 10\n");
-		unlink(block_before);
-		unlink(block_after);
-		block_before->type = 0;
-		block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + sizeof(CMCB) + sizeof(LMCB) + block_after->size + temp->size;
-		end_after->type = 0;
-		end_after->size = block_before->size;
-		insert(block_before);
-		write_text_bold_blue("LEAVING FREE_MEM 4\n");
-		return 0;
-	}
+	return 0;
 }
 
 //TODO //TODO //TODO //TODO //TODO //TODO //TODO //TODO
@@ -434,16 +436,25 @@ void insert(CMCB* mcb){
 		}
 		write_text_cyan("INSIDE INSERT 2\n");	
 		while(temp!=NULL){
+
+			write_text(itoa((int)mcb->startAddr));
+			write_text("\n");
+			write_text(itoa((int)temp->startAddr));
+			write_text("\n");
+
 			if(mcb->startAddr > temp->startAddr){
+			write_text_cyan("INSIDE INSERT 2...\n");	
 				if(temp->prev == NULL){			//if head
 					mcb -> next = temp;			//insert at head
 					temp -> prev = mcb;
 					free_block_list.head = mcb;
 				}else if(temp->next == NULL){	//if tail
+			write_text_cyan("INSIDE INSERT 2...........\n");
 					mcb -> prev = temp;			//insert at tail
 					temp -> next = mcb;
 					free_block_list.tail = mcb;
 				}else{							//if neither head nor tail
+			write_text_cyan("INSIDE INSERT 2...----------------------\n");
 					mcb -> next = temp;			//insert in between
 					mcb -> prev = temp -> prev;
 					temp -> prev = mcb;
@@ -451,8 +462,11 @@ void insert(CMCB* mcb){
 				}
 				free_block_list.count++;		//increment count
 			}else{
-				temp = temp->next;
+				mcb -> next = temp;			//insert at head
+				temp -> prev = mcb;
+				free_block_list.head = mcb;
 			}
+			temp = temp->next;
 		}
 		
 	write_text_cyan("INSIDE INSERT 3\n");
