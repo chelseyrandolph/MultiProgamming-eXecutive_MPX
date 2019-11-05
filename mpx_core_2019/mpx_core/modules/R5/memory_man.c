@@ -130,6 +130,7 @@ u32int alloc_mem(u32int num_bytes){
 
 	//There is a block that will need to be split into an allocated and free block
 	}else{
+		write_text_green("ALLOC_MEM 6\n");
 		//Creating an allocated block
 		temp->type = 1;
 		temp->size = num_bytes + sizeof(CMCB) + sizeof(LMCB);
@@ -146,27 +147,33 @@ u32int alloc_mem(u32int num_bytes){
 		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
 		freeBlock->startAddr = temp->startAddr + free_bytes - num_bytes + sizeof(CMCB) + sizeof(LMCB);
 		
-		write_text_blue("HERE----\n");
+		write_text_green("ALLOC_MEM 7\n");
 		//Allocated block
 		insert(temp);
 		//Free block
 		insert(freeBlock);
 	}
+	write_text_bold_green("LEAVING ALLOC_MEM\n");
 	return (u32int) temp->startAddr;
 	
 }
 
 int free_mem(void *addr){
 	write_text_bold_blue("INSIDE FREE_MEM\n");
-
+	int bytes = 0;
 	//Set temp to the allocate list
 	CMCB *temp = allocated_block_list.head;
+
 	//Traverse through the list until you find the correct block to free.
 	while(temp != NULL){
 		if(temp->startAddr == addr){
 			write_text_blue("FREE_MEM 0\n");
+			write_text_bold_blue(itoa(temp->size));
+			write_text("\n");
 			strcpy(temp->name, NULL);
 			temp->type = 0;
+			bytes = temp->size;
+			break;
 		}
 		temp = temp -> next;
 	}
@@ -180,11 +187,14 @@ int free_mem(void *addr){
 	unlink(temp);
 	
 	
-	LMCB* end = (LMCB*)(((int)temp->startAddr) + temp->size);
+	LMCB* end = (LMCB*)(temp->startAddr + bytes + sizeof(CMCB));
+	end->type = 0;
+	end->size = temp->size - sizeof(CMCB) - bytes;
+
 	write_text_blue("FREE_MEM 2\n");
 	//Check for adjacement blocks
 	//Checking the block after
-	CMCB* block_after = (CMCB*) ((int) end + sizeof(LMCB));
+	CMCB* block_after = (CMCB*) (end->startAddr + sizeof(LMCB));
 	LMCB* end_after = (LMCB*) (((int) block_after->startAddr) + block_after->size);
 	CMCB* temp_after = free_block_list.head;
 
@@ -213,6 +223,7 @@ int free_mem(void *addr){
 		write_text_blue("FREE_MEM 7\n");
 		temp->type = 0;
 		end->type = 0;
+		temp->size = bytes;
 		insert(temp);
 		write_text_bold_blue("LEAVING FREE_MEM 1\n");
 		return 0;
@@ -408,16 +419,20 @@ void unlink(CMCB* mcb){
 }
 
 void insert(CMCB* mcb){
+	write_text_bold_cyan("INSIDE INSERT\n");
 	CMCB* temp = NULL;
 
 	if(mcb->type == 0){					//If free
+		write_text_cyan("INSIDE INSERT 0\n");
 		temp = free_block_list.head;
 		if(temp == NULL){			//if list is empty, set head and tail
+			write_text_cyan("INSIDE INSERT 1\n");
 			free_block_list.head = mcb;
 			free_block_list.tail = mcb;
 			free_block_list.count = 1;
 			return;
-		}		
+		}
+		write_text_cyan("INSIDE INSERT 2\n");	
 		while(temp!=NULL){
 			if(mcb->startAddr > temp->startAddr){
 				if(temp->prev == NULL){			//if head
@@ -440,15 +455,18 @@ void insert(CMCB* mcb){
 			}
 		}
 		
-
+	write_text_cyan("INSIDE INSERT 3\n");
 	}else if(mcb->type == 1){			//if allocated
+			write_text_cyan("INSIDE INSERT 4\n");
 		temp = allocated_block_list.head;
 		if(temp == NULL){			//if list is empty, set head and tail
+		write_text_cyan("INSIDE INSERT 5\n");
 			allocated_block_list.head = mcb;
 			allocated_block_list.tail = mcb;
 			allocated_block_list.count = 1;
 			return;
 		}
+		write_text_cyan("INSIDE INSERT 6\n");
 		while(temp!=NULL){
 			if(mcb->startAddr > temp->startAddr){
 				if(temp->prev == NULL){			//if head
@@ -471,9 +489,10 @@ void insert(CMCB* mcb){
 				temp = temp->next;
 			}
 		}
+		write_text_cyan("INSIDE INSERT 7\n");
 
 	}
-	
+	write_text_bold_cyan("LEAVING INSERT\n");
 	return;
 }
 
@@ -494,9 +513,11 @@ void function(){
 	write_text("allocated 20 bytes.\n");
 	show_alloc_mem();
 	show_free_mem();
-	//write_text("freeing 15 bytes\n");
-	//free_mem((void*)52);
-	//write_text("freed 15 bytes\n");
+	write_text("freeing 218105000 bytes\n");
+	free_mem((void*)(218105000));
+	write_text("freed 218105000 bytes\n");
+	show_alloc_mem();
+	show_free_mem();
 	write_text("done.\n");
 	
 }
