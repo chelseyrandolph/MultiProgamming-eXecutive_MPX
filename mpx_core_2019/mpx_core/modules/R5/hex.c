@@ -4,7 +4,7 @@
 
 void printDecToHex(int dec){
 	
-	char hex[30];
+	char hex[15];
 
 	int i = 0;
 	while(dec != 0){
@@ -20,7 +20,7 @@ void printDecToHex(int dec){
 		}
 		dec = dec/16;
 	} 
-	char outHex[30];
+	char outHex[15];
 	outHex[0] = '0';
 	outHex[1] = 'x';
 	int k = 2;
@@ -29,7 +29,8 @@ void printDecToHex(int dec){
 		outHex[k] = hex[j];
 		k++;
 	}
-	
+	int length = sizeof(outHex)/sizeof(outHex[0]);
+	outHex[length] = '\0';
 	write_text_blue(outHex);
 }
 
