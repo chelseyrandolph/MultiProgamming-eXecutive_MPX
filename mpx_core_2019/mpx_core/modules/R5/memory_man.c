@@ -135,7 +135,6 @@ int free_mem(void *addr){
 			strcpy(temp->name, NULL);
 			temp->type = 0;
 			insert_mem(temp);
-			show_free_mem();
 			merge_free_blocks(temp);
 			return 0;
 		}
@@ -259,12 +258,12 @@ void show_free_mem(){
 			sizestr[i] = ' ';
 		}
 		sizestr[10] = '\0';
-		write_text_blue(itoa(temp->size));
-		//write_text_blue(sizestr);
+		//write_text_blue(itoa(temp->size));
+		write_text_blue(sizestr);
 		write_text(" | ");
 
 		printDecToHex((int)temp->startAddr);
-		write_text("   | ");			//TODO this is lazy, fix it
+		write_text("    | ");			//TODO this is lazy, fix it
 		if(temp->type == 0){
 			write_text_blue("  FREE   ");
 		}else{
@@ -310,9 +309,9 @@ void show_alloc_mem(){
 		write_text(" | ");
 
 		printDecToHex((int)temp->startAddr);
-		write_text("   | ");			//TODO this is lazy, fix it
+		write_text("   | ");			
 		
-		write_text_blue("ALLOCATED");
+		write_text_blue("ALLOCATED ");
 		
 		write_text(" |\n");
 		temp = temp->prev;
@@ -351,8 +350,6 @@ void unlink(CMCB* mcb){
 	// mcb is somewhere else
 	mcb->next->prev = mcb->prev;
 	mcb->prev->next = mcb->next;
-	mcb->next = NULL;
-	mcb->prev = NULL;
 	write_text_bold_yellow("Unlinked within list .... LEAVING UNLINK 4\n");
 	return;
 
