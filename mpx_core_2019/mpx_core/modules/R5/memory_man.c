@@ -77,7 +77,7 @@ CMCB* findCMCB(char name[]){
 	return NULL;
 }
 
-void *alloc_mem(u32int num_bytes){
+u32int *alloc_mem(u32int num_bytes){
 
 	int roundUp = num_bytes % 4;
 	if(roundUp > 0){
@@ -99,7 +99,6 @@ void *alloc_mem(u32int num_bytes){
 	unlink(temp);
 	
 	if((temp->size - blocksize) < MINIMUM_FREE_BLOCK_SIZE){
-		write_text_bold_cyan("IF");
 		num_bytes = temp->size;
 		temp->type = 1;
 		temp->startAddr = (void*)(start_of_mem + sizeof(CMCB));
@@ -136,6 +135,7 @@ int free_mem(void *addr){
 			strcpy(temp->name, NULL);
 			temp->type = 0;
 			insert_mem(temp);
+			show_free_mem();
 			merge_free_blocks(temp);
 			return 0;
 		}
@@ -160,35 +160,14 @@ int free_mem(void *addr){
 
 void merge_free_blocks(CMCB *freeblock){
 	write_text_magenta("INSIDE MERGE\n");
-	CMCB* newFreeBlock = NULL;
+	//CMCB* newFreeBlock = free_block_list.head;
 	int newSize; 
 	void* newStartAddr;
 	int merge = 1;
 
-
-	show_free_mem();
-	CMCB* freeList = free_block_list.head;
-	while(freeList != NULL){
-		write_text("FREE BLOCK\n");
-		write_text(itoa((int)freeList->startAddr));
-		write_text("\n");
-		if(freeList->next != NULL){
-			freeList = freeList->next;
-		}else{
-			break;
-		}
-	}
-
-	show_alloc_mem();
-
 	if(freeblock->next != NULL){
 		CMCB* temp = allocated_block_list.head;
 		while(temp != NULL){
-			write_text("ALLOCATED BLOCK\n");
-			write_text(itoa((int)temp->startAddr));
-			write_text("\n");
-			
-
 			//If a alloc block is found between the two free blocks then do not merge them
 			if((int)(temp->startAddr) > (int)(freeblock->startAddr)
 			 && (int)(temp->startAddr) < (int)(freeblock->next->startAddr)){
@@ -209,42 +188,11 @@ void merge_free_blocks(CMCB *freeblock){
 		unlink(freeblock->next);
 		unlink(freeblock);
 
-		newFreeBlock->size = newSize;
-		newFreeBlock->startAddr = newStartAddr;
-		newFreeBlock->type = 0;
+		freeblock->size = newSize;
+		freeblock->startAddr = newStartAddr;
+		freeblock->type = 0;
 
-		insert_mem(newFreeBlock);
-
-		write_text_bold_red("\n\nTHESE ARE OBVIOUSLY THE SAME AKA THERE IS ONLY ONE FREE BLOCK IN THE LIST....\n");
-		write_text_bold_red("I CAN'T FIGURE OUT WHY IT WON'T PRINT OUT\n\n");
-		write_text("Free Block List Head Size: ");
-		CMCB *freeList = free_block_list.head;
-		write_text(itoa(freeList->size));
-		write_text("\n");
-		write_text("Free Block List Head Start Address: ");
-		write_text(itoa((int)freeList->startAddr));
-		write_text("\n");
-		if(freeList->type == 0){
-			write_text("Free Block List Head Type:  FREE\n\n");
-		}else if(freeList->type == 1){
-			write_text_bold_red("Free Block List Head Type:  ALLOCATED\n\n");
-		}
-		write_text("Free Block List Tail Size: ");
-		freeList = free_block_list.tail;
-		write_text(itoa(freeList->size));
-		write_text("\n");
-		write_text("Free Block List Tail Start Address: ");
-		write_text(itoa((int)freeList->startAddr));
-		write_text("\n");
-		if(freeList->type == 0){
-			write_text("Free Block List Tail Type:  FREE\n");
-		}else if(freeList->type == 1){
-			write_text_bold_red("Free Block List Tail Type:  ALLOCATED\n");
-		}
-
-		write_text_bold_red("\nWE ARE LOSING THE TABLE HERE EVEN THOUGH THERE IS SOMETHING IN THE FREE LIST.\n");
-		show_free_mem();
-		
+		insert_mem(freeblock);
 		write_text_magenta("RETURN 1\n");
 		return;
 	}
@@ -271,15 +219,11 @@ void merge_free_blocks(CMCB *freeblock){
 		unlink(freeblock->prev);
 		unlink(freeblock);
 
-		newFreeBlock->size = newSize;
-		newFreeBlock->startAddr = newStartAddr;
-		newFreeBlock->type = 0;
+		freeblock->size = newSize;
+		freeblock->startAddr = newStartAddr;
+		freeblock->type = 0;
 
-		insert_mem(newFreeBlock);
-
-		write_text(itoa(newSize));
-		show_free_mem();
-
+		insert_mem(freeblock);
 		write_text_magenta("RETRUN 2\n");
 		return;
 	}
@@ -315,7 +259,8 @@ void show_free_mem(){
 			sizestr[i] = ' ';
 		}
 		sizestr[10] = '\0';
-		write_text_blue(sizestr);
+		write_text_blue(itoa(temp->size));
+		//write_text_blue(sizestr);
 		write_text(" | ");
 
 		printDecToHex((int)temp->startAddr);
@@ -378,6 +323,8 @@ void show_alloc_mem(){
 
 void unlink(CMCB* mcb){
 	write_text_bold_yellow("INSIDE UNLINK\n");
+
+
 	//Unlinking the head of free 
 	if(mcb == free_block_list.head){
 		free_block_list.head = mcb->next;
@@ -424,7 +371,6 @@ void insert_mem(CMCB* mcb){
 			free_block_list.tail = mcb;
 			free_block_list.count = 1;
 			write_text_bold_cyan("LEAVING INSERT: free list empty \n");
-			return;
 		}
 	
 		while(temp!=NULL){
@@ -434,10 +380,6 @@ void insert_mem(CMCB* mcb){
 					mcb->next = temp;			//insert at head
 					temp->prev = mcb;
 					free_block_list.head = mcb;
-					if(temp->next == NULL){
-						free_block_list.tail = temp;
-					}
-					break;
 				}else if(temp->next == NULL){	//if tail
 					write_text_cyan("INSIDE INSERT: Insert at tail\n");	
 					mcb->prev = temp;			//insert at tail
@@ -473,7 +415,6 @@ void insert_mem(CMCB* mcb){
 			allocated_block_list.tail = mcb;
 			allocated_block_list.count = 1;
 			write_text_bold_cyan("LEAVING INSERT: into empty list \n");
-			return;
 		}
 		while(temp!=NULL){
 			if(mcb->startAddr > temp->startAddr){
@@ -519,15 +460,24 @@ void function(){
 //	write_text_bold_green(itoa(sizeof(PCB)));
 //	write_text_bold_green(" bytes\n");
 	PCB *pcb = (PCB*)alloc_mem(sizeof(PCB));
-	//PCB *pcb2 = alloc_mem(sizeof(PCB));
-	//strcpy(pcb->name , "process01");
+	alloc_mem(400);
+	PCB *pcb2 = (PCB*)alloc_mem(sizeof(PCB));
+	strcpy(pcb2->name , "name5678");
 	//PCB *pcb2 = alloc_mem(sizeof(PCB));
 	
 	strcpy(pcb->name, "name1234");
 	//free_mem(pcb2);
-	free_mem(findCMCB(pcb->name));
 	show_free_mem();
-	write_text_bold_red("FOR SOME REASON THE PCB NAME IS GONE BUT THE INFORMATION IS STILL THERE.\n");
+	show_alloc_mem();
+
+	free_mem(findCMCB(pcb2->name));
+
+	show_free_mem();
+	show_alloc_mem();
+
+	free_mem(findCMCB(pcb->name));
+
+	show_free_mem();
 	show_alloc_mem();
 
 }
