@@ -158,21 +158,72 @@ int free_mem(void *addr){
 // and then merges them if not						   //
 /////////////////////////////////////////////////////////
 
+
 void merge_free_blocks(CMCB *freeblock){
-	CMCB* tempAlloc = allocated_block_list.head;
+	//CMCB* newFreeBlock = free_block_list.head;
+	int newSize; 
+	void* newStartAddr;
 	int merge = 1;
-	while(tempAlloc != NULL && merge == 1){
-		if(tempAlloc->startAddr > freeblock->startAddr && tempAlloc->startAddr < free_block_list.head->startAddr){
-			merge = 0;
-		}else{
-			tempAlloc = tempAlloc->next;
+
+	if(freeblock->next != NULL){
+		CMCB* temp = allocated_block_list.head;
+		while(temp != NULL){
+			//If a alloc block is found between the two free blocks then do not merge them
+			if((int)(temp->startAddr) > (int)(freeblock->startAddr)
+			 && (int)(temp->startAddr) < (int)(freeblock->next->startAddr)){
+				merge = 0;	// Freeblock      Allocated    Free->next
+				break;
+			}else{
+				temp = temp->next;
+			}
 		}
 	}
-	if(merge == 1){
+
+
+	if(merge == 1 && freeblock->next != NULL){	// no alloc block was found between the two free blocks so merge!	
+		newSize = freeblock->size + freeblock->next->size + sizeof(CMCB);
+		newStartAddr = freeblock->startAddr;
+		unlink(freeblock->next);
 		unlink(freeblock);
+
+		freeblock->size = newSize;
+		freeblock->startAddr = newStartAddr;
+		freeblock->type = 0;
+
+		insert_mem(freeblock);
+		return;
 	}
-	
+
+
+	merge = 1;
+	if(freeblock->prev != NULL){
+		CMCB* temp = allocated_block_list.head;
+		while(temp != NULL){
+			//If a alloc block is found between the two free blocks then do not merge them
+			if((int)(temp->startAddr) > (int)(freeblock->prev->startAddr)
+			 && (int)(temp->startAddr) < (int)(freeblock->startAddr)){
+				merge = 0; // Free->prev     Freeblock     Allocated
+			}else{
+				temp = temp->next;
+			}
+		}
+	}
+	if(merge == 1 && freeblock->prev != NULL){ // no alloc block was found between the two free blocks so merge!
+		newSize = freeblock->prev->size + freeblock->size + sizeof(CMCB);
+		newStartAddr = freeblock->prev->startAddr;
+		unlink(freeblock->prev);
+		unlink(freeblock);
+
+		freeblock->size = newSize;
+		freeblock->startAddr = newStartAddr;
+		freeblock->type = 0;
+
+		insert_mem(freeblock);
+		return;
+	}
+
 }
+
 
 int isEmpty(){
 	if(allocated_block_list.head == NULL){
