@@ -16,8 +16,8 @@
 
 
 void version(){			//Prints the current version
-	static char version[20] = "MPX-OS Version 5.66\n";
-	write_text_bold_green(version);
+	int v = 5;
+	printf("MPX-OS Version %d\n", v);
 }
 
 void displayAllCommands(){

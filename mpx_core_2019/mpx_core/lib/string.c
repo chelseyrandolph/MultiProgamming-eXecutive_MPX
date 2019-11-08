@@ -1,6 +1,9 @@
 #include <system.h>
 #include <string.h>
-
+#include <stdarg.h>
+#include "../modules/R1/time.h"
+#include "../modules/R5/hex.h"
+#include "colortext.h"
 /* ************************************ *
  * Author:  Forrest Desjardins    	*
  * Creation Date:  2014           	*
@@ -200,6 +203,61 @@ char* strtok(char *s1, const char *s2)
   return s1;
 }
 
+int printf(const char* string, ...){
+
+	va_list v;
+	va_start(v, string);
+	int size = 0;
+	static char str[200];
+	memset(str, '\0', sizeof(str));
+	char* strPtr; 
+	memset(str, '\0', sizeof(strPtr));
+	while(*string != '\0'){
+		//There is a percent so the next character should tell us what to format it to
+		if(*string == '%'){
+			string++;
+			//Signed Integer
+			if(*string == 'd'){
+				int d = va_arg(v, int);
+				strPtr = itoa(d);
+				int i = 0;
+				while(strPtr[i] != '\0'){
+					*(str + size) = strPtr[i++];
+					size++;
+				}
+			//Character
+			}else if(*string == 'c'){
+				char character = (char) va_arg(v, int);
+				*(str + size) = character;
+				size++;
+			//String
+			} else if(*string == 's'){
+				char* word = va_arg(v, char*);
+				while(*word != '\0'){
+					*(str + size) = *word;
+					word++;
+					size++;
+				}
+			//Percent sign
+			}else if(*string == '%'){
+				*(str + size) = *string;
+				size++;
+			}else{
+				return -1;
+			}
+			string++;
+		//Just a regular character, store that into the string
+		}else{
+			*(str + size) = *string;
+			size++;
+			string++;
+		}
+	}
+	
+	*(str + size) = '\0';
+	write_text(str);
+	return 0;
+}
 
 
 /* And finally....
