@@ -13,6 +13,7 @@
 #include "../R5/memory_man.h"
 
 
+
 char history[100][100];
 int historySize = 0;
 
@@ -216,7 +217,7 @@ int comhand(){
 		memset(cmdBuffer, '\0', 100);
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-		
+		write_text(cmdBuffer);
 //		Tokenize buffer. 
 //		This set of instructions will break the buffer on white space and put it inside a *array
 //		0 index is always the command wihle everything after is the input for the command
@@ -315,28 +316,41 @@ void displayMenu(){
 
 }
 
-void auto_complete(char partial_str[]){
+char* substring(char *source, int start, int end){
+	int length = end - start;
+	char *dest;
+	int i = start;
+	for(i = start; i < end && (*source != '\0'); i++){
+		*dest = *(source + i);
+		dest++;
+	}
+	*dest = '\0';
+	return dest - length;
+}
+
+char *cmd_str = "";
+char* auto_complete(char partial_str[]){
 	int i;
-	int num_cmds = sizeof(commands);
-	write_text(itoa(num_cmds));
-	for(i = 0; i < num_cmds; i++){
-		char cmd_str[30];
+	char *sub;
+	int numOfMatches = 0;
+	int index = -1;
+	for(i = 0; i < 24; i++){
+		int end = strlen(partial_str);
 		strcpy(cmd_str, commands[i]);
-		int k;
-		int same = 1;
-		int str_size = sizeof(partial_str);
-		for(k = 0; k < str_size; i++){
-			if(partial_str[k] != cmd_str[k]){
-				same = 0;
-			}
-		}
-		if(same == 1){
-			serial_print(commands[i]);
+		sub = substring(cmd_str, 0, end);
+		if(strcmp(partial_str, sub) == 0){
+			numOfMatches += 1;
+			index = i;
 		}else{
-			serial_print("");
+			continue;
 		}
 	}
+	if(numOfMatches == 1){
+		return commands[index];
+	}
+	return partial_str;
 }
+
 
 void showHistory(){
 	int i;

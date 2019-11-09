@@ -33,7 +33,7 @@ char commands[24][30] = {
 	"infinite",
 	"show-free-mem",
 	"show-alloc-mem",
-		"memtest",
+	"memtest",
 	"history"
 	
 };
@@ -65,3 +65,35 @@ char helpcommands[22][70] = {
 	"show-free-mem",
 	"show-alloc-mem"
 };
+
+char alias[23][30] = {
+    "version",
+    "help",
+    "shutdown",
+    "get-time",
+    "get-date",
+    "set-time",    
+    "set-date",
+	"create-pcb",
+	"show-all",
+	"show-blocked",
+	"show-ready",
+    "show-pcb",
+	"delete-pcb",
+	"suspend-pcb",
+	"resume-pcb",
+	//"block-pcb",
+	//"unblock-pcb",
+	"set-pcb-priority",
+	//"yield",
+	"loadr3",
+	"clear",
+	"alarm",
+	"infinite",
+	"show-free-mem",
+	"show-alloc-mem",
+	"memtest"
+	
+};
+
+

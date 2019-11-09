@@ -1,0 +1,87 @@
+void insert_mem(CMCB* mcb){
+	write_text_bold_cyan("INSIDE INSERT\n");
+	CMCB* temp = NULL;
+	
+	if(mcb->type == 0){					//If free
+		write_text_cyan("INSIDE INSERT 0\n");
+		temp = free_block_list.head;
+		if(temp == NULL){			//if list is empty, set head and tail
+			write_text_cyan("INSIDE INSERT 1\n");
+			free_block_list.head = mcb;
+			free_block_list.tail = mcb;
+			free_block_list.count = 1;
+			return;
+		}
+		write_text_cyan("INSIDE INSERT 2\n");	
+		while(temp!=NULL){
+
+			if(mcb->startAddr > temp->startAddr){
+			write_text_cyan("INSIDE INSERT 2...\n");	
+				if(temp->prev == NULL){			//if head
+					mcb -> next = temp;			//insert at head
+					temp -> prev = mcb;
+					free_block_list.head = mcb;
+				}else if(temp->next == NULL){	//if tail
+					write_text_cyan("INSIDE INSERT 2...........\n");
+					mcb -> prev = temp;			//insert at tail
+					temp -> next = mcb;
+					free_block_list.tail = mcb;
+				}else{							//if neither head nor tail
+					write_text_cyan("INSIDE INSERT 2...----------------------\n");
+					mcb -> next = temp;			//insert in between
+					mcb -> prev = temp -> prev;
+					temp -> prev -> next = mcb;
+					temp -> prev = mcb;
+					
+				}
+				free_block_list.count++;		//increment count
+				
+			}else{
+				mcb -> next = temp;			//insert at head
+				temp -> prev = mcb;
+				free_block_list.head = mcb;
+			}
+			temp = temp->next;
+		}
+		
+	write_text_cyan("INSIDE INSERT 3\n");
+	}else if(mcb->type == 1){			//if allocated
+			write_text_cyan("INSIDE INSERT 4\n");
+		temp = allocated_block_list.head;
+		if(temp == NULL){			//if list is empty, set head and tail
+		write_text_cyan("INSIDE INSERT 5\n");
+			allocated_block_list.head = mcb;
+			allocated_block_list.tail = mcb;
+			allocated_block_list.count = 1;
+			return;
+		}
+		write_text_cyan("INSIDE INSERT 6\n");
+		while(temp!=NULL){
+			if(mcb->startAddr > temp->startAddr){
+				if(temp->prev == NULL){			//if head
+					mcb -> next = temp;			//insert at head
+					temp -> prev = mcb;
+					allocated_block_list.head = mcb;
+				}else if(temp->next == NULL){	//if tail
+					mcb -> prev = temp;			//insert at tail
+					temp -> next = mcb;
+					allocated_block_list.tail = mcb;
+				}else{							//if neither head nor tail
+					mcb -> next = temp;			//insert in between
+					mcb -> prev = temp -> prev;
+					temp -> prev = mcb;
+					temp -> prev -> next = mcb;
+				}
+				allocated_block_list.count++;	//increment count
+				return;
+			}else{
+				temp = temp->next;
+			}
+		}
+		write_text_cyan("INSIDE INSERT 7\n");
+
+	}
+	write_text_bold_cyan("LEAVING INSERT\n");
+	return;
+}
+

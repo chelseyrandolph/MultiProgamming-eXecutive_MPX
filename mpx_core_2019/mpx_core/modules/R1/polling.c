@@ -76,7 +76,6 @@ int init_polling(char *buffer, int *count){
 					break;
 				case 13: //return
 					//When you hit enter, it should slap a noll character at the end of the buffer and return back to comHand
-					//serial_print("correct");
 					//buffer[cursor] = '\0';  <-  This is no bueno: causing it to not recognize cmd when cursor isnt at the end
 					//cursor = 0;             <-  This is also no bueno but leave it here for Brandon :)
 					addToCmdHistory(buffer);
@@ -87,7 +86,7 @@ int init_polling(char *buffer, int *count){
 						buf_len--;
 					}
 					serial_print("\r\n");	
-					return -1;
+					return 0;
 					break;
 				case 27: 
 					tmp_buf[4] = '\0';
@@ -174,7 +173,11 @@ int init_polling(char *buffer, int *count){
 					}
 				break;
 				case 9:
-					auto_complete(buffer);
+					serial_print("\33[2K\r");
+					buffer = auto_complete(buffer);
+					serial_print(buffer);
+					cursor = strlen(buffer);
+					buf_len = strlen(buffer);
 				break;
 				//Default is for any of letters/numbers a-zA-Z0-9
 				default: //other letters and numbers

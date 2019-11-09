@@ -1,0 +1,37 @@
+void merge_free_blocks(CMCB *freeblock){
+	int merge = 1;
+	if(freeblock->next != NULL){
+		CMCB* temp = allocated_block_list.head;
+		while(temp != NULL){
+			//If a alloc block is found between the two free blocks then do not merge them
+			if((int)(temp->startAddr) < (int)(freeblock->startAddr)
+			 && (int)(temp->startAddr) > (int)(freeblock->next->startAddr)){
+				merge = 0;	// an alloc block is found in between so merge = 0
+			}else{
+				temp = temp->next;
+			}
+		}
+	}
+	if(merge == 1){	// no alloc block was found between the two free blocks so merge!
+		freeblock->size = freeblock->size + freeblock->next->size + sizeof(CMCB);
+		unlink(freeblock->next);
+	}
+	merge = 1;
+	if(freeblock->prev != NULL){
+		CMCB* temp = allocated_block_list.head;
+		while(temp != NULL){
+			//If a alloc block is found between the two free blocks then do not merge them
+			if((int)(temp->startAddr) < (int)(freeblock->prev->startAddr)
+			 && (int)(temp->startAddr) > (int)(freeblock->startAddr)){
+				merge = 0; // an alloc block is found in between so merge = 0
+			}else{
+				temp = temp->next;
+			}
+		}
+	}
+	if(merge == 1){ // no alloc block was found between the two free blocks so merge!
+		freeblock->prev->size = freeblock->prev->size + freeblock->size + sizeof(CMCB);
+		write_text_red(itoa(freeblock->prev->size));
+		unlink(freeblock);
+	}
+}

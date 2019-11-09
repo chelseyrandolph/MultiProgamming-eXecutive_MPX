@@ -72,10 +72,6 @@ void kmain(void)
    sti();
    init_paging();
 
-	
-	//show_free_mem();
-	//function();
-
    // THIS IS JUST OUR MEMU, NOT COMHAND
    displayMenu();
 

@@ -14,7 +14,7 @@ int comhand();
 
 void displayMenu();
 
-void auto_complete(char partial_str[]);
+char* auto_complete(char partial_str[]);
 
 void addToCmdHistory(char string[100]);
 
