@@ -19,8 +19,8 @@ queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
 PCB* allocate_pcb(){
 	
-	PCB *pcb = sys_alloc_mem(sizeof(PCB));
-	pcb -> bottom_of_stack = sys_alloc_mem(1024);
+	PCB *pcb = alloc_mem(sizeof(PCB));
+	pcb -> bottom_of_stack = alloc_mem(1024);
 	return pcb;
 }
 
@@ -77,8 +77,8 @@ void remove_all(){
 
 int free_pcb(PCB* pcb){
 	if(pcb != NULL){
-		sys_free_mem(pcb->bottom_of_stack); 
-		sys_free_mem(pcb);
+		free_mem(pcb->bottom_of_stack); 
+		free_mem(pcb);
 	}
 	return 0;
 }

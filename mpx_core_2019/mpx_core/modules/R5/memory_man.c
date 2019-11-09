@@ -21,7 +21,7 @@ mem_queue allocated_block_list = {.head = NULL, .tail = NULL, .count = 0};
 mem_queue free_block_list = {.head = NULL, .tail = NULL, .count = 0};
 
 // Each word is 4 bytes, you wouldn't want to break a block on a byte
-int MINIMMUM_FREE_BLOCK_SIZE = 4;
+int MINIMUM_FREE_BLOCK_SIZE = 4;
 
 u32int init_heap(u32int heap_size_param){
 	write_text_bold_magenta("INSIDE INIT_HEAP\n");
@@ -48,7 +48,7 @@ u32int init_heap(u32int heap_size_param){
 	//CMCB is equal to the start of memory, type is free, and the size if the size of the heap.
 	top_of_heap = (CMCB*) start_of_mem;
 	top_of_heap->type = 0;
-	top_of_heap->size = heap_size_param + sizeof(CMCB) + sizeof(LMCB);
+	top_of_heap->size = heap_size_param;
 	//CMCB start address is equal to the CMCB's size and the size of the CMCB struct itself.
 	top_of_heap->startAddr = (void*) (start_of_mem);
 	top_of_heap->next = NULL;
@@ -74,88 +74,50 @@ u32int init_heap(u32int heap_size_param){
 	return start_of_mem;
 }
 
+void *alloc_mem(u32int num_bytes){
 
-u32int alloc_mem(u32int num_bytes){
-	write_text_bold_green("INSIDE ALLOC_MEM\n");
-
-	//Rounds up to the next full word which is equal to 4 bytes
 	int roundUp = num_bytes % 4;
 	if(roundUp > 0){
 		num_bytes = num_bytes + (4 - roundUp);
 	}
 
-	//Setting the CMCB to the free block list to allocate a new block 
+	int blocksize = (int)(num_bytes) + sizeof(CMCB); //blocksize accounts for overhead (readability)
 	CMCB *temp = free_block_list.head;
 	int free_bytes = temp->size;
 
-	write_text_green("ALLOC_MEM 0\n");
-
-
-	// If the size of the free block is less than the size of the bytes needed to allocate,
-	// We iterate through the list until we get to the end. If we reach the end,
-	// we will throw and error that there is not enough room to allocate that block and exit.
 	while(temp->size < (int) num_bytes){
-		write_text_green("ALLOC_MEM 1\n");
-		//No block can be found to allocate
 		if(temp->next == NULL){
-			write_text_red("ERROR: No block available for allocation.\n");
-			return -1;
+			write_text_red("No Block available for allocation");
+			return NULL;
 		}
 		temp = temp->next;
 	}
 
-	write_text_green("ALLOC_MEM 2\n");
-	//unlink the block
 	unlink(temp);
-
-	write_text_green("ALLOC_MEM 3\n");
-
-
-	//If the block we are allocating would leave a left over  block not big enough for a word,
-	// (a bytes = 4), then we do not split that block.
-	if((int)(temp->size - num_bytes - sizeof(CMCB) - sizeof(LMCB)) < MINIMMUM_FREE_BLOCK_SIZE){
-		write_text_green("ALLOC_MEM 4\n");
-		// Updates num_bytes and change the type to allocated
+	
+	if((temp->size - blocksize) < MINIMUM_FREE_BLOCK_SIZE){
 		num_bytes = temp->size;
 		temp->type = 1;
 		temp->startAddr = (void*)(start_of_mem + sizeof(CMCB));
-
-		//Change the LMCB to allocated
-		LMCB* LMCBEnd = (LMCB*)(temp->startAddr + num_bytes);
-		LMCBEnd->type = 1;
-		bottom_of_heap->size = bottom_of_heap->size - num_bytes - sizeof(CMCB) - sizeof(LMCB);
-
-		insert(temp);
-		write_text_green("ALLOC_MEM 5\n");
-
-	//There is a block that will need to be split into an allocated and free block
-	}else{
-		write_text_green("ALLOC_MEM 6\n");
-		//Creating an allocated block
+		bottom_of_heap->size = bottom_of_heap->size - blocksize;
+		write_text("jjhe");
+		insert_mem(temp);
+	}else{	
+		//allocated block 
 		temp->type = 1;
-		temp->size = num_bytes + sizeof(CMCB) + sizeof(LMCB);
-		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
-		temp->startAddr = temp->startAddr + num_bytes + sizeof(CMCB) + sizeof(LMCB);
-
-		LMCB* end = (LMCB*)(temp->startAddr + num_bytes + sizeof(CMCB));
-		end->type = 1;
-		end->size = temp->size - sizeof(CMCB) - num_bytes;
-
-		CMCB* freeBlock = (CMCB*) (temp->startAddr + num_bytes + sizeof(CMCB) + sizeof(LMCB));
-		freeBlock->type = 0;
-		freeBlock->size = free_bytes - num_bytes - sizeof(CMCB) - sizeof(LMCB);
-		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
-		freeBlock->startAddr = temp->startAddr + free_bytes - num_bytes + sizeof(CMCB) + sizeof(LMCB);
+		temp->size = num_bytes;
+		temp->startAddr = temp->startAddr;
 		
-		write_text_green("ALLOC_MEM 7\n");
-		//Allocated block
-		insert(temp);
-		//Free block
-		insert(freeBlock);
+		//free block
+		CMCB *freeblock = (CMCB*)(temp->startAddr + blocksize);
+		freeblock->type = 0;
+		freeblock->size = free_bytes - blocksize;
+		freeblock->startAddr = temp->startAddr + blocksize;
+
+		insert_mem(temp);
+		insert_mem(freeblock);
 	}
-	write_text_bold_green("LEAVING ALLOC_MEM\n");
-	return (u32int) temp->startAddr;
-	
+	return temp->startAddr;
 }
 
 int free_mem(void *addr){
@@ -259,7 +221,7 @@ int free_mem(void *addr){
 			write_text("\n");
 			strcpy(temp->name, NULL);
 			temp->type = 0;
-			insert(temp);
+			insert_mem(temp);
 			return 0;
 		}
 		temp = temp -> next;
@@ -375,14 +337,10 @@ void show_alloc_mem(){
 		addrstr[11] = '\0';
 		write_text_blue(addrstr); */
 		printDecToHex((int)temp->startAddr);
-		write_text(" | ");			//TODO this is lazy, fix it
-		if(temp->type == 1){
-			write_text_blue("ALLOCATED");
-		}else{
-			write_text("\n");
-			write_text_red("Error... Free Block in the Allocated List.\n");
-			return;
-		}
+		write_text("   | ");			//TODO this is lazy, fix it
+		
+		write_text_blue("ALLOCATED");
+		
 		write_text(" |\n");
 		temp = temp->next;
 	}
@@ -425,7 +383,7 @@ void unlink(CMCB* mcb){
 
 }
 
-void insert(CMCB* mcb){
+void insert_mem(CMCB* mcb){
 	write_text_bold_cyan("INSIDE INSERT\n");
 	CMCB* temp = NULL;
 	
@@ -518,11 +476,28 @@ void insert(CMCB* mcb){
 
 
 void function(){
-	write_text("allocating 10 bytes....\n");
+	
+	int i;
+	for(i = 0; i < 3; i++){
+		alloc_mem(200);
+	}
+	show_alloc_mem();
+	/*write_text("allocating 10 bytes....\n");
 	alloc_mem(10);
 	write_text("allocated 10 bytes.\n");
 	show_alloc_mem();
 	show_free_mem();
+	free_mem((void*)(218103864));
+	show_alloc_mem();
+	show_free_mem(); 
+	*PCB* pcb = alloc_mem(sizeof(PCB));
+	strcpy(pcb->name, "testpcb1");
+	pcb->process_class = 1;
+	pcb->priority = 9;
+	pcb->readystate = 0;
+	pcb->suspended = 0;
+	insert_pcb(pcb);
+	show_all();
 	write_text("allocating 15 bytes....\n");
 	alloc_mem(15);
 	write_text("allocated 15 bytes.\n");
@@ -539,7 +514,7 @@ void function(){
 	show_alloc_mem();
 	show_free_mem();
 	write_text("done.\n");
-	
+	*/
 }
 
 

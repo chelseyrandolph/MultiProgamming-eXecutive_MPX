@@ -1,0 +1,139 @@
+
+
+//CHELSEYS ALLOC
+void *alloc_mem(u32int num_bytes){
+	write_text_bold_green("INSIDE ALLOC_MEM\n");
+
+	//Rounds up to the next full word which is equal to 4 bytes
+	int roundUp = num_bytes % 4;
+	if(roundUp > 0){
+		num_bytes = num_bytes + (4 - roundUp);
+	}
+
+	//Setting the CMCB to the free block list to allocate a new block 
+	CMCB *temp = free_block_list.head;
+	int free_bytes = temp->size;
+
+	write_text_green("ALLOC_MEM 0\n");
+
+
+	// If the size of the free block is less than the size of the bytes needed to allocate,
+	// We iterate through the list until we get to the end. If we reach the end,
+	// we will throw and error that there is not enough room to allocate that block and exit.
+	while(temp->size < (int) num_bytes){
+		write_text_green("ALLOC_MEM 1\n");
+		//No block can be found to allocate
+		if(temp->next == NULL){
+			write_text_red("ERROR: No block available for allocation.\n");
+			return NULL;
+		}
+		temp = temp->next;
+	}
+
+	write_text_green("ALLOC_MEM 2\n");
+	//unlink the block
+	unlink(temp);
+
+	write_text_green("ALLOC_MEM 3\n");
+
+
+	//If the block we are allocating would leave a left over  block not big enough for a word,
+	// (a bytes = 4), then we do not split that block.
+	if((int)(temp->size - num_bytes - sizeof(CMCB) - sizeof(LMCB)) < MINIMMUM_FREE_BLOCK_SIZE){
+		write_text_green("ALLOC_MEM 4\n");
+		// Updates num_bytes and change the type to allocated
+		num_bytes = temp->size;
+		temp->type = 1;
+		temp->startAddr = (void*)(start_of_mem + sizeof(CMCB));
+
+		//Change the LMCB to allocated
+		LMCB* LMCBEnd = (LMCB*)(temp->startAddr + num_bytes);
+		LMCBEnd->type = 1;
+		bottom_of_heap->size = bottom_of_heap->size - num_bytes - sizeof(CMCB) - sizeof(LMCB);
+
+		insert(temp);
+		write_text_green("ALLOC_MEM 5\n");
+
+	//There is a block that will need to be split into an allocated and free block
+	}else{
+		write_text_green("ALLOC_MEM 6\n");
+		//Creating an allocated block
+		temp->type = 1;
+		temp->size = num_bytes;
+		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
+		temp->startAddr = temp->startAddr + num_bytes + sizeof(CMCB) + sizeof(LMCB);
+		write_text_bold_red("ALLOC_MEM 6.51\n");
+		LMCB* end = (LMCB*)(temp->startAddr + num_bytes + sizeof(CMCB));
+		write_text_red("allocmem6.52\n");
+		end->type = 1;
+		write_text_bold_red("ALLOC_MEM 6.53\n");
+		end->size = temp->size - sizeof(CMCB) - num_bytes;
+
+		CMCB* freeBlock = (CMCB*) (temp->startAddr + num_bytes + sizeof(CMCB) + sizeof(LMCB));
+		freeBlock->type = 0;
+		write_text_bold_red("ALLOC_MEM 6.54\n");
+		freeBlock->size = free_bytes - num_bytes - sizeof(CMCB) - sizeof(LMCB);
+		//TODO: I'M CONFUSED ON THE STARTING ADDRESSES OF EACH BLOCK
+		freeBlock->startAddr = temp->startAddr + free_bytes - num_bytes + sizeof(CMCB) + sizeof(LMCB);
+		
+		write_text_green("ALLOC_MEM 7\n");
+		//Allocated block
+		insert(temp);
+		//Free block
+		insert(freeBlock);
+	}
+	write_text_bold_green("LEAVING ALLOC_MEM\n");
+	//PCB* this = (PCB*)temp->startAddr;
+	//strcpy(temp->name, this->name);
+	return temp->startAddr;
+	
+}
+
+
+//Brandons alloc
+void *alloc_mem(u32int num_bytes){
+
+	int roundUp = num_bytes % 4;
+	if(roundUp > 0){
+		num_bytes = num_bytes + (4 - roundUp);
+	}
+
+	int blocksize = (int)(num_bytes) + sizeof(CMCB); //blocksize accounts for overhead (readability)
+	CMCB *temp = free_block_list.head;
+	int free_bytes = temp->size;
+
+	while(temp->size < (int) num_bytes){
+		if(temp->next == NULL){
+			write_text_red("No Block available for allocation");
+			return NULL;
+		}
+		temp = temp->next;
+	}
+
+	unlink(temp);
+	
+	if((temp->size - blocksize) > MINIMUM_FREE_BLOCK_SIZE){
+		num_bytes = temp->size;
+		temp->type = 1;
+		temp->startAddr = (void*)(start_of_mem + sizeof(CMCB));
+		bottom_of_heap->size = bottom_of_heap->size - blocksize;
+		insert(temp);
+	}else{	
+		//allocated block 
+		temp->type = 1;
+		temp->size = num_bytes;
+		temp->startAddr = temp->startAddr;
+		
+		//free block
+		CMCB *freeblock = (*CMCB)(temp->startAddr + blocksize);
+		freeblock->type = 0;
+		freeblock->size = free_bytes - blocksize;
+		freeblock->startAddr = temp->startAddr + blocksize;
+
+		insert(temp);
+		insert(freeblock);
+		return temp->startAddr;
+	}
+	
+}
+

@@ -257,6 +257,7 @@ int comhand(){
 			case 20: infinite(); break;
 			case 21: show_free_mem(); break;
 			case 22: show_alloc_mem(); break;
+			case 23: function();
 			default: write_text_red("Not a valid command, type ");
 					 write_text_yellow("'help' "); 
 					 write_text_red("for options\n");

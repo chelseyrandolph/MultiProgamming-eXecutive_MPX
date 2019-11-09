@@ -31,7 +31,7 @@ void printDecToHex(int dec){
 	}
 	int length = sizeof(outHex)/sizeof(outHex[0]);
 	outHex[length] = '\0';
-	write_text_blue(outHex);
+	write_text_bold_cyan(outHex);
 }
 
 void test(){

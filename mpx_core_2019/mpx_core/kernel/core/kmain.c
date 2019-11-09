@@ -64,10 +64,10 @@ void kmain(void)
    sti();
    init_paging();
 
-	init_heap(1000);
+	init_heap(30000);
 	show_free_mem();
-	function();
-   //sys_set_malloc(alloc_mem);
+	//function();
+  // sys_set_malloc(alloc_mem);
   // sys_set_free(free_mem);
 
 
@@ -84,7 +84,7 @@ void kmain(void)
 //Loading initial processes
    // 5.-) IDLE process
    klogv("Initilizing idle process...");
-   loadProcess("idle_process", 0, 9, &idle);
+   loadProcess("idle_process", 0, 4, &idle);
 
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
@@ -92,10 +92,6 @@ void kmain(void)
 
    //show_alloc_mem();
    yield();
-
-
-   
-
 
 
    // 6) System Shutdown on return from your command handler

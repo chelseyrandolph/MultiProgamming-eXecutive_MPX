@@ -22,7 +22,7 @@ static int mem_module_active = 0;
 
 // If a student created heap manager is implemented this
 // is a pointer to the student's "malloc" operation.
-u32int (*student_malloc)(u32int);
+u32int* (*student_malloc)(u32int);
 
 // if a student created heap manager is implemented this
 // is a pointer to the student's "free" operation.
@@ -132,7 +132,7 @@ void sys_set_read( int (*func)(char *b, int *cnt))
   Description..: Sets the memory allocation function for sys_alloc_mem
   Params..: Function pointer
 */
-void sys_set_malloc(u32int (*func)(u32int))
+void sys_set_malloc(u32int* (*func)(u32int))
 {
   student_malloc = func;
 }

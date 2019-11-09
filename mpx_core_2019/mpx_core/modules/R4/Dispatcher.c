@@ -88,7 +88,7 @@ void loadProcess(char name[], int class, int priority, void* function){
 }
 
 void loadr3(){
-	loadProcess("sys_load_proc", 1, 0, &sys_load_proc);
+	//loadProcess("sys_load_proc", 1, 0, &sys_load_proc);
 	loadProcess("process01", 1, 2, &proc1);
 	suspend_pcb("process01");
 	loadProcess("process02", 1, 2, &proc2);

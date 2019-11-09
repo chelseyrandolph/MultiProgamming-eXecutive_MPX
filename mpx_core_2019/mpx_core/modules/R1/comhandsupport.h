@@ -7,7 +7,7 @@
 #include "time.h"
 #include "date.h"
 
-char commands[22][30] = {
+char commands[23][30] = {
     "version",
     "help",
     "shutdown",
@@ -32,7 +32,8 @@ char commands[22][30] = {
 	"alarm",
 	"infinite",
 	"show-free-mem",
-	"show-alloc-mem"
+	"show-alloc-mem",
+		"memtest"
 	
 };
 //Paramarized help menu 
