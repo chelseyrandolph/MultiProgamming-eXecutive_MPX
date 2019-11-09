@@ -16,6 +16,7 @@ queue blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 queue suspended_ready_queue = {.head = NULL, .tail = NULL, .count = 0};
 queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
+
 int free_pcb(PCB* pcb){
 	if(pcb != NULL){
 		CMCB* temp = findCMCB(pcb->name);

@@ -27,7 +27,6 @@ int erSize = 34;
 void proc1()
 {
   int i;
-
   // repeat forever if termination fails
   while(1){
     for(i=0; i<RC_1; i++){
@@ -44,7 +43,6 @@ void proc1()
 void proc2()
 {
   int i;
-
   // repeat forever if termination fails
   while(1){
     for(i=0; i<RC_2; i++){
@@ -59,7 +57,6 @@ void proc2()
 void proc3()
 {
   int i;
-
   // repeat forever if termination fails
   while(1){
     for(i=0; i<RC_3; i++){
@@ -74,7 +71,6 @@ void proc3()
 void proc4()
 {
   int i;
-
   // repeat forever if termination fails
   while(1){
     for(i=0; i<RC_4; i++){
@@ -89,7 +85,6 @@ void proc4()
 void proc5()
 {
   int i;
-
   // repeat forever if termination fails
   while(1){
     for(i=0; i<RC_5; i++){

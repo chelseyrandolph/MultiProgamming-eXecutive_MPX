@@ -92,8 +92,6 @@ outb(0x71,secToint);}
 sti();
 }
 
-
-
 void getTime(){
 	int hourr, minutee , secondd;
 
@@ -191,32 +189,8 @@ char* itoa(int num)
 	// If number is negative, append '-' at start
 	if (isNegative)
 		str[0] = '-';
-
-
-
-
-
 	return str;
 }
-
-	// convert binary code decimal to string 
-/*char* itoa(int number){
-
-	char *string = " "; 
-	//int i;
-	//for(i=0 ;i <3; i++){
-
-	string[0]= (number/10)+48;
-	string[1]= (number%10)+48;
-	string[2] = '\0';
-
-	return string;
-
-
-
-
-}*/
-
 
 int BCDToDEC(int num){
 return ((((num)>>4)&0x0F)*10) +(num&0x0F);

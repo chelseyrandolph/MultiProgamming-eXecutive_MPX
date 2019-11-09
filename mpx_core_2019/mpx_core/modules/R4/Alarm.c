@@ -88,31 +88,8 @@ void setAlarm(){
 		alarm_queue.tail = new_alarm;
 		alarm_queue.count++;
 	}
-
-//==========================================================================
-
-
-	/*While loop that continuously checks if the alarm has hit the current time
-	   If it hits the current time then we print the user message, then the process exits
-	   If the current time does not match, then the process will print "not time yet" then the process voluntarily idles  */
-	/*while(1){
-		
-		if(checkTime(hours, minutes)){
-			sys_req(WRITE, DEFAULT_DEVICE, userMessage, &userInt);
-			sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
-		}	
-		write_text("Not time yet\n");
-		sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
-	}*/
-	
-	
 }
 
-/*
-	This function checks the current time using the same functions from getTime in time.c
-		then it checks the hours and minutes against the user hour and minutes
-		if it passes, then it returns a 1 or yes otherwise returns a 0 or no
-*/
 void checkAlarms(){
 	if(alarm_queue.count == 0){
 		sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);	//ends the alarm process if there are no alarms
@@ -161,21 +138,8 @@ void checkAlarms(){
 			}
 			
 		}
-		//sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
-		
 	}
-
-	
 }
 
 
-/*	pseudocode
 
-	while(not at the alarm time){
-		sys_req(idle)
-	}
-	sys_req(write user message)
-	sys_req(EXIT)
-	
-
-*/

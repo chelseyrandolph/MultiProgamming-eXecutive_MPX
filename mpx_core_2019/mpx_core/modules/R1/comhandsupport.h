@@ -15,7 +15,7 @@ char commands[24][30] = {
     "get-date",
     "set-time",    
     "set-date",
-	"create-pcb",
+	//"create-pcb",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -23,8 +23,8 @@ char commands[24][30] = {
 	"delete-pcb",
 	"suspend-pcb",
 	"resume-pcb",
-	//"block-pcb",
-	//"unblock-pcb",
+	"block-pcb",
+	"unblock-pcb",
 	"set-pcb-priority",
 	//"yield",
 	"loadr3",
@@ -33,12 +33,12 @@ char commands[24][30] = {
 	"infinite",
 	"show-free-mem",
 	"show-alloc-mem",
-	"memtest",
+	//"memtest",
 	"history"
 	
 };
 //Paramarized help menu 
-char helpcommands[22][70] = {
+char helpcommands[24][70] = {
     "version",
     "help [command]",
     "shutdown",
@@ -46,7 +46,7 @@ char helpcommands[22][70] = {
     "get-date",
     "set-time",    
     "set-date",
-	"create-pcb \033[0;34m[name] [class] [priority]\033[0m",
+	//"create-pcb \033[0;34m[name] [class] [priority]\033[0m",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -54,8 +54,8 @@ char helpcommands[22][70] = {
 	"delete-pcb \033[0;34m[pcb_name]\033[0m",
 	"suspend-pcb \033[0;34m[pcb_name]\033[0m",
 	"resume-pcb \033[0;34m[pcb_name]\033[0m",
-	//"block-pcb \033[0;34m[pcb_name]\033[0m",
-	//"unblock-pcb \033[0;34m[pcb_name]\033[0m",
+	"block-pcb \033[0;34m[pcb_name]\033[0m",
+	"unblock-pcb \033[0;34m[pcb_name]\033[0m",
 	"set-pcb-priority \033[0;34m[pcb_name] [new_priority]\033[0m",
 	//"yield",
 	"loadr3",
@@ -63,10 +63,13 @@ char helpcommands[22][70] = {
 	"alarm",
 	"infinite",
 	"show-free-mem",
-	"show-alloc-mem"
+	"show-alloc-mem",
+	//"memtest",
+	"history"
+
 };
 
-char alias[23][30] = {
+char alias[24][30] = {
     "version",
     "help",
     "shutdown",
@@ -74,7 +77,7 @@ char alias[23][30] = {
     "get-date",
     "set-time",    
     "set-date",
-	"create-pcb",
+	//"create-pcb",
 	"show-all",
 	"show-blocked",
 	"show-ready",
@@ -82,8 +85,8 @@ char alias[23][30] = {
 	"delete-pcb",
 	"suspend-pcb",
 	"resume-pcb",
-	//"block-pcb",
-	//"unblock-pcb",
+	"block-pcb",
+	"unblock-pcb",
 	"set-pcb-priority",
 	//"yield",
 	"loadr3",
@@ -92,7 +95,8 @@ char alias[23][30] = {
 	"infinite",
 	"show-free-mem",
 	"show-alloc-mem",
-	"memtest"
+	//"memtest",
+	"history"
 	
 };
 

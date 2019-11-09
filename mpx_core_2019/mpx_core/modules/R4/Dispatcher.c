@@ -36,7 +36,6 @@ u32int* sys_call(context* registers){
 			free_pcb(cop);
 			exit = 1;
 		}
-
 	}
 
 	if(temporary_ready != NULL){
@@ -52,7 +51,6 @@ u32int* sys_call(context* registers){
 		cop = NULL;
 		return (u32int*) contextSwitch;
 	}
-	
 	return (u32int*)  con;
 }
 
@@ -61,9 +59,11 @@ void yield(){
 asm volatile("int $60");
 }
 
+
 void sys_load_proc(){
 	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 }
+
 
 void infinite(){
 	while(1){
@@ -92,7 +92,6 @@ void loadProcess(char name[], int class, int priority, void* function){
 }
 
 void loadr3(){
-	//loadProcess("sys_load_proc", 1, 0, &sys_load_proc);
 	loadProcess("process01", 1, 7, &proc1);
 	suspend_pcb("process01");
 	loadProcess("process02", 1, 7, &proc2);

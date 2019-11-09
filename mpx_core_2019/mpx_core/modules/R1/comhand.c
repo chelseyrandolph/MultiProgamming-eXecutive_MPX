@@ -84,48 +84,48 @@ int inputHelp(char helpBuffer[]){
 					write_text("\nPrompts the user for a month, day, and year to change the MPX date to.\n\n");
 					break;
 
-			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
+			/*case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);  
 					write_text("\nCreates a PCB.\n\n"); 
 					break;
-			
-			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+			*/
+			case 8: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
 					write_text("\nShows all PCBs Created.\n\n");   
 					break;
 
-			case 10: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 9: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nShows all the blocked PCBs.\n\n"); 
 					 break;
 
-			case 11: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 10: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nShows PCBs that are ready for execution.\n\n"); 
 					 break;
 
-			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 11: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nShows a single, user chosen PCB.\n\n"); 
 					 break;
 	
-			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 12: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nDeletes a PCB from the appropriate queue and then free all associated memory.\n\n");
 					 break;
 			
-			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 13: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nPlaces a PCB in the suspended state.\n\n"); 
 					 break;
 
-			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
+			case 14: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize);
 					 write_text("\nPlaces a PCB in the not suspended state.\n\n"); 
 					 break;
-			/*
-			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			
+			case 15: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nSets a PCB's state to blocked.\n\n"); 
 					 break;
 
-			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nSets a PCB's state to unblocked.\n\n"); 
 					 break;
-			*/
+			
 
-			case 16: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nSets a PCB's priority.\n\n"); 
 					 break;
 /*
@@ -133,37 +133,44 @@ int inputHelp(char helpBuffer[]){
 					 write_text("\nCauses comhand to yield to other processes.\n\n");
 					 break;
 */
-			case 17: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 18: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nLoads test processes.\n\n"); 
 					 break;
 
-			case 18: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 19: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nThis clears the terminal.\n\n"); 
 					 break;
 
-			case 19: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 20: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nThis creates an alarm.\n\n");
 					 break;
 
-			case 20: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 21: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nThis creates the infinite process.\n\n");
 					 break;
 
-			case 21: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 22: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nThis shows the free memory blocks.\n\n");
 					 break;
 
-			case 22: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+			case 23: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
 					 write_text("\nThis shows the allocated memory blocks.\n\n");
 					 break;
+			
+			case 24: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 write_text("\nThis is a test function for R5.\n\n");
+					 break;
 
+			case 25: sys_req(WRITE, DEFAULT_DEVICE, helpcommands[i-1], &tempSize); 
+					 write_text("\nThis shows the current commands in history.\n\n");
+					 break;
+			
+			
 			default: displayAllCommands();
 		}
 		return 0;
 
 }
-
-
 
 
 
@@ -253,26 +260,26 @@ int comhand(){
 			case 5: getDate();						break;
 			case 6: setTime();						break;
 			case 7: setDate();						break;
-			case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
-			case 9: show_all();						break;
-			case 10: show_blocked();				break;
-			case 11: show_ready();					break;
-			case 12: show_pcb(tokenizedBuffer[1]);  break;
-			case 13: delete_pcb(tokenizedBuffer[1]);break;
-			case 14: suspend_pcb(tokenizedBuffer[1]); break;
-			case 15: resume_pcb(tokenizedBuffer[1]); break;
-			//case 16: block_pcb(tokenizedBuffer[1]); break;
-			//case 17: unblock_pcb(tokenizedBuffer[1]); break;
-			case 16: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
+			//case 8: create_pcb(tokenizedBuffer[1], atoi(tokenizedBuffer[2]), atoi(tokenizedBuffer[3]));	break;
+			case 8: show_all();						break;
+			case 9: show_blocked();				break;
+			case 10: show_ready();					break;
+			case 11: show_pcb(tokenizedBuffer[1]);  break;
+			case 12: delete_pcb(tokenizedBuffer[1]);break;
+			case 13: suspend_pcb(tokenizedBuffer[1]); break;
+			case 14: resume_pcb(tokenizedBuffer[1]); break;
+			case 15: block_pcb(tokenizedBuffer[1]); break;
+			case 16: unblock_pcb(tokenizedBuffer[1]); break;
+			case 17: set_pcb_priority(tokenizedBuffer[1], atoi(tokenizedBuffer[2]));break;
 			//case 17: yield(); break;
-			case 17: loadr3(); break;
-			case 18: clear(); break;
-			case 19: setAlarm(); break;
-			case 20: infinite(); break;
-			case 21: show_free_mem(); break;
-			case 22: show_alloc_mem(); break;
-			case 23: function(); break;
-			case 24: showHistory();  break;
+			case 18: loadr3(); break;
+			case 19: clear(); break;
+			case 20: setAlarm(); break;
+			case 21: loadProcess("infinite_process", 1, 0, &infinite); break;
+			case 22: show_free_mem(); break;
+			case 23: show_alloc_mem(); break;
+			case 24: function(); break;
+			case 25: showHistory();  break;
 			default: write_text_red("Not a valid command, type ");
 					 write_text_yellow("'help' "); 
 					 write_text_red("for options\n");
@@ -332,18 +339,26 @@ char* auto_complete(char partial_str[]){
 	int i;
 	char *sub;
 	int numOfMatches = 0;
+	char matches[25][30];
 	int index = -1;
-	for(i = 0; i < 24; i++){
+	for(i = 0; i < 25; i++){
 		int end = strlen(partial_str);
 		strcpy(cmd_str, commands[i]);
 		sub = substring(cmd_str, 0, end);
 		if(strcmp(partial_str, sub) == 0){
+			strcpy(matches[numOfMatches], commands[i]);
 			numOfMatches += 1;
 			index = i;
 		}else{
 			continue;
 		}
 	}
+	if(numOfMatches > 1){
+		for(i = 0; i < numOfMatches; i ++){
+			write_text_yellow(matches[i]);
+			write_text("\n");
+		}
+	} 
 	if(numOfMatches == 1){
 		return commands[index];
 	}
