@@ -217,7 +217,6 @@ int comhand(){
 		memset(cmdBuffer, '\0', 100);
 		bufferSize = 99;
 		sys_req(READ,DEFAULT_DEVICE,cmdBuffer,&bufferSize);
-		write_text(cmdBuffer);
 //		Tokenize buffer. 
 //		This set of instructions will break the buffer on white space and put it inside a *array
 //		0 index is always the command wihle everything after is the input for the command

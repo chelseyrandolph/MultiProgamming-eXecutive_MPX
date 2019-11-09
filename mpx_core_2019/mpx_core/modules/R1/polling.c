@@ -159,22 +159,26 @@ int init_polling(char *buffer, int *count){
 							case 66:	//down arrow for cmd history
 								serial_print("\33[2K\r");
 								historyCursor++;
-								serial_print(getCommand(historyCursor));
-	
+								strcpy(buffer, getCommand(historyCursor)); 
+								serial_print(buffer);
+								cursor = strlen(buffer);
+								buf_len = strlen(buffer);
 							break;
 
 							case 65:	//Up arrow for cmd history
 								serial_print("\33[2K\r");
 								historyCursor--;
-								serial_print(getCommand(historyCursor));
-	
+								strcpy(buffer, getCommand(historyCursor)); 
+								serial_print(buffer);
+								cursor = strlen(buffer);
+								buf_len = strlen(buffer);
 							break;
 						}
 					}
 				break;
 				case 9:
 					serial_print("\33[2K\r");
-					buffer = auto_complete(buffer);
+					strcpy(buffer,auto_complete(buffer));
 					serial_print(buffer);
 					cursor = strlen(buffer);
 					buf_len = strlen(buffer);
