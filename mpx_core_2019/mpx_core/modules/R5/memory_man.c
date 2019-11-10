@@ -122,127 +122,78 @@ void *alloc_mem(u32int num_bytes){
 
 int free_mem(void *addr){
 
-	write_text_bold_blue("INSIDE FREE_MEM\n");
 	//Set temp to the allocate list
 	CMCB *temp = allocated_block_list.head;
 	//Traverse through the list until you find the correct block to free.
 	while(temp != NULL){
 		if(temp->startAddr == addr){
-			write_text_blue("FREE_MEM 1\n");
+
 			unlink(temp);
-	
-	
-			LMCB* end = (LMCB*)(temp->startAddr + temp->size + sizeof(CMCB));
-			end->type = 0;
-			end->size = temp->size - sizeof(CMCB);
-			/*
-			write_text_blue("FREE_MEM 2\n");
-			//Check for adjacement blocks
-			//Checking the block after
-			CMCB* block_after = (CMCB*) (temp->startAddr + sizeof(LMCB));
-			LMCB* end_after = (LMCB*) (block_after->startAddr + block_after->size + sizeof(CMCB));
-			CMCB* temp_after = free_block_list.head;
-
-			write_text_blue("FREE_MEM 3\n");
-			while(temp_after != NULL && temp_after != block_after){
-				temp_after = temp_after->next;
-			}
-
-			write_text_blue("FREE_MEM 4\n");
-			//Checking the block before
-			LMCB* end_before = (LMCB*) ((int) temp - sizeof(LMCB));
-			CMCB* block_before = (CMCB*) ((int) end_before - end_before->size - sizeof(CMCB));
-			CMCB* temp_before = free_block_list.head;
-
-
-			write_text_blue("FREE_MEM 5\n");
-			//Traverse the lists
-			while(temp_before != NULL && temp_before != block_before){
-				temp_before = temp_before->next;
-			}
-
-			write_text_blue("FREE_MEM 6\n");
-			//No adjacement blocks
-			// We just insert it as a new free block
-			if(temp_after == NULL && temp_before == NULL){
-				write_text_blue("FREE_MEM 7\n");
-				temp->type = 0;
-				end->type = 0;
-				insert(temp);
-				write_text_bold_blue("LEAVING FREE_MEM 1\n");
-				return 0;
-			}
-
-			//There is an adjacement block before the free block
-			//We put these two blocks together into one free block.
-			else if(temp_after != NULL && temp_before == NULL){
-				write_text_blue("FREE_MEM 8\n");
-				unlink(block_before);
-				block_before->type = 0;
-				block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + temp->size;
-				end->type = 0;
-				insert(block_before);
-				write_text_bold_blue("LEAVING FREE_MEM 2\n");
-				return 0;
-			}
-
-			//There is an adjacement block after the free block
-			//We put these two blocks together into one free block.
-			else if(temp_after != NULL && temp_before == NULL){
-				write_text_blue("FREE_MEM 9\n");
-				temp->type = 0;
-				unlink(block_after);
-				temp->size = temp->size + sizeof(CMCB) + sizeof(LMCB) + block_after->size;
-				end_after->type = 0;
-				insert(temp);
-				write_text_bold_blue("LEAVING FREE_MEM 3\n");
-				return 0;
-			}	
-
-			//There is an adjacement block before and after the free block
-			//We put these three blocks together into one free block.
-			else{
-				write_text_blue("FREE_MEM 10\n");
-				unlink(block_before);
-				unlink(block_after);
-				block_before->type = 0;
-				block_before->size = block_before->size + sizeof(CMCB) + sizeof(LMCB) + sizeof(CMCB) + sizeof(LMCB) + block_after->size + temp->size;
-				end_after->type = 0;
-				end_after->size = block_before->size;
-				insert(block_before);
-				write_text_bold_blue("LEAVING FREE_MEM 4\n");
-				return 0;
-			}
-			*/
-			write_text_blue("FREE_MEM 0\n");
-			write_text_bold_blue(itoa(temp->size));
-			write_text("\n");
-			write_text_bold_blue(itoa((int)temp->startAddr));
-			write_text("\n");
+		
 			strcpy(temp->name, NULL);
 			temp->type = 0;
 			insert_mem(temp);
+			merge_free_blocks(temp);
 			return 0;
 		}
 		temp = temp -> next;
 	}
 
-	//If temp is null, throw an error 
+	//If temp is null, alert user and return
 	if(temp == NULL){
-		write_text_bold_red("ERROR: Allocated block not found.\n");
+		write_text_red("ERROR: Block not found.\n");
 		return -1;
 	}
+	
 	return 0;
 }
 
-//TODO //TODO //TODO //TODO //TODO //TODO //TODO //TODO
+/////////////////////////////////////////////////////////
+// merge_free_blocks takes a pointer to a newly freed  //
+// block, then checks to see if there is an alloc block//
+// address between it and its next or it and its prev, //
+// and then merges them if not						   //
+/////////////////////////////////////////////////////////
 
-// WE HAVE NEVER USED ALLOCATED BLOCK LIST . COUNT
-// SHOULD WE JUST CHECK THE HEAD ???
 
-//TODO //TODO //TODO //TODO //TODO //TODO //TODO //TODO
+void merge_free_blocks(CMCB *freeblock){
+	int merge = 1;
+	if(freeblock->next != NULL){
+		CMCB* temp = allocated_block_list.head;
+		while(temp != NULL){
+			//If a alloc block is found between the two free blocks then do not merge them
+			if((int)(temp->startAddr) > (int)(freeblock->startAddr)
+			 && (int)(temp->startAddr) < (int)(freeblock->next->startAddr)){
+				merge = 0;	// an alloc block is found in between so merge = 0
+			}else{
+				temp = temp->next;
+			}
+		}
+	}
+	if(merge == 1){	// no alloc block was found between the two free blocks so merge!
+		freeblock->size = freeblock->size + freeblock->next->size + sizeof(CMCB);
+		unlink(freeblock->next);
+	}
+	merge = 1;
+	if(freeblock->prev != NULL){
+		CMCB* temp = allocated_block_list.head;
+		while(temp != NULL){
+			//If a alloc block is found between the two free blocks then do not merge them
+			if((int)(temp->startAddr) > (int)(freeblock->prev->startAddr)
+			 && (int)(temp->startAddr) < (int)(freeblock->startAddr)){
+				merge = 0; // an alloc block is found in between so merge = 0
+			}else{
+				temp = temp->next;
+			}
+		}
+	}
+	if(merge == 1){ // no alloc block was found between the two free blocks so merge!
+		freeblock->prev->size = freeblock->prev->size + freeblock->size + sizeof(CMCB);
+		unlink(freeblock);
+	}
+}
 int isEmpty(){
-	if(allocated_block_list.count == 0){
+	if(allocated_block_list.head == NULL){
 		write_text("true\n");
 		return 1;
 	}
@@ -482,6 +433,12 @@ void function(){
 		alloc_mem(200);
 	}
 	show_alloc_mem();
+	write_text_green("size of pcb: ");
+	write_text_bold_green(itoa(sizeof(PCB)));
+	write_text_bold_green(" bytes\n");
+	PCB *pcb = alloc_mem(sizeof(PCB));
+	show_alloc_mem();
+	free_mem(pcb);
 	/*write_text("allocating 10 bytes....\n");
 	alloc_mem(10);
 	write_text("allocated 10 bytes.\n");

@@ -29,6 +29,8 @@ void *alloc_mem(u32int num_bytes);
 
 int free_mem(void *addr);
 
+void merge_free_blocks(CMCB *freeblock);
+
 int isEmpty();
 
 void show_free_mem();

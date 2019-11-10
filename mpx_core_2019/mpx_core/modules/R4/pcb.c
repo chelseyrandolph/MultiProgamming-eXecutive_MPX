@@ -19,8 +19,13 @@ queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
 PCB* allocate_pcb(){
 	
-	PCB *pcb = alloc_mem(sizeof(PCB));
-	pcb -> bottom_of_stack = alloc_mem(1024);
+	PCB *pcb = sys_alloc_mem(sizeof(PCB));
+
+	pcb->bottom_of_stack = pcb->stack; // THIS LINE IN PARTICULAR
+
+	memset(pcb->bottom_of_stack, NULL, sizeof(pcb->stack));
+	pcb->top_of_stack = pcb->bottom_of_stack + sizeof(pcb->stack) - sizeof(struct context);
+
 	return pcb;
 }
 
