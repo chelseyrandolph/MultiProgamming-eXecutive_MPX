@@ -9,7 +9,6 @@ typedef struct PCB {
 	struct PCB *prev;		//Previous PCB in linked list
 	unsigned char* bottom_of_stack;
 	unsigned char* top_of_stack;
-	struct context* context;
 	int stack_size; 
 	unsigned char stack[1024];
 }PCB;

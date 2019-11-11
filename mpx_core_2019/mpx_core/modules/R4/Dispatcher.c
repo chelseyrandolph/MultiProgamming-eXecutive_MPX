@@ -21,14 +21,14 @@ extern queue ready_queue;
 u32int* sys_call(context* registers){
 // create a temporary pcb that reperesents to the head of ready_queue	
 	PCB* temporary_ready = ready_queue.head;
-
+	context* con;
 	if(cop == NULL){
 		contextSwitch = registers;
 	}else{
 		
 		if(params.op_code == IDLE){		
 			cop -> top_of_stack = (unsigned char*) registers;
-			cop -> context = registers;	
+			con = registers;	
 		}else if(params.op_code == EXIT){
 			free_pcb(cop);
 		}
@@ -49,7 +49,7 @@ u32int* sys_call(context* registers){
 		return (u32int*) contextSwitch;
 	}
 	
-	return (u32int*) cop -> context;
+	return (u32int*)  con;
 }
 
 
@@ -89,15 +89,15 @@ void loadProcess(char name[], int class, int priority, void* function){
 
 void loadr3(){
 	//loadProcess("sys_load_proc", 1, 0, &sys_load_proc);
-	loadProcess("process01", 1, 2, &proc1);
+	loadProcess("process01", 1, 7, &proc1);
 	suspend_pcb("process01");
-	loadProcess("process02", 1, 2, &proc2);
+	loadProcess("process02", 1, 7, &proc2);
 	suspend_pcb("process02");
-	loadProcess("process03", 1, 2, &proc3);
+	loadProcess("process03", 1, 7, &proc3);
 	suspend_pcb("process03");
-	loadProcess("process04", 1, 2, &proc4);
+	loadProcess("process04", 1, 7, &proc4);
 	suspend_pcb("process04");
-	loadProcess("process05", 1, 2, &proc5);
+	loadProcess("process05", 1, 7, &proc5);
 	suspend_pcb("process05");
 }
 

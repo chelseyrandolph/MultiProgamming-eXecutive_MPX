@@ -84,7 +84,7 @@ void kmain(void)
 //Loading initial processes
    // 5.-) IDLE process
    klogv("Initilizing idle process...");
-   loadProcess("idle_process", 0, 4, &idle);
+   loadProcess("idle_process", 0, 8, &idle);
 
    // 5) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");

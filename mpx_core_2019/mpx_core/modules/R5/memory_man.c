@@ -58,19 +58,8 @@ u32int init_heap(u32int heap_size_param){
 	free_block_list.head = top_of_heap;
 	free_block_list.tail = top_of_heap;
 
-	//The LMCB is equal to the start of memory, size of CMCB and the heap size, with a type of free.
-	bottom_of_heap = (LMCB*)((int)start_of_mem + sizeof(CMCB) + heap_size_param);
-	bottom_of_heap->type = 0;
-
-	//The LMCB size of equal to the size of the CMCB at the start of the heap
-	bottom_of_heap->size = top_of_heap->size;
 
 
-	write_text_bold_magenta("LEAVING INIT_HEAP\n");
-	write_text("This is the number of bytes initialized in the heap: ");
-	write_text_magenta(itoa(top_of_heap->size));
-	write_text("\n");
-	//Hexadecimal number
 	return start_of_mem;
 }
 
@@ -96,11 +85,11 @@ void *alloc_mem(u32int num_bytes){
 	unlink(temp);
 	
 	if((temp->size - blocksize) < MINIMUM_FREE_BLOCK_SIZE){
+		write_text_bold_cyan("IF");
 		num_bytes = temp->size;
 		temp->type = 1;
 		temp->startAddr = (void*)(start_of_mem + sizeof(CMCB));
 		bottom_of_heap->size = bottom_of_heap->size - blocksize;
-		write_text("jjhe");
 		insert_mem(temp);
 	}else{	
 		//allocated block 
@@ -117,6 +106,8 @@ void *alloc_mem(u32int num_bytes){
 		insert_mem(temp);
 		insert_mem(freeblock);
 	}
+	//write_text(itoa((int)temp->startAddr));
+	//write_text(itoa(temp->size));
 	return temp->startAddr;
 }
 
@@ -133,7 +124,7 @@ int free_mem(void *addr){
 			strcpy(temp->name, NULL);
 			temp->type = 0;
 			insert_mem(temp);
-			merge_free_blocks(temp);
+			//merge_free_blocks(temp);
 			return 0;
 		}
 		temp = temp -> next;
@@ -162,8 +153,8 @@ void merge_free_blocks(CMCB *freeblock){
 		CMCB* temp = allocated_block_list.head;
 		while(temp != NULL){
 			//If a alloc block is found between the two free blocks then do not merge them
-			if((int)(temp->startAddr) > (int)(freeblock->startAddr)
-			 && (int)(temp->startAddr) < (int)(freeblock->next->startAddr)){
+			if((int)(temp->startAddr) < (int)(freeblock->startAddr)
+			 && (int)(temp->startAddr) > (int)(freeblock->next->startAddr)){
 				merge = 0;	// an alloc block is found in between so merge = 0
 			}else{
 				temp = temp->next;
@@ -179,8 +170,8 @@ void merge_free_blocks(CMCB *freeblock){
 		CMCB* temp = allocated_block_list.head;
 		while(temp != NULL){
 			//If a alloc block is found between the two free blocks then do not merge them
-			if((int)(temp->startAddr) > (int)(freeblock->prev->startAddr)
-			 && (int)(temp->startAddr) < (int)(freeblock->startAddr)){
+			if((int)(temp->startAddr) < (int)(freeblock->prev->startAddr)
+			 && (int)(temp->startAddr) > (int)(freeblock->startAddr)){
 				merge = 0; // an alloc block is found in between so merge = 0
 			}else{
 				temp = temp->next;
@@ -189,6 +180,7 @@ void merge_free_blocks(CMCB *freeblock){
 	}
 	if(merge == 1){ // no alloc block was found between the two free blocks so merge!
 		freeblock->prev->size = freeblock->prev->size + freeblock->size + sizeof(CMCB);
+		write_text_red(itoa(freeblock->prev->size));
 		unlink(freeblock);
 	}
 }
@@ -211,7 +203,7 @@ void show_free_mem(){
 	write_text_bold_blue("|            |    Start    |           |\n");
 	write_text_bold_blue("|    Size    |   Address   |    Type   |\n");
 	write_text_bold_blue("|______________________________________|\n");
-	CMCB *temp = free_block_list.head;
+	CMCB *temp = free_block_list.tail;
 	while(temp != NULL){
 		write_text("| ");
 		char sizestr[11];
@@ -244,7 +236,7 @@ void show_free_mem(){
 			return;
 		}
 		write_text(" |\n");
-		temp = temp->next;
+		temp = temp->prev;
 	}
 		write_text("|______________________________________|\n");
 		write_text("\n\n");
@@ -258,7 +250,7 @@ void show_alloc_mem(){
 	write_text_bold_blue("|                  |            |    Start    |           |\n");
 	write_text_bold_blue("|       Name       |    Size    |   Address   |    Type   |\n");
 	write_text_bold_blue("|_________________________________________________________|\n");
-	CMCB *temp = allocated_block_list.head;
+	CMCB *temp = allocated_block_list.tail;
 	while(temp != NULL){
 		write_text("| ");
 		char namestr[17];
@@ -293,7 +285,7 @@ void show_alloc_mem(){
 		write_text_blue("ALLOCATED");
 		
 		write_text(" |\n");
-		temp = temp->next;
+		temp = temp->prev;
 	}
 		write_text("|_________________________________________________________|\n");
 		write_text("\n\n");
@@ -351,11 +343,6 @@ void insert_mem(CMCB* mcb){
 		write_text_cyan("INSIDE INSERT 2\n");	
 		while(temp!=NULL){
 
-			write_text(itoa((int)mcb->startAddr));
-			write_text("\n");
-			write_text(itoa((int)temp->startAddr));
-			write_text("\n");
-
 			if(mcb->startAddr > temp->startAddr){
 			write_text_cyan("INSIDE INSERT 2...\n");	
 				if(temp->prev == NULL){			//if head
@@ -363,16 +350,17 @@ void insert_mem(CMCB* mcb){
 					temp -> prev = mcb;
 					free_block_list.head = mcb;
 				}else if(temp->next == NULL){	//if tail
-			write_text_cyan("INSIDE INSERT 2...........\n");
+					write_text_cyan("INSIDE INSERT 2...........\n");
 					mcb -> prev = temp;			//insert at tail
 					temp -> next = mcb;
 					free_block_list.tail = mcb;
 				}else{							//if neither head nor tail
-			write_text_cyan("INSIDE INSERT 2...----------------------\n");
+					write_text_cyan("INSIDE INSERT 2...----------------------\n");
 					mcb -> next = temp;			//insert in between
 					mcb -> prev = temp -> prev;
-					temp -> prev = mcb;
 					temp -> prev -> next = mcb;
+					temp -> prev = mcb;
+					
 				}
 				free_block_list.count++;		//increment count
 				
@@ -432,46 +420,19 @@ void function(){
 	for(i = 0; i < 3; i++){
 		alloc_mem(200);
 	}
-	show_alloc_mem();
-	write_text_green("size of pcb: ");
-	write_text_bold_green(itoa(sizeof(PCB)));
-	write_text_bold_green(" bytes\n");
+//	show_alloc_mem();
+//	write_text_green("size of pcb: ");
+//	write_text_bold_green(itoa(sizeof(PCB)));
+//	write_text_bold_green(" bytes\n");
 	PCB *pcb = alloc_mem(sizeof(PCB));
+	PCB *pcb2 = alloc_mem(sizeof(PCB));
+	//strcpy(pcb->name , "process01");
+	//PCB *pcb2 = alloc_mem(sizeof(PCB));
+	alloc_mem(450);
 	show_alloc_mem();
+	free_mem(pcb2);
 	free_mem(pcb);
-	/*write_text("allocating 10 bytes....\n");
-	alloc_mem(10);
-	write_text("allocated 10 bytes.\n");
-	show_alloc_mem();
-	show_free_mem();
-	free_mem((void*)(218103864));
-	show_alloc_mem();
-	show_free_mem(); 
-	*PCB* pcb = alloc_mem(sizeof(PCB));
-	strcpy(pcb->name, "testpcb1");
-	pcb->process_class = 1;
-	pcb->priority = 9;
-	pcb->readystate = 0;
-	pcb->suspended = 0;
-	insert_pcb(pcb);
-	show_all();
-	write_text("allocating 15 bytes....\n");
-	alloc_mem(15);
-	write_text("allocated 15 bytes.\n");
-	show_alloc_mem();
-	show_free_mem();
-	write_text("allocating 20 bytes....\n");
-	alloc_mem(20);
-	write_text("allocated 20 bytes.\n");
-	show_alloc_mem();
-	show_free_mem();
-	write_text("freeing 218105000 bytes\n");
-	free_mem((void*)(218103864));
-	write_text("freed 218105000 bytes\n");
-	show_alloc_mem();
-	show_free_mem();
-	write_text("done.\n");
-	*/
+
 }
 
 

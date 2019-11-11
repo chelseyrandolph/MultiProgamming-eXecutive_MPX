@@ -19,23 +19,18 @@ queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
 PCB* allocate_pcb(){
 	
-	PCB *pcb = sys_alloc_mem(sizeof(PCB));
-
-	pcb->bottom_of_stack = pcb->stack; // THIS LINE IN PARTICULAR
-
-	memset(pcb->bottom_of_stack, NULL, sizeof(pcb->stack));
-	pcb->top_of_stack = pcb->bottom_of_stack + sizeof(pcb->stack) - sizeof(struct context);
-
+	PCB *pcb = (PCB*)alloc_mem(sizeof(PCB));
 	return pcb;
 }
 
 PCB* setup_pcb(char name[], int pclass, int priority){ // pclass refers to process class (system or user)
 
 	PCB *new_pcb = allocate_pcb();		// allocates memory to the new PCB
-
-	new_pcb -> top_of_stack = new_pcb -> bottom_of_stack + sizeof(new_pcb->stack) - sizeof(context);
-	new_pcb -> context = (context*) new_pcb -> top_of_stack;
-
+	memset(new_pcb->stack, '\0', 1024);
+	//new_pcb->bottom_of_stack = &new_pcb->stack[0];
+	new_pcb -> top_of_stack = new_pcb->stack + 1024 - sizeof(context);
+	//new_pcb -> context = (context*) new_pcb -> top_of_stack;
+	new_pcb->name[16] = '\0';
 	if(strlen(name) >= 8){	// Process name must be at least 8 characters
 		strcpy(new_pcb->name, name);		// sets the new process's name to name parameter
 	}else{
@@ -82,8 +77,8 @@ void remove_all(){
 
 int free_pcb(PCB* pcb){
 	if(pcb != NULL){
-		free_mem(pcb->bottom_of_stack); 
-		free_mem(pcb);
+		sys_free_mem(pcb->bottom_of_stack); 
+		sys_free_mem(pcb);
 	}
 	return 0;
 }
