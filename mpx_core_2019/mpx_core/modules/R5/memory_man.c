@@ -33,7 +33,7 @@ u32int init_heap(u32int heap_size_param){
 	}
 
 	//Start of memory is the size of the bytes, CMCB, and LMCB to cover overhead.
-	start_of_mem = kmalloc(heap_size_param + sizeof(CMCB) + sizeof(LMCB));
+	start_of_mem = kmalloc(heap_size_param + sizeof(CMCB));
 
 	//If this is null, then the heap wasn't given the space it needs to set up.
 	if(start_of_mem == NULL){
@@ -106,9 +106,12 @@ void *alloc_mem(u32int num_bytes){
 		insert_mem(temp);
 		insert_mem(freeblock);
 	}
-	//write_text(itoa((int)temp->startAddr));
+	//printDecToHex((int)(temp->startAddr));
+	//write_text_red(temp->name);
 	//write_text(itoa(temp->size));
-	return temp->startAddr;
+	PCB* pcb = (PCB*)(temp->startAddr + sizeof(CMCB));
+	temp->name = pcb->name;
+	return temp->startAddr + sizeof(CMCB);
 }
 
 int free_mem(void *addr){
@@ -416,22 +419,24 @@ void insert_mem(CMCB* mcb){
 
 void function(){
 	
-	int i;
-	for(i = 0; i < 3; i++){
-		alloc_mem(200);
-	}
+
+	alloc_mem(200);
+
 //	show_alloc_mem();
 //	write_text_green("size of pcb: ");
 //	write_text_bold_green(itoa(sizeof(PCB)));
 //	write_text_bold_green(" bytes\n");
-	PCB *pcb = alloc_mem(sizeof(PCB));
-	PCB *pcb2 = alloc_mem(sizeof(PCB));
+	PCB *pcb = (PCB*)alloc_mem(sizeof(PCB));
+	//PCB *pcb2 = alloc_mem(sizeof(PCB));
 	//strcpy(pcb->name , "process01");
 	//PCB *pcb2 = alloc_mem(sizeof(PCB));
-	alloc_mem(450);
+	
+	strcpy(pcb->name, "name1234");
+	//free_mem(pcb2);
+	//free_mem(pcb);
+	alloc_mem(400);
+	alloc_mem(100);
 	show_alloc_mem();
-	free_mem(pcb2);
-	free_mem(pcb);
 
 }
 

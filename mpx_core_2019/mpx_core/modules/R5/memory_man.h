@@ -1,7 +1,7 @@
 
 typedef struct CMCB {
 	int size;
-	char name[16];
+	char *name;
 	int type; //1 for alloc, 0 for free
 	struct CMCB* next;
 	struct CMCB* prev;
