@@ -24,7 +24,7 @@
 #include "modules/R5/memory_man.h"
 void kmain(void)
 {
-   extern uint32_t magic;
+ //  extern uint32_t magic;
    // Uncomment if you want to access the multiboot header
    // extern void *mbd;
    // char *boot_loader_name = (char*)((long*)mbd)[16];
@@ -42,15 +42,16 @@ void kmain(void)
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
-   if ( magic != 0x2BADB002 ){
-     //kpanic("Boot was not error free. Halting.");
-   }
+	init_heap(30000);
   
    init_serial(COM1);
    set_serial_out(COM1);
    set_serial_in(COM1);
    mpx_init(MODULE_R5);
 
+   //if ( magic != 0x2BADB002 ){
+   //  kpanic("Boot was not error free. Halting.");
+  // }
    // 3) Descriptor Tables
    klogv("Initializing descriptor tables...");
 
@@ -64,11 +65,11 @@ void kmain(void)
    sti();
    init_paging();
 
-	init_heap(30000);
-	show_free_mem();
+	
+	//show_free_mem();
 	//function();
-  // sys_set_malloc(alloc_mem);
-  // sys_set_free(free_mem);
+   sys_set_malloc(alloc_mem);
+   sys_set_free(free_mem);
 
 
 
@@ -93,7 +94,7 @@ void kmain(void)
    //show_alloc_mem();
    yield();
 
-
+   //show_alloc_mem();
    // 6) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
 

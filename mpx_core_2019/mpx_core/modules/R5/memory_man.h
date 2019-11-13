@@ -27,7 +27,7 @@ u32int init_heap(u32int heap_size_param);
 
 CMCB* findCMCB(char name[]);
 
-void *alloc_mem(u32int num_bytes);
+u32int *alloc_mem(u32int num_bytes);
 
 int free_mem(void *addr);
 

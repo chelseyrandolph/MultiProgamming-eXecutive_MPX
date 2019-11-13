@@ -16,7 +16,7 @@
 
 
 void version(){			//Prints the current version
-	static char version[20] = "MPX-OS Version 2.70\n";
+	static char version[20] = "MPX-OS Version 5.66\n";
 	write_text_bold_green(version);
 }
 
@@ -196,9 +196,9 @@ int shutDown(){
 int comhand(){
 	int quit = 0;
 	while(!quit){
-		char *cmdBuffer = sys_alloc_mem(100);
+		char cmdBuffer[100]; //= (char*)alloc_mem(100);
 		int bufferSize;
-		
+
 	
 //		Get a command
 		memset(cmdBuffer, '\0', 100);
@@ -208,15 +208,17 @@ int comhand(){
 //		Tokenize buffer. 
 //		This set of instructions will break the buffer on white space and put it inside a *array
 //		0 index is always the command wihle everything after is the input for the command
-		char **tokenizedBuffer = sys_alloc_mem(10);
-		
-		char* token = strtok(cmdBuffer, " ");
+		char tokenizedBuffer[100][100]; 
+		// = (char**)sys_alloc_mem(10);
+
+		char token[100];
+		strcpy(token, strtok(cmdBuffer, " "));
 		
 		int index = 0;
 //		Change index number if you want to be able to input more than X number of words!
 		for(index=0; index<5;index++){
-			tokenizedBuffer[index] = token;
-			token = strtok(NULL, " ");
+			strcpy(tokenizedBuffer[index], token);
+			strcpy(token, strtok(NULL, " "));
 	
 			
 		}

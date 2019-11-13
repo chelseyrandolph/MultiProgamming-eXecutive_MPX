@@ -85,7 +85,7 @@ CMCB* findCMCB(char name[]){
 	return NULL;
 }
 
-void *alloc_mem(u32int num_bytes){
+u32int* alloc_mem(u32int num_bytes){
 
 	int roundUp = num_bytes % 4;
 	if(roundUp > 0){
@@ -343,13 +343,11 @@ void show_alloc_mem(){
 }
 
 void unlink(CMCB* mcb){
-	write_text_bold_yellow("INSIDE UNLINK\n");
 	//Unlinking the head of free 
 	if(mcb == free_block_list.head){
 		free_block_list.head = mcb->next;
 		mcb->next = NULL;
 		mcb->prev = NULL;
-		write_text_bold_yellow("LEAVING UNLINK 1\n");
 		return;
 	}
 	//Unlinking the head of allocated 
@@ -357,14 +355,12 @@ void unlink(CMCB* mcb){
 		allocated_block_list.head = mcb->next;
 		mcb->next = NULL;
 		mcb->prev = NULL;
-		write_text_bold_yellow("LEAVING UNLINK 2\n");
 		return;
 	}
 	// mcb is the last item in the list
 	if(mcb->next == NULL){
 		mcb->prev->next = NULL;
 		mcb->prev = NULL;
-		write_text_bold_yellow("LEAVING UNLINK 3\n");
 		return;
 	}
 	// mcb is somewhere else
@@ -372,30 +368,23 @@ void unlink(CMCB* mcb){
 	mcb->prev->next = mcb->next;
 	mcb->next = NULL;
 	mcb->prev = NULL;
-	write_text_bold_yellow("LEAVING UNLINK 4\n");
 	return;
 
 }
 
 void insert_mem(CMCB* mcb){
-	write_text_bold_cyan("INSIDE INSERT\n");
 	CMCB* temp = NULL;
 	
 	if(mcb->type == 0){					//If free
-		write_text_cyan("INSIDE INSERT 0\n");
 		temp = free_block_list.head;
 		if(temp == NULL){			//if list is empty, set head and tail
-			write_text_cyan("INSIDE INSERT 1\n");
 			free_block_list.head = mcb;
 			free_block_list.tail = mcb;
 			free_block_list.count = 1;
 			return;
 		}
-		write_text_cyan("INSIDE INSERT 2\n");	
 		while(temp!=NULL){
-			write_text_cyan("-------------------------\n");	
 			if(mcb->startAddr > temp->startAddr){
-			write_text_cyan("INSIDE INSERT 2...\n");	
 				if(temp->prev == NULL){			//if head
 					mcb->next = temp;			//insert at head
 					temp->prev = mcb;
@@ -403,17 +392,13 @@ void insert_mem(CMCB* mcb){
 					if(temp->next == NULL){
 						free_block_list.tail = temp;
 					}
-	write_text_bold_cyan("LEAVING INSERT\n");
 					break;
 				}else if(temp->next == NULL){	//if tail
-					write_text_cyan("INSIDE INSERT 2...........\n");
 					mcb->prev = temp;			//insert at tail
 					temp->next = mcb;
 					free_block_list.tail = mcb;
-	write_text_bold_cyan("LEAVING INSERT\n");
 					break;
 				}else{							//if neither head nor tail
-					write_text_cyan("INSIDE INSERT 2...----------------------\n");
 					mcb->next = temp;			//insert in between
 					temp->prev->next = mcb;
 					mcb->prev = temp->prev;
@@ -423,34 +408,20 @@ void insert_mem(CMCB* mcb){
 				free_block_list.count++;		//increment count
 				
 			}else{
-				write_text_cyan("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-				write_text(itoa(temp->size));
-				write_text("\n");
-				write_text(itoa((int)temp->startAddr));
-				write_text("\n");
-				write_text(itoa(mcb->size));
-				write_text("\n");
-				write_text(itoa((int)mcb->startAddr));
 				mcb->next = temp;			//insert at head
 				temp->prev = mcb;
 				free_block_list.head = mcb;
 			}
-			write_text_cyan("_>_>_>_>_>_>_>_>_>_>\n");	
 			temp = temp->next;
 		}
-		
-	write_text_cyan("INSIDE INSERT 3\n");
-	}else if(mcb->type == 1){			//if allocated
-			write_text_cyan("INSIDE INSERT 4\n");
+			}else if(mcb->type == 1){			//if allocated
 		temp = allocated_block_list.head;
 		if(temp == NULL){			//if list is empty, set head and tail
-		write_text_cyan("INSIDE INSERT 5\n");
 			allocated_block_list.head = mcb;
 			allocated_block_list.tail = mcb;
 			allocated_block_list.count = 1;
 			return;
 		}
-		write_text_cyan("INSIDE INSERT 6\n");
 		while(temp!=NULL){
 			if(mcb->startAddr > temp->startAddr){
 				if(temp->prev == NULL){			//if head
@@ -473,10 +444,7 @@ void insert_mem(CMCB* mcb){
 				temp = temp->next;
 			}
 		}
-		write_text_cyan("INSIDE INSERT 7\n");
-
 	}
-	write_text_bold_cyan("LEAVING INSERT\n");
 	return;
 }
 

@@ -18,7 +18,7 @@ param params;
 // global for the current module
 int current_module = 5;  
 static int io_module_active = 0;
-static int mem_module_active = 0;
+static int mem_module_active = 1;
 
 // If a student created heap manager is implemented this
 // is a pointer to the student's "malloc" operation.

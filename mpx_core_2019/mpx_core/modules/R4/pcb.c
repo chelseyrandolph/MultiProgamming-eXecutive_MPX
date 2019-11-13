@@ -16,11 +16,19 @@ queue blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 queue suspended_ready_queue = {.head = NULL, .tail = NULL, .count = 0};
 queue suspended_blocked_queue = {.head = NULL, .tail = NULL, .count = 0};
 
+int free_pcb(PCB* pcb){
+	if(pcb != NULL){
+		CMCB* temp = findCMCB(pcb->name);
+		//printDecToHex((int)(temp->startAddr));
+		sys_free_mem(temp->startAddr);
+	}
+	return 0;
+}
 
 
 PCB* allocate_pcb(){
 	
-	PCB *pcb = (PCB*)alloc_mem(sizeof(PCB));
+	PCB *pcb = (PCB*)sys_alloc_mem(sizeof(PCB));
 	return pcb;
 }
 
@@ -76,13 +84,6 @@ void remove_all(){
 	}
 }
 
-int free_pcb(PCB* pcb){
-	if(pcb != NULL){
-		CMCB* temp = findCMCB(pcb->name);
-		free_mem(temp->startAddr);
-	}
-	return 0;
-}
 
 PCB* find_pcb(char process_name[]){
 	PCB *temp_process = ready_queue.head;	//points to the PCB at the head of the queue
