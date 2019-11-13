@@ -63,6 +63,28 @@ u32int init_heap(u32int heap_size_param){
 	return start_of_mem;
 }
 
+CMCB* findCMCB(char name[]){
+	CMCB* cmcb = allocated_block_list.head;
+	while(cmcb != NULL){
+		if(cmcb->name == name){
+			return cmcb;
+		}else{
+			cmcb = cmcb->next;
+		}
+	}
+	cmcb = free_block_list.head;
+	while(cmcb != NULL){
+		if(cmcb->name == name){
+			return cmcb;
+		}else{
+			cmcb = cmcb->next;
+		}
+	}
+	write_text_bold_blue("memory_man/findPCB: ");
+	write_text_red("MEMORY BLOCK NOT FOUND\n");
+	return NULL;
+}
+
 void *alloc_mem(u32int num_bytes){
 
 	int roundUp = num_bytes % 4;

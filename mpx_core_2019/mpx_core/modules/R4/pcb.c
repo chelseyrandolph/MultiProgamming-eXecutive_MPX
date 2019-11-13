@@ -8,6 +8,7 @@
 #include "../R1/time.h"
 #include "../R5/memory_man.h"
 #include "../../lib/colortext.h"
+#include "../R5/hex.h"
 
 
 queue ready_queue = {.head = NULL, .tail = NULL, .count = 0};
@@ -77,8 +78,8 @@ void remove_all(){
 
 int free_pcb(PCB* pcb){
 	if(pcb != NULL){
-		sys_free_mem(pcb->bottom_of_stack); 
-		sys_free_mem(pcb);
+		CMCB* temp = findCMCB(pcb->name);
+		free_mem(temp->startAddr);
 	}
 	return 0;
 }
