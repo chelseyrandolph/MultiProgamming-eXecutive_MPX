@@ -204,7 +204,8 @@ void merge_free_blocks(CMCB *freeblock){
 			 && (int)(temp->startAddr) < (int)(freeblock->startAddr)){
 				merge = 0; // Free->prev     Freeblock     Allocated
 			}else{
-				temp = temp->next;
+				//temp = temp->next;
+				return;
 			}
 		}
 	}

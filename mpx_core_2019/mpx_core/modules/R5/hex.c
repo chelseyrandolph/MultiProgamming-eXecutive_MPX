@@ -4,7 +4,7 @@
 
 void printDecToHex(int dec){
 	
-	char hex[15];
+	char hex[8];
 
 	int i = 0;
 	while(dec != 0){
@@ -20,7 +20,7 @@ void printDecToHex(int dec){
 		}
 		dec = dec/16;
 	} 
-	char outHex[15];
+	char outHex[8];
 	outHex[0] = '0';
 	outHex[1] = 'x';
 	int k = 2;

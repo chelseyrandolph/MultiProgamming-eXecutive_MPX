@@ -22,23 +22,32 @@ u32int* sys_call(context* registers){
 // create a temporary pcb that reperesents to the head of ready_queue	
 	PCB* temporary_ready = ready_queue.head;
 	context* con;
+	int exit = 0;
 	if(cop == NULL){
 		contextSwitch = registers;
+		exit = 0;
 	}else{
 		
 		if(params.op_code == IDLE){		
 			cop -> top_of_stack = (unsigned char*) registers;
 			con = registers;	
+			exit = 0;
 		}else if(params.op_code == EXIT){
 			free_pcb(cop);
+			exit = 1;
 		}
+
 	}
 
 	if(temporary_ready != NULL){
 		remove_pcb(temporary_ready);
 		//New processes will get added back
 		
-		if(cop != NULL && params.op_code != EXIT){
+		if(cop == NULL){
+			write_text("cop is NULL\n");
+		}
+
+		if(cop != NULL && exit == 0){
 			insert_pcb(cop);
 		}
 		cop = temporary_ready;

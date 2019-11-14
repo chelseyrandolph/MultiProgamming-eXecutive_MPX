@@ -86,49 +86,38 @@ void remove_all(){
 
 
 PCB* find_pcb(char process_name[]){
+
 	PCB *temp_process = ready_queue.head;	//points to the PCB at the head of the queue
-	int found = 0;
-	while(!found){
+	while(temp_process != NULL){
 		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else if(temp_process == ready_queue.tail){
-			found = 1;
 		}else{
 			temp_process = temp_process->next;
 		}
 	}
 
-	temp_process = blocked_queue.head;	//points to the PCB at the head of the queue
-	found = 0;
-	while(!found){
+	temp_process = blocked_queue.head;	//points to the PCB at the head of the queue;
+	while(temp_process != NULL){
 		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else if(temp_process == blocked_queue.tail){
-			found = 1;
 		}else{
 			temp_process = temp_process->next;
 		}
 	}
 
 	temp_process = suspended_ready_queue.head;	//points to the PCB at the head of the queue
-	found = 0;
-	while(!found){
+	while(temp_process != NULL){
 		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else if(temp_process == suspended_ready_queue.tail){
-			found = 1;
 		}else{
 			temp_process = temp_process->next;
 		}
 	}
 
 	temp_process = suspended_blocked_queue.head;	//points to the PCB at the head of the queue
-	found = 0;
-	while(!found){
+	while(temp_process != NULL){
 		if(strcmp(temp_process->name, process_name) == 0){
 			return temp_process;
-		}else if(temp_process == suspended_blocked_queue.tail){
-			found = 1;
 		}else{
 			temp_process = temp_process->next;
 		}
@@ -374,15 +363,18 @@ int delete_pcb(char name[]){
 		remove_pcb(pcb);
 		free_pcb(pcb);
 	}else{
+		write_text_bold_yellow("pcb.c/delete_pcb: ");
 		write_text_yellow("Process not found\n\n");
 	}
 	return 0;
 }
 
+
 // Temporary user command
 int block_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
 	if(pcb == NULL){
+
 		write_text_bold_red("Process Not Found\n");
 	}
 	remove_pcb(pcb);		//takes the pcb out of the queue its in
