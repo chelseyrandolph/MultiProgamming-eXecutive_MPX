@@ -72,7 +72,7 @@ CMCB* findCMCB(char name[]){
 			cmcb = cmcb->next;
 		}
 	}
-	write_text_bold_blue("memory_man/findPCB: ");
+	write_text_bold_blue("memory_man/findCMCB: ");
 	write_text_red("MEMORY BLOCK NOT FOUND\n");
 	return NULL;
 }
@@ -204,8 +204,8 @@ void merge_free_blocks(CMCB *freeblock){
 			 && (int)(temp->startAddr) < (int)(freeblock->startAddr)){
 				merge = 0; // Free->prev     Freeblock     Allocated
 			}else{
-				//temp = temp->next;
-				return;
+				temp = temp->next;
+				//return;
 			}
 		}
 	}
@@ -245,7 +245,7 @@ void show_free_mem(){
 	write_text_bold_blue("|            |    Start    |           |\n");
 	write_text_bold_blue("|    Size    |   Address   |    Type   |\n");
 	write_text_bold_blue("|______________________________________|\n");
-	CMCB *temp = free_block_list.tail;
+	CMCB *temp = free_block_list.head;
 	while(temp != NULL){
 		write_text("| ");
 		char sizestr[11];
@@ -268,7 +268,7 @@ void show_free_mem(){
 			return;
 		}
 		write_text(" |\n");
-		temp = temp->prev;
+		temp = temp->next;
 	}
 		write_text("|______________________________________|\n");
 		write_text("\n\n");
@@ -355,6 +355,8 @@ void unlink(CMCB* mcb){
 }
 
 void insert_mem(CMCB* mcb){
+	mcb->next = NULL;
+	mcb->prev = NULL;
 	write_text_bold_cyan("INSIDE INSERT\n");
 	CMCB* temp = NULL;
 	
@@ -371,40 +373,28 @@ void insert_mem(CMCB* mcb){
 		}
 	
 		while(temp!=NULL){
-			if(mcb->startAddr > temp->startAddr){
-			write_text_cyan("INSIDE INSERT: Insert at head\n");	
-				if(temp->prev == NULL){			//if head
-					mcb->next = temp;			//insert at head
+			if(mcb->size < temp->size){
+				if(temp == free_block_list.head){
 					temp->prev = mcb;
+					mcb->next = temp;
 					free_block_list.head = mcb;
-					if(temp->next == NULL){
-						free_block_list.tail = temp;
-					}
-					break;
-				}else if(temp->next == NULL){	//if tail
-					write_text_cyan("INSIDE INSERT: Insert at tail\n");	
-					mcb->prev = temp;			//insert at tail
-					temp->next = mcb;
-					free_block_list.tail = mcb;
-					break;
-				}else{						//if neither head nor tail
-					write_text("INSIDE INSERT: Insert in between \n");
-					mcb->next = temp;			//insert in between
+					return;
+				}else{
 					temp->prev->next = mcb;
 					mcb->prev = temp->prev;
 					temp->prev = mcb;
-					
+					mcb->next = temp;
+					return;
 				}
-				free_block_list.count++;		//increment count
-				write_text_bold_cyan("LEAVING INSERT: free list \n");
+		
+			}else if(free_block_list.tail == temp){
+				temp->next = mcb;
+				mcb->prev = temp;
+				free_block_list.tail = mcb;
 				return;
 			}else{
-				write_text_cyan("INSIDE INSERT: Insert at head 2\n");	
-				mcb->next = temp;			//insert at head
-				temp->prev = mcb;
-				free_block_list.head = mcb;
+				temp = temp -> next;
 			}
-			temp = temp->next;
 		}
 		
 	}else if(mcb->type == 1){			//if allocated
@@ -420,28 +410,26 @@ void insert_mem(CMCB* mcb){
 		}
 		while(temp!=NULL){
 			if(mcb->startAddr > temp->startAddr){
-				if(temp->prev == NULL){			//if head
-					write_text_cyan("INSIDE INSERT: Insert at head\n");
-					mcb -> next = temp;			//insert at head
-					temp -> prev = mcb;
+				if(temp == allocated_block_list.head){
+					temp->prev = mcb;
+					mcb->next = temp;
 					allocated_block_list.head = mcb;
-				}else if(temp->next == NULL){	//if tail
-					write_text_cyan("INSIDE INSERT: Insert at tail\n");
-					mcb->prev = temp;			//insert at tail
-					temp->next = mcb;
-					allocated_block_list.tail = mcb;
-				}else{							//if neither head nor tail
-					write_text_cyan("INSIDE INSERT: Insert in between\n");
-					mcb->next = temp;			//insert in between
+					return;
+				}else{
+					temp->prev->next = mcb;
 					mcb->prev = temp->prev;
 					temp->prev = mcb;
-					temp->prev->next = mcb;
+					mcb->next = temp;
+					return;
 				}
-				allocated_block_list.count++;	//increment count
-				write_text_bold_cyan("LEAVING INSERT: Allocated\n");
+		
+			}else if(allocated_block_list.tail == temp){
+				temp->next = mcb;
+				mcb->prev = temp;
+				allocated_block_list.tail = mcb;
 				return;
 			}else{
-				temp = temp->next;
+				temp = temp -> next;
 			}
 		}
 
@@ -454,25 +442,21 @@ void insert_mem(CMCB* mcb){
 
 void function(){
 	
-
-	alloc_mem(200);
-
-//	show_alloc_mem();
-//	write_text_green("size of pcb: ");
-//	write_text_bold_green(itoa(sizeof(PCB)));
-//	write_text_bold_green(" bytes\n");
 	PCB *pcb = (PCB*)alloc_mem(sizeof(PCB));
-	//PCB *pcb2 = alloc_mem(sizeof(PCB));
-	//strcpy(pcb->name , "process01");
-	//PCB *pcb2 = alloc_mem(sizeof(PCB));
-	
-	strcpy(pcb->name, "name1234");
-	//free_mem(pcb2);
-	free_mem(findCMCB(pcb->name));
-	show_free_mem();
-	write_text_bold_red("FOR SOME REASON THE PCB NAME IS GONE BUT THE INFORMATION IS STILL THERE.\n");
+	PCB *pcb2 = (PCB*)alloc_mem(sizeof(PCB));
+	PCB *pcb3 = (PCB*)alloc_mem(sizeof(PCB));
+	PCB *pcb4 = (PCB*)alloc_mem(sizeof(PCB));
+	strcpy(pcb->name, "test_proc1");
+	strcpy(pcb2->name, "test_proc2");
+	strcpy(pcb3->name, "test_proc3");
+	strcpy(pcb4->name, "test_proc4");
 	show_alloc_mem();
-
+	show_free_mem();
+	free_mem(findCMCB(pcb4->name));
+	show_free_mem();
+	free_mem(findCMCB(pcb->name));
+	show_alloc_mem();
+	show_free_mem();
 }
 
 

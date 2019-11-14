@@ -42,11 +42,6 @@ u32int* sys_call(context* registers){
 	if(temporary_ready != NULL){
 		remove_pcb(temporary_ready);
 		//New processes will get added back
-		
-		if(cop == NULL){
-			write_text("cop is NULL\n");
-		}
-
 		if(cop != NULL && exit == 0){
 			insert_pcb(cop);
 		}

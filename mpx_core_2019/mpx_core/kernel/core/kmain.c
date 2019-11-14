@@ -42,8 +42,10 @@ void kmain(void)
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
-	init_heap(30000);
-  
+   init_heap(30000);
+    sys_set_malloc(alloc_mem);
+   sys_set_free(free_mem);
+
    init_serial(COM1);
    set_serial_out(COM1);
    set_serial_in(COM1);
@@ -68,8 +70,7 @@ void kmain(void)
 	
 	//show_free_mem();
 	//function();
-   sys_set_malloc(alloc_mem);
-   sys_set_free(free_mem);
+
 
 
 
