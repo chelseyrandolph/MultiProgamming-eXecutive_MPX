@@ -317,39 +317,32 @@ void show_alloc_mem(){
 }
 
 void unlink(CMCB* mcb){
-	write_text_bold_yellow("INSIDE UNLINK\n");
 	//Unlinking the head of free 
 	if(mcb == free_block_list.head){
 		free_block_list.head = mcb->next;
 		free_block_list.head->prev = NULL;
-		write_text_bold_yellow("Unlinked head of free .... LEAVING UNLINK 1\n");
 		return;
 	}
 	//Unlinking the head of allocated 
 	else if(mcb == allocated_block_list.head){
 		allocated_block_list.head = mcb->next;
 		allocated_block_list.head->prev = NULL;
-		write_text_bold_yellow("Unlinked head of allocated .... LEAVING UNLINK 2\n");
-		show_alloc_mem();
 		return;
 	}
 	// mcb is the last item in the list
 	if(mcb == allocated_block_list.tail){
 		allocated_block_list.tail = mcb->prev;
 		allocated_block_list.tail->next = NULL;
-		write_text_bold_yellow("Unlink last item in list .... LEAVING UNLINK 3\n");
 		return;
 	}
 	if(mcb == free_block_list.tail){
 		free_block_list.tail = mcb->prev;
 		free_block_list.tail->next = NULL;
-		write_text_bold_yellow("Unlink last item in list .... LEAVING UNLINK 3\n");
 		return;
 	}
 	// mcb is somewhere else
 	mcb->next->prev = mcb->prev;
 	mcb->prev->next = mcb->next;
-	write_text_bold_yellow("Unlinked within list .... LEAVING UNLINK 4\n");
 	return;
 
 }
@@ -357,18 +350,14 @@ void unlink(CMCB* mcb){
 void insert_mem(CMCB* mcb){
 	mcb->next = NULL;
 	mcb->prev = NULL;
-	write_text_bold_cyan("INSIDE INSERT\n");
 	CMCB* temp = NULL;
 	
 	if(mcb->type == 0){					//If free
-		write_text_cyan("INSIDE INSERT: Type is free\n");
 		temp = free_block_list.head;
 		if(temp == NULL){			//if list is empty, set head and tail
-			write_text_cyan("INSIDE INSERT: Free list empty\n");
 			free_block_list.head = mcb;
 			free_block_list.tail = mcb;
 			free_block_list.count = 1;
-			write_text_bold_cyan("LEAVING INSERT: free list empty \n");
 			return;
 		}
 	
@@ -398,14 +387,11 @@ void insert_mem(CMCB* mcb){
 		}
 		
 	}else if(mcb->type == 1){			//if allocated
-			write_text_cyan("INSIDE INSERT: Type is allocated\n");
 		temp = allocated_block_list.head;
 		if(temp == NULL){			//if list is empty, set head and tail
-		write_text_cyan("INSIDE INSERT: Allocated list is empty\n");
 			allocated_block_list.head = mcb;
 			allocated_block_list.tail = mcb;
 			allocated_block_list.count = 1;
-			write_text_bold_cyan("LEAVING INSERT: into empty list \n");
 			return;
 		}
 		while(temp!=NULL){
@@ -434,7 +420,6 @@ void insert_mem(CMCB* mcb){
 		}
 
 	}
-	write_text_bold_cyan("LEAVING INSERT: End of function\n");
 	return;
 }
 

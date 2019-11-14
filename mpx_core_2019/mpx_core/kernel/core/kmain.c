@@ -42,9 +42,12 @@ void kmain(void)
  	
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
+
    init_heap(30000);
     sys_set_malloc(alloc_mem);
    sys_set_free(free_mem);
+
+
 
    init_serial(COM1);
    set_serial_out(COM1);
@@ -55,6 +58,8 @@ void kmain(void)
    //  kpanic("Boot was not error free. Halting.");
   // }
    // 3) Descriptor Tables
+
+
    klogv("Initializing descriptor tables...");
 
    init_idt();
@@ -70,9 +75,6 @@ void kmain(void)
 	
 	//show_free_mem();
 	//function();
-
-
-
 
    // THIS IS JUST OUR MEMU, NOT COMHAND
    displayMenu();
