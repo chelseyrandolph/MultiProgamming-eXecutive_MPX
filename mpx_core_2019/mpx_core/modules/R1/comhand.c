@@ -13,7 +13,8 @@
 #include "../R5/memory_man.h"
 
 
-
+char history[100][100];
+int historySize = 0;
 
 void version(){			//Prints the current version
 	int v = 5;
@@ -191,7 +192,18 @@ int shutDown(){
 	}
 }
 
+int getHistorySize(){
+	return historySize;
+}
 
+char* getCommand(int index){
+	return history[index];
+}
+
+void addToCmdHistory(char string[100]){
+	strcpy(history[historySize], string);
+	historySize++;
+}
 
 int comhand(){
 	int quit = 0;
@@ -259,7 +271,8 @@ int comhand(){
 			case 20: infinite(); break;
 			case 21: show_free_mem(); break;
 			case 22: show_alloc_mem(); break;
-			case 23: function();
+			case 23: function(); break;
+			case 24: showHistory();  break;
 			default: write_text_red("Not a valid command, type ");
 					 write_text_yellow("'help' "); 
 					 write_text_red("for options\n");
@@ -322,6 +335,14 @@ void auto_complete(char partial_str[]){
 		}else{
 			serial_print("");
 		}
+	}
+}
+
+void showHistory(){
+	int i;
+	for(i = 0; i < historySize; i++){
+		write_text(history[i]);
+		write_text("\n");
 	}
 }
 

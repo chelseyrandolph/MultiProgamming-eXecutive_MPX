@@ -11,12 +11,13 @@
 #include "polling.h"
 #include "comhand.h"
 
-
+int historyCursor = 0;
 char tmp_buf[4];
 
 int init_polling(char *buffer, int *count){
 	char str[2];
 	str[1] = '\0';
+
 
 	if(!buffer || !count){
 		return -1;
@@ -78,7 +79,8 @@ int init_polling(char *buffer, int *count){
 					//serial_print("correct");
 					//buffer[cursor] = '\0';  <-  This is no bueno: causing it to not recognize cmd when cursor isnt at the end
 					//cursor = 0;             <-  This is also no bueno but leave it here for Brandon :)
-					
+					addToCmdHistory(buffer);
+					historyCursor = getHistorySize();
 					while(buffer[buf_len-1] == ' '){	//When return is pressed, this loop takes off
 						buffer[cursor - 1] = NULL;		//all the excess spaces so that the command will
 						cursor--;						//will be recognized
@@ -155,8 +157,19 @@ int init_polling(char *buffer, int *count){
 								}
 								
 							break;
+							case 66:	//down arrow for cmd history
+								serial_print("\33[2K\r");
+								historyCursor++;
+								serial_print(getCommand(historyCursor));
+	
+							break;
 
-
+							case 65:	//Up arrow for cmd history
+								serial_print("\33[2K\r");
+								historyCursor--;
+								serial_print(getCommand(historyCursor));
+	
+							break;
 						}
 					}
 				break;
