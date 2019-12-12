@@ -356,10 +356,6 @@ int create_pcb(char name[], int pclass, int priority){
 
 int delete_pcb(char name[]){
 	PCB *pcb = find_pcb(name);
-	if((strcmp(pcb->name,"infinite_process") == 0) && pcb->suspended == 1){
-		write_text_red("Must suspend infinite process before deleting it.\n");
-		return 0;
-	}
 	if(pcb != NULL){
 		remove_pcb(pcb);
 		free_pcb(pcb);

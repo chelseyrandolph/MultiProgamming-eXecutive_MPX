@@ -72,8 +72,6 @@ CMCB* findCMCB(char name[]){
 			cmcb = cmcb->next;
 		}
 	}
-	write_text_bold_blue("memory_man/findCMCB: ");
-	write_text_red("MEMORY BLOCK NOT FOUND\n");
 	return NULL;
 }
 
@@ -144,7 +142,6 @@ int free_mem(void *addr){
 
 	//If temp is null, alert user and return
 	if(temp == NULL){
-		write_text_red("ERROR: Block not found.\n");
 		return -1;
 	}
 	

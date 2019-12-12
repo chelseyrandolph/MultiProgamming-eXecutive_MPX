@@ -184,11 +184,6 @@ int shutDown(){
 	sys_req(READ, DEFAULT_DEVICE, ans, &ansInt);
 	
 	if(strcmp(ans, "Y")==0){
-		PCB *infinite = find_pcb("infinite_process");
-		if(infinite != NULL && infinite->suspended == 0){
-			write_text_bold_yellow("Cannot shutdown while infinite process is not suspended\n");
-			return 0;
-		}	
 		write_text_red("MPX is shutting down \n");
 		return 1;
 	}else if(strcmp(ans, "N")==0){
@@ -291,8 +286,10 @@ int comhand(){
 	}
 //Remove and free all queues
 //When comhand quits, the queues should be empty
+	if(find_pcb("infinite_process") != NULL){
+		suspend_pcb("infinite_process");
+	}
 
-	suspend_pcb("infinite_process");
 	remove_all();
 	sys_req(EXIT, DEFAULT_DEVICE, NULL, NULL);
 	return -1;
@@ -305,10 +302,10 @@ void displayMenu(){
 
 	static char header1[70] = {"\033[1;32m _   _  ___  ___  _____    __    _  _____  __        __  ___\n"};
 	static char header2[70] = {"| | | || __|| __||  _  |  |  \\  | ||  _  ||  \\      /  || __|\n"};
-	static char header3[70] = {"| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
+	static char header3[70] = {"\033[1;31m| | | || |_ | |_ | |_| |  |   \\ | || |_| ||   \\    /   || |_ \n"};
 	static char header4[70] = {"\033[1;34m| | | ||__ ||  _||  __ \\  | |\\ \\| ||  _  || |\\ \\  / /| ||  _|\n"};
 	static char header5[70] = {"| |_| | _| || |_ | |  \\ \\ | | \\ \\ || | | || | \\ \\/ / | || |_ \n"};
-	static char header6[70] = {"|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
+	static char header6[76] = {"\033[1;35m|_____||___||___||_|   \\_\\|_|  \\__||_| |_||_|  \\__/  |_||___|\033[0m\n\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,header1,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header2,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header3,&headerSize);
@@ -316,7 +313,7 @@ void displayMenu(){
 	sys_req(WRITE,DEFAULT_DEVICE,header5,&headerSize);
 	sys_req(WRITE,DEFAULT_DEVICE,header6,&headerSize);
 
-	static char init_text[150] = "\033[0;35mMPX-OS V2.70\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
+	static char init_text[150] = "\033[0;35mMPX-OS Version 5.0\033[0m\nType \033[1;33mhelp\033[0m for a list of commands...\n\n\n";
 	static int init_size = 150;
 	sys_req(WRITE, DEFAULT_DEVICE, init_text, &init_size);
 
