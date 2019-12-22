@@ -1,45 +1,37 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+This MPX project used Linux VM, C programming, and GDB debugging tool.
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+R1: Basic Interface Development
+  - Polling
+  - Command Handler
+  - User Interface
+  - Menu Display
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+R2: PCB (Process Control Block) Operations
+  - Process management
+  - Creating/deleting, keeping track of processes, and moving processes between multiple queues representing process states
 
----
+R3/ R4: Dispatching **Mostly written in C, but some Assembly is required
+  R3:
+    - Track particular processes with PCBs 
+    - Support system idling and exiting
+    - Switch out of the running process using a context switch
+    - Be able to add new processes, execute the processes until all are complete, then return to command handler
+	R4:
+    - Treat your command handler as a process with its own priority and state
+    - Prevent polling from being blocked
+    - Add an alarm command
+    - Use an infinitely running process that has to be user suspended to be killed
 
-## Edit a file
+R5: Memory Management
+  - Implement a heap manager to dynamically allocate and deallocate memory 
+  - Blocks of memory (MCB) will be kept track of through the use of complete memory control blocks (CMCB)
+  - Blocks of memory will be stored in one of two lists, which must be implemented (free block list & allocated block list)
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
-
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
-
----
-
-## Create a file
-
-Next, you’ll add a new file to this repository.
-
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
-
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
-
----
-
-## Clone a repository
-
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
-
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
-
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+R6: Interrupt Driven I/O ---- WAS NOT COMPLETED IN THE GIVEN SOURCE CODE
+  - Build a complete MultiProgramming eXecutive by integrating all previous modules
+  - Implement a simple interrupt-driven serial port driver
+    - Enable communication between your computer and: 
+      - Another attached computer
+      - Video terminal
+    - Handle external interrupt events
+  - Integrate the driver into the MPX via I/O queues and sys_call
